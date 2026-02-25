@@ -1,0 +1,44 @@
+{
+  "name": "VaultZero",
+  "short_name": "VaultZero",
+  "description": "Zero-knowledge, offline-first encryption vault with post-quantum resistance.",
+  "id": "/",
+  "start_url": "./vault.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08080d",
+  "theme_color": "#08080d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/fevicon.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

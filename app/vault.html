@@ -1,0 +1,535 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>VaultZero — Secure Encryption Tool | Offline-First</title>
+    <meta name="theme-color" content="#08080d" />
+    <meta name="description" content="VaultZero is a zero-knowledge, offline-first encryption vault with post-quantum resistance. Encrypt messages and files locally in your browser." />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" />
+    
+    <!-- Open Graph for WhatsApp/Social Clickability -->
+    <meta property="og:title" content="VaultZero" />
+    <meta property="og:description" content="I sent you an encrypted message. Tap to unlock." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vaultzero.tensorhub.pk/vault.html" />
+    <meta property="og:image" content="https://vaultzero.tensorhub.pk/assets/logo.png" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content="VaultZero encryption vault" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VaultZero Vault — Secure Encryption" />
+    <meta name="twitter:description" content="Zero-knowledge, offline-first encryption vault with post-quantum resistance." />
+    <meta name="twitter:image" content="https://vaultzero.tensorhub.pk/assets/logo.png" />
+    <link rel="canonical" href="https://vaultzero.tensorhub.pk/vault.html" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" as="style" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vault-design.css" />
+    <link rel="manifest" href="app-identity.json" />
+    
+    <!-- iOS / Safari Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="VaultZero" />
+    <link rel="icon" sizes="512x512" href="assets/fevicon.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="assets/fevicon.jpeg" />
+</head>
+<body>
+
+<div class="app-shell">
+    <div id="version-status-bar" class="version-bar hidden">
+        <div class="version-content">
+            <span id="version-msg"></span>
+            <span id="version-numbers" class="version-micro"></span>
+            <button id="btn-update-app" class="update-btn hidden">Update Now</button>
+            <button id="btn-close-version-bar" class="version-close-btn" title="Dismiss">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MOBILE HEADER ==================== -->
+    <header class="mobile-header">
+        <div class="mobile-header-inner">
+            <div class="mobile-branding">
+                <div class="logo-mark small">
+                    <img src="assets/logo.png" alt="Logo" width="120" height="auto">
+                </div>
+            </div>
+            
+            <div id="mobile-version-tag" class="mobile-v-compact">
+                <span id="mobile-v-text">V1.2.1</span>
+            </div>
+
+            <button id="btn-install-mobile" class="mobile-install-btn" title="Install App">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+
+            <button onclick="onPanicWipe()" class="mobile-wipe-btn">WIPE</button>
+        </div>
+    </header>
+
+    <!-- ==================== DESKTOP HEADER ==================== -->
+    <header class="desktop-header">
+        <div class="desktop-header-left">
+            <img src="assets/logo.png" alt="VaultZero Logo" width="120" height="auto" style="object-fit: contain;">
+        </div>
+
+        <nav class="header-nav">
+            <button id="header-nav-sym" onclick="switchMainTab('symmetric')" class="header-nav-btn active" title="Security Vault">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <span>Vault</span>
+            </button>
+            <button id="header-nav-asym" onclick="switchMainTab('asymmetric')" class="header-nav-btn" title="Secure Share">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                <span>Share</span>
+            </button>
+            <button id="header-nav-identity" onclick="switchMainTab('identity')" class="header-nav-btn" title="My Identity">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Identity</span>
+            </button>
+        </nav>
+
+        <div class="desktop-header-right">
+            <button id="btn-install-header" class="header-install-btn" title="Install App">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Install</span>
+            </button>
+
+            <div id="header-version-area" class="header-version-box">
+                <div class="header-status-wrap">
+                    <div class="status-dot"></div>
+                    <span id="header-status-label" class="v-label">Secure</span>
+                </div>
+                <span id="header-version-display" class="v-version">V1.2.1</span>
+                <button id="btn-update-header" class="update-btn side-pulse hidden">Update Now</button>
+            </div>
+
+            <button onclick="onPanicWipe()" class="header-wipe-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                Wipe
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content">
+
+        <!-- ============ SYMMETRIC VIEW ============ -->
+        <section id="view-symmetric" class="view-section">
+
+            <!-- Single wide card for symmetric -->
+            <div class="card main-card">
+                <div class="card-header-row">
+                    <div>
+                        <h3 class="card-title">Secret Vault</h3>
+                        <p class="card-desc">Lock messages with a password</p>
+                    </div>
+                    <div class="tab-bar">
+                        <button id="btn-encrypt-sym" onclick="setOpMode('encrypt')" class="tab-btn active">Create</button>
+                        <button id="btn-decrypt-sym" onclick="setOpMode('decrypt')" class="tab-btn">Open</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password-sym" placeholder="Enter password" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label-row">
+                        <label id="text-label" class="form-label">Input Content</label>
+                    </div>
+                    <div class="input-row-group">
+                        <textarea id="message-sym" placeholder="Type your secrets..." class="form-input form-textarea"></textarea>
+                        <div id="file-input-container" class="file-drop-zone" onclick="document.getElementById('target-file-sym').click()">
+                            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            <span id="file-label-sym">Click to attach file or image</span>
+                            <input type="file" id="target-file-sym" accept=".txt,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp" class="hidden" />
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sym-options-area">
+                    <div class="options-row">
+                        <label class="option-chip">
+                            <input type="checkbox" id="stego-toggle-sym" />
+                            <span>Hide in Photo</span>
+                        </label>
+                        <label class="option-chip">
+                            <input type="checkbox" id="timer-toggle-sym" />
+                            <span>Auto-Delete After Use</span>
+                        </label>
+                    </div>
+
+                    <div id="stego-file-container-sym" class="hidden form-group">
+                        <label class="form-label">Upload Cover Image</label>
+                        <div class="file-drop-zone" id="stego-drop-zone-sym" onclick="document.getElementById('stego-file-sym').click()">
+                            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            <span id="stego-label-sym">Click or drop image here</span>
+                            <input type="file" id="stego-file-sym" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" class="hidden" />
+                        </div>
+                    </div>
+                    <div id="timer-options-sym" class="hidden form-group">
+                        <label class="form-label">Link Expiration</label>
+                        <select id="timer-select-sym" class="form-input">
+                            <option value="60000">1 Minute</option>
+                            <option value="1800000">30 Minutes</option>
+                            <option value="3600000">1 Hour</option>
+                            <option value="86400000" selected>24 Hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="centered-action-wrap">
+                    <button id="btn-action-sym" disabled class="action-btn primary-action">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <span id="btn-action-text-sym">Lock</span>
+                    </button>
+                </div>
+
+                <div id="result-area-sym" class="hidden result-card-inner" style="margin-top:1.5rem">
+                    <div class="result-header">
+                        <span class="form-label">Output</span>
+                        <div class="result-actions">
+                            <button id="btn-copy-sym" class="copy-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>COPY TEXT</span>
+                            </button>
+                            <button id="btn-download-sym" class="copy-btn hidden" style="background:var(--green-soft); color:var(--green); border-color:var(--green)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>DOWNLOAD FILE</span>
+                            </button>
+                            <button id="btn-copy-link-sym" class="copy-btn secondary-copy">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                <span>SHARE LINK</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="result-text-sym" class="result-box"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============ ASYMMETRIC VIEW ============ -->
+        <section id="view-asymmetric" class="hidden view-section">
+
+            <div class="card main-card">
+                <div class="card-header-row">
+                    <div>
+                        <h3 class="card-title">Secure Share</h3>
+                        <p class="card-desc">Send messages directly to a friend's ID</p>
+                    </div>
+                    <div class="tab-bar">
+                        <button id="btn-encrypt-asym" onclick="setOpModeAsym('encrypt')" class="tab-btn active">Send</button>
+                        <button id="btn-decrypt-asym" onclick="setOpModeAsym('decrypt')" class="tab-btn">Receive</button>
+                    </div>
+                </div>
+
+                <div class="form-columns">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label id="asym-key-label" class="form-label">Friend's ID</label>
+                            <textarea id="key-input-asym" placeholder="Paste their ID here" class="form-input form-textarea mono" style="min-height:90px"></textarea>
+                            <button id="btn-load-my-key-asym" class="hidden autofill-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                USE MY ID
+                            </button>
+                        </div>
+
+                        <div id="asym-input-group" class="form-group">
+                            <div class="form-label-row">
+                                <label id="asym-msg-label" class="form-label">Message or File</label>
+                            </div>
+                            <div class="input-row-group">
+                                <textarea id="message-asym" placeholder="Only your friend can read this..." class="form-input form-textarea"></textarea>
+                                <div id="file-input-container-asym" class="file-drop-zone" onclick="document.getElementById('target-file-asym').click()">
+                                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                    <span id="file-label-asym">Click to attach file or image</span>
+                                    <input type="file" id="target-file-asym" accept=".txt,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp" class="hidden" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="asym-options-area">
+                            <div class="options-row">
+                                <label class="option-chip">
+                                    <input type="checkbox" id="stego-toggle-asym" />
+                                    <span>Hide in Photo</span>
+                                </label>
+                                <label class="option-chip">
+                                    <input type="checkbox" id="timer-toggle-asym" />
+                                    <span>Auto-Delete After Use</span>
+                                </label>
+                            </div>
+
+                            <div id="stego-file-container-asym" class="hidden form-group">
+                                <label class="form-label">Upload Cover Image</label>
+                                <div class="file-drop-zone" id="stego-drop-zone-asym" onclick="document.getElementById('stego-file-asym').click()">
+                                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                    <span id="stego-label-asym">Click or drop image here</span>
+                                    <input type="file" id="stego-file-asym" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" class="hidden" />
+                                </div>
+                            </div>
+                            <div id="timer-options-asym" class="hidden form-group">
+                                <label class="form-label">Link Expiration</label>
+                                <select id="timer-select-asym" class="form-input">
+                                    <option value="60000">1 Minute</option>
+                                    <option value="1800000">30 Minutes</option>
+                                    <option value="3600000">1 Hour</option>
+                                    <option value="86400000" selected>24 Hours</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="centered-action-wrap">
+                    <button id="btn-action-asym" disabled class="action-btn primary-action">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <circle cx="12" cy="11.5" r="1"></circle>
+                            <rect x="11.5" y="12.2" width="1" height="2" rx="0.5"></rect>
+                        </svg>
+                        <span id="btn-action-text-asym">Secure & Seal</span>
+                    </button>
+                </div>
+
+                <div id="result-area-asym" class="hidden result-card-inner" style="margin-top:1.5rem">
+                    <div class="result-header">
+                        <span class="form-label">Secure Payload</span>
+                        <div class="result-actions">
+                            <button id="btn-copy-asym" class="copy-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>COPY TEXT</span>
+                            </button>
+                            <button id="btn-download-asym" class="copy-btn hidden" style="background:var(--green-soft); color:var(--green); border-color:var(--green)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span>DOWNLOAD FILE</span>
+                            </button>
+                            <button id="btn-copy-link-asym" class="copy-btn secondary-copy">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                <span>SHARE LINK</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="result-text-asym" class="result-box"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="view-identity" class="hidden view-section">
+            <div class="card main-card">
+                <div class="card-header-row">
+                    <div>
+                        <h3 class="card-title">My Digital Identity</h3>
+                        <p class="card-desc">Your unique cryptographic signature for secure communication.</p>
+                    </div>
+                    <div id="identity-status-badge" class="identity-badge">
+                        <div class="status-dot"></div>
+                        <span>ACTIVE & SECURED</span>
+                    </div>
+                </div>
+
+                <div class="identity-profile-card">
+                    <div class="id-card-top">
+                        <div class="profile-avatar">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="profile-info">
+                            <span class="profile-tag">CRYPTOGRAPHIC PROFILE</span>
+                            <span class="profile-name">Secure User Signature</span>
+                        </div>
+                    </div>
+
+                    <div class="id-card-content">
+                        <div class="form-group">
+                            <label class="form-label">Public Access ID</label>
+                            <div class="key-display-container">
+                                <div class="key-shield-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                </div>
+                                <textarea id="my-public-key-id" readonly class="id-key-area mono" placeholder="LOCKED. Generate or Unlock to view ID."></textarea>
+                                <button id="btn-copy-public-id" class="id-copy-action" title="Copy ID">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    <span>COPY</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="id-card-actions">
+                        <button id="btn-share-link-id" class="id-action-btn secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            <span>Share ID Link</span>
+                        </button>
+                        <button id="btn-generate-keys-id" class="id-action-btn danger">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3L15.5 7.5z"></path></svg>
+                            <span>Regenerate ID</span>
+                        </button>
+                    </div>
+
+                    <div class="id-card-footer">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span>Your identity is stored locally using AES-GCM 256-bit encryption. It never leaves this device.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== DESKTOP FOOTER ==================== -->
+    <footer class="desktop-footer">
+        <span>VaultZero &middot; Zero-Knowledge Encryption</span>
+        <span>All operations run locally &middot; No data leaves this device</span>
+    </footer>
+
+    <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+    <nav class="mobile-nav">
+        <button id="nav-symmetric" onclick="switchMainTab('symmetric')" class="mobile-nav-btn active">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Vault</span>
+        </button>
+
+        <button id="btn-update-mobile-nav" class="mobile-nav-btn update-nav-btn hidden">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
+            <div class="nav-update-dot"></div>
+            <span>Update</span>
+        </button>
+
+        <button id="nav-asymmetric" onclick="switchMainTab('asymmetric')" class="mobile-nav-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span>Share</span>
+        </button>
+
+        <button id="nav-identity" onclick="switchMainTab('identity')" class="mobile-nav-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>My ID</span>
+        </button>
+    </nav>
+
+</div>
+
+<!-- Updating Overlay -->
+<div id="updating-overlay" class="updating-overlay hidden">
+    <div class="updating-card">
+        <div class="updating-spinner"></div>
+        <h2>Applying Secure Update</h2>
+        <p>Verifying integrity and refreshing vaults...</p>
+        <div class="updating-progress-bar">
+            <div class="updating-progress-fill"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="status-toast" class="toast">MESSAGE</div>
+
+<!-- PWA Install Modal -->
+<div id="install-modal" class="install-modal hidden">
+    <div class="install-modal-backdrop" onclick="closeInstallModal()"></div>
+    <div class="install-modal-card">
+        <button class="install-modal-close" onclick="closeInstallModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="install-modal-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </div>
+        <h2 class="install-modal-title">Install VaultZero</h2>
+        <p class="install-modal-subtitle">Use offline &middot; Launch instantly &middot; Zero tracking</p>
+
+        <!-- Shown on Chrome/Edge desktop & Android when native prompt is available -->
+        <div id="install-native" class="install-section hidden">
+            <button id="btn-install-native" class="install-action-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Install Now
+            </button>
+        </div>
+
+        <!-- Shown on iOS Safari -->
+        <div id="install-ios" class="install-section hidden">
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Tap the <strong>Share</strong> button <span class="step-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    </span> at the bottom of Safari</div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Tap <strong>"Add"</strong> in the top right corner</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shown on Android browsers without native prompt -->
+        <div id="install-android" class="install-section hidden">
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Tap the <strong>Menu</strong> button <span class="step-icon">&#8942;</span> in your browser</div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Tap <strong>"Install"</strong> to confirm</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shown on Desktop browsers without native prompt -->
+        <div id="install-desktop" class="install-section hidden">
+            <div class="install-steps">
+                <div class="install-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Click the <strong>install icon</strong> <span class="step-icon">&#8853;</span> in your browser's address bar</div>
+                </div>
+                <div class="install-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Or open <strong>Menu &rarr; Install VaultZero</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Already installed message -->
+        <div id="install-done" class="install-section hidden">
+            <div class="install-done-badge">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>VaultZero is already installed!</span>
+            </div>
+        </div>
+
+        <p class="install-modal-footer">Works offline &middot; No app store needed</p>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="libs/localforage.min.js"></script>
+<script src="libs/sodium.js"></script>
+<script src="libs/argon2-bundled.min.js"></script>
+<script src="libs/kyber.js"></script>
+<script src="encryption.js"></script>
+<script src="image-hide.js"></script>
+<script src="security-logs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

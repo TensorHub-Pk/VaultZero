@@ -1,0 +1,13 @@
+{
+  "version": "1.5.5",
+  "released": "2026-02-25",
+  "hashes": {
+    "app.js": "439e0cf547e4a2397c65bb27094ea24189bd07b9cb4fda9b5526fd4f4a7edbd8",
+    "encryption.js": "0bf6dd383f2c84cf5e83a3ce1752c4f3925450b46c6f59ace4bb8cd0c6cdfae0",
+    "service-worker.js": "573b6fbf19b0435c9cfde148025f589cb9d76b92a4728be3e9aa0ec64303865f",
+    "security-logs.js": "9ba4aa9cfc46aec04c5e481dfca741b004a1b999d591d8f50c242ac57e1971d3",
+    "app-identity.json": "3d9f1039196476e72274ea2c16ffd3d76d545d4a97d715a5df54065712255b8a"
+  },
+  "signature": "8/9H9YRtCSR6MYsfJoxsqNNvsi/Bwa78xhLc9WKuM69egbJm9vPaZ+BoADEwS8keJ1yQDWjQMXMvclZbdl4XDg==",
+  "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
+}
