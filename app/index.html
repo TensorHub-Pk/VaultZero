@@ -1,4 +1,9 @@
-﻿<!doctype html>
+﻿<!--
+  VaultZero — Zero-Knowledge Offline Encryption
+  Copyright (c) 2026 VaultZero Contributors
+  SPDX-License-Identifier: MIT
+-->
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -10,15 +15,20 @@
     <meta name="keywords" content="client-side encryption tool, zero knowledge encryption, secure message encryption online, offline encryption web app, privacy-first encryption tool, secure document encryption online, browser-based encryption, post-quantum ready encryption, ChaCha20, Argon2id, ML-KEM-768, secure messaging" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
 
-    <!-- Security Headers -->
+    <!-- Security Headers & SEO -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" />
+    <meta name="author" content="TensorHub Inc." />
+    <meta name="copyright" content="TensorHub Inc." />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="alternate" hreflang="x-default" href="https://vaultzero.tensorhub.pk/" />
 
     <!-- Canonical & Favicon -->
     <link rel="canonical" href="https://vaultzero.tensorhub.pk/" />
-    <link rel="icon" sizes="512x512" href="assets/fevicon.jpeg" type="image/jpeg" />
-    <link rel="apple-touch-icon" sizes="512x512" href="assets/fevicon.jpeg" />
+    <link rel="icon" sizes="512x512" href="./assets/fevicon.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
 
     <!-- Open Graph (1200x630 optimized) -->
     <meta property="og:title" content="VaultZero — Zero-Knowledge Encryption" />
@@ -134,14 +144,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" as="style" />
-    <link rel="preload" href="assets/logo.png" as="image" />
+    <link rel="preload" href="./assets/logo.png" as="image" />
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="home-design.css" />
+    <link rel="stylesheet" href="./home-design.css" />
+    <link rel="manifest" href="./app-identity.json" />
 
 </head>
 <body>
@@ -150,7 +161,7 @@
     <header class="site-header" id="site-header">
         <div class="container header-inner">
             <a href="/" class="logo-link" aria-label="VaultZero Home">
-                <img src="assets/logo.png" alt="VaultZero Logo" class="logo-img" width="160" height="auto">
+                <img src="assets/logo.png" alt="VaultZero Logo" class="logo-img" width="130" height="auto">
             </a>
             <nav class="site-nav" id="site-nav">
                 <a href="#features" class="nav-link">Features</a>
@@ -171,6 +182,11 @@
     <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="container hero-inner">
+            <div style="margin-bottom: 20px;">
+                <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                    <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 32px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.2));">
+                </a>
+            </div>
             <div class="hero-badge">Open Source · Offline-First · Zero Knowledge</div>
             <h1 class="hero-title">
                 Encryption That Never<br>
@@ -202,6 +218,50 @@
                 <div class="stat">
                     <span class="stat-value">0 bytes</span>
                     <span class="stat-label">Sent to servers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== OPENSSF COMPLIANCE ===== -->
+    <section class="openssf-section reveal" id="compliance">
+        <div class="container">
+            <div class="openssf-card">
+                <div class="openssf-visual">
+                    <img src="https://raw.githubusercontent.com/ossf/artwork/e1d53fab943dfd4379b1f181d4078e2ea238c324/openssf/stacked/color/openssf-stacked-color.svg" alt="Official OpenSSF Logo" class="openssf-logo-large">
+                    <div class="badge-float">
+                        <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 48px;">
+                        </a>
+                    </div>
+                </div>
+                <div class="openssf-content">
+                    <h2>Committed to <span class="gold-text">OpenSSF Gold</span> Standards</h2>
+                    <p class="openssf-description">
+                        VaultZero is actively pursuing the OpenSSF Best Practices <strong>Gold Badge</strong>. This represents the highest tier of security and quality in open-source software maintenance.
+                    </p>
+                    <div class="openssf-criteria">
+                        <div class="criterion-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Two-Person Code Review</span>
+                        </div>
+                        <div class="criterion-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>90% Unit Test Coverage</span>
+                        </div>
+                        <div class="criterion-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Automated CI Security Scans</span>
+                        </div>
+                        <div class="criterion-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Reproducible Build Path</span>
+                        </div>
+                    </div>
+                    <a href="https://bestpractices.dev/projects/12040" target="_blank" rel="noopener noreferrer" class="compliance-cta">
+                        View Compliance Roadmap
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
                 </div>
             </div>
         </div>
@@ -384,6 +444,8 @@
         </div>
     </section>
 
+    </section>
+
     <!-- ===== FOOTER ===== -->
     <footer class="site-footer new-footer">
         <div class="container">
@@ -392,7 +454,7 @@
                 <!-- Branding (Left) -->
                 <div class="new-footer-left">
                     <a href="https://tensorhub.pk" class="new-footer-logo">
-                        <img src="assets/logo.png" alt="VaultZero Logo" width="160" height="auto" class="logo-img" style="object-fit: contain;">
+                        <img src="assets/logo.png" alt="VaultZero Logo" width="90" height="auto" style="object-fit: contain;">
                     </a>
                     <p class="new-footer-copy" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">&copy; <span id="copyright-year">2026</span> TensorHub Inc. Built for privacy.</p>
                 </div>
@@ -416,34 +478,19 @@
                     </div>
                 </div>
 
-                <!-- Social Links (Right) -->
-                <div class="new-footer-socials">
-                    <a href="https://github.com/Muhammad-Owais-1947" target="_blank" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
-                    <a href="https://github.com/TensorHub-Pk" target="_blank" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
-                    <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
-                    <a href="mailto:info@tensorhub.pk" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
-                </div>
-            </div>
-
-            <!-- Bottom Row: Quick Links -->
-            <div class="footer-links-row">
-                <div class="footer-col">
-                    <h4>Products</h4>
-                    <a href="vault.html" target="_blank" rel="noopener noreferrer">VaultZero App</a>
-                    <a href="#features">Key Features</a>
-                    <a href="#architecture">Crypto Architecture</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Security</h4>
-                    <a href="#threat-model">Threat Model</a>
-                    <a href="SECURITY_ARCHITECTURE.md">Security Docs</a>
-                    <a href="mailto:security@tensorhub.pk">Bug Bounty</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Community</h4>
-                    <a href="https://github.com/TensorHub-Pk" target="_blank" rel="noopener noreferrer">GitHub Source</a>
-                    <a href="#open-source">Open Source</a>
-                    <a href="https://tensorhub.pk" target="_blank" rel="noopener noreferrer">TensorHub.pk</a>
+                <!-- Social & Compliance (Right) -->
+                <div class="new-footer-right">
+                    <div class="new-footer-socials">
+                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="https://github.com/TensorHub-Pk" target="_blank" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
+                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="mailto:info@tensorhub.pk" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
+                    </div>
+                    <div class="footer-badge">
+                        <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 24px;">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -530,11 +577,26 @@
 
             // Throttled scroll handler for header (16ms = ~60fps)
             var scrollTicking = false;
+            var lastScrollY = window.scrollY;
             window.addEventListener('scroll', function() {
                 if (!scrollTicking) {
                     scrollTicking = true;
                     requestAnimationFrame(function() {
-                        header.classList.toggle('scrolled', window.scrollY > 40);
+                        var currentScrollY = window.scrollY;
+                        if (currentScrollY > 40) {
+                            header.classList.add('scrolled');
+                        } else {
+                            header.classList.remove('scrolled');
+                        }
+                        
+                        // Hide on scroll down, show on scroll up
+                        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                            header.classList.add('header-hidden');
+                        } else if (currentScrollY < lastScrollY) {
+                            header.classList.remove('header-hidden');
+                        }
+                        lastScrollY = currentScrollY;
+                        
                         scrollTicking = false;
                     });
                 }
@@ -551,7 +613,7 @@
                     });
                 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-                document.querySelectorAll('.feature-card, .threat-card, .arch-card, .os-card').forEach(function(el) {
+                document.querySelectorAll('.feature-card, .threat-card, .arch-card, .os-card, .openssf-section').forEach(function(el) {
                     el.classList.add('reveal');
                     observer.observe(el);
                 });

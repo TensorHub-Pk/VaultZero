@@ -1,4 +1,6 @@
-# Contributing to VaultZero
+# ![Logo](app/assets/logo.png) Contributing to VaultZero
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 First off, thank you for considering contributing to VaultZero! It's people like you that make VaultZero such a great tool.
 
@@ -9,6 +11,10 @@ Following these guidelines helps to communicate that you respect the time of the
 This project and everyone participating in it is governed by the [VaultZero Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [PLACEHOLDER_FOR_CONDUCT_EMAIL].
 
 ## How Can I Contribute?
+
+### Finding Tasks for New Contributors
+
+We welcome new contributors! To find small, manageable tasks to get started with, look for issues labeled [`good-first-issue`](https://github.com/TensorHub-Pk/VaultZero/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22). These tasks are designed to be completed with minimal context and serve as a great introduction to the codebase.
 
 ### Reporting Bugs
 
@@ -51,7 +57,19 @@ Please follow these steps to have your contribution considered by the maintainer
 4.  **Open an Issue**: Ensure there is an issue open that your PR addresses.
 5.  **Submit the PR**: Describe what your PR changes, how to test it, and link the related issue. Wait for review. Since we target the OpenSSF Gold Badge, **at least one other person MUST review and approve your PR before it can be merged.**
 
-**Important Note for Maintainers:** ALL pull requests must be reviewed by a developer other than the author prior to merging (OpenSSF Gold requirement). Maintainers must enforce this policy strictly.
+### Contribution Standards
+
+- **Accessibility:** Ensure UI contributions follow semantic HTML guidelines and WCAG 2.1 Level AA standards where possible. All interactive elements must be keyboard-navigable and compatible with screen readers.
+- **Internationalization:** While the project is currently in English, we aim for easy localization. Avoid hardcoding text strings in the functional logic; prefer a centralized dictionary approach if adding user-facing text.
+- **Code Style:** Follow the established patterns in the repository. Use clear, descriptive variable names and provide comments for complex cryptographic logic.
+
+**Important Note for Maintainers:** ALL pull requests must be reviewed by a developer other than the author prior to merging (OpenSSF Gold requirement). Please refer to our documented [Code Review Standards](docs/CODE_REVIEW_STANDARDS.md) for detailed requirements and checklists. Maintainers must enforce this policy strictly.
+
+### Developer Certificate of Origin (DCO)
+
+To improve the tracking of contributions and ensure legal clarity, VaultZero requires that all contributions be accompanied by a "Sign-off" statement. By adding `Signed-off-by: Real Name <email@address.com>` to your commit messages, you certify that you have the right to submit the code under the project's license.
+
+For more information, visit [developercertificate.org](https://developercertificate.org/).
 
 ## Setup for Local Development
 

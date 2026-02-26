@@ -1,4 +1,6 @@
-﻿# 🛡️ VaultZero — Cryptographic & Security Architecture
+﻿# ![Logo](../app/assets/logo.png) 🛡️ VaultZero — Cryptographic & Security Architecture
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 VaultZero is a **Zero-Knowledge, Offline-First** cybersecurity platform with **Post-Quantum** resistance. All cryptographic operations execute client-side. No data ever leaves the device.
 

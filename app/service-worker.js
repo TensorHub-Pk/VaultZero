@@ -1,4 +1,10 @@
-﻿const CACHE_NAME = 'vault-v3';
+﻿/**
+ * VaultZero — Zero-Knowledge Offline Encryption
+ * Copyright (c) 2026 VaultZero Contributors
+ * SPDX-License-Identifier: MIT
+ */
+
+const CACHE_NAME = 'vault-v1';
 const ASSETS_TO_CACHE = [
   '/',
   'index.html',
@@ -46,7 +52,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
   // Network-first for update manifest (update checks must bypass cache)
-  if (url.pathname === '/update-info.json' || url.pathname === '/version.json') {
+  if (url.pathname.endsWith('/update-info.json') || url.pathname.endsWith('/version.json')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
     );

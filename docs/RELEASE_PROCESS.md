@@ -1,4 +1,6 @@
-# Release Process
+# ![Logo](../app/assets/logo.png) Release Process
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 This document outlines the standard operating procedure for releasing a new version of VaultZero. Adhering to this process ensures consistency, traceability, and compliance with OpenSSF Best Practices.
 

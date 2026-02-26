@@ -1,4 +1,9 @@
-﻿<!doctype html>
+﻿<!--
+  VaultZero — Zero-Knowledge Offline Encryption
+  Copyright (c) 2026 VaultZero Contributors
+  SPDX-License-Identifier: MIT
+-->
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -6,7 +11,7 @@
     <title>VaultZero — Secure Encryption Tool | Offline-First</title>
     <meta name="theme-color" content="#08080d" />
     <meta name="description" content="VaultZero is a zero-knowledge, offline-first encryption vault with post-quantum resistance. Encrypt messages and files locally in your browser." />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" />
@@ -30,55 +35,48 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" as="style" />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="vault-design.css" />
+    <link rel="stylesheet" href="./vault-design.css" />
+    <link rel="manifest" href="./app-identity.json" />
     <link rel="manifest" href="app-identity.json" />
     
     <!-- iOS / Safari Support -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="VaultZero" />
-    <link rel="icon" sizes="512x512" href="assets/fevicon.jpeg" type="image/jpeg" />
-    <link rel="apple-touch-icon" sizes="512x512" href="assets/fevicon.jpeg" />
+    <link rel="icon" sizes="512x512" href="./assets/fevicon.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
 </head>
 <body>
 
 <div class="app-shell">
-    <div id="version-status-bar" class="version-bar hidden">
-        <div class="version-content">
-            <span id="version-msg"></span>
-            <span id="version-numbers" class="version-micro"></span>
-            <button id="btn-update-app" class="update-btn hidden">Update Now</button>
-            <button id="btn-close-version-bar" class="version-close-btn" title="Dismiss">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-    </div>
-
     <!-- ==================== MOBILE HEADER ==================== -->
     <header class="mobile-header">
         <div class="mobile-header-inner">
             <div class="mobile-branding">
                 <div class="logo-mark small">
-                    <img src="assets/logo.png" alt="Logo" width="120" height="auto">
+                    <img src="assets/logo.png" alt="Logo" width="80" height="auto">
                 </div>
             </div>
             
             <div id="mobile-version-tag" class="mobile-v-compact">
-                <span id="mobile-v-text">V1.2.1</span>
+                <div class="status-dot online"></div>
+                <span id="mobile-v-text">V0.0.0</span>
             </div>
 
-            <button id="btn-install-mobile" class="mobile-install-btn" title="Install App">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            </button>
+            <div class="mobile-actions-right">
+                <button id="btn-install-mobile" class="mobile-install-btn hidden" title="Install App">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </button>
 
-            <button onclick="onPanicWipe()" class="mobile-wipe-btn">WIPE</button>
+                <button onclick="onPanicWipe()" class="mobile-wipe-btn">WIPE</button>
+            </div>
         </div>
     </header>
 
     <!-- ==================== DESKTOP HEADER ==================== -->
     <header class="desktop-header">
         <div class="desktop-header-left">
-            <img src="assets/logo.png" alt="VaultZero Logo" width="120" height="auto" style="object-fit: contain;">
+            <img src="assets/logo.png" alt="VaultZero Logo" width="130" height="auto" style="object-fit: contain;">
         </div>
 
         <nav class="header-nav">
@@ -102,13 +100,14 @@
                 <span>Install</span>
             </button>
 
-            <div id="header-version-area" class="header-version-box">
-                <div class="header-status-wrap">
-                    <div class="status-dot"></div>
-                    <span id="header-status-label" class="v-label">Secure</span>
+            <div class="header-status-area">
+                <div class="status-indicator">
+                    <div class="status-dot online"></div>
+                    <span id="header-status-text">Online</span>
                 </div>
-                <span id="header-version-display" class="v-version">V1.2.1</span>
-                <button id="btn-update-header" class="update-btn side-pulse hidden">Update Now</button>
+                <div class="version-tag">
+                    <span id="header-version-text">V0.0.0</span>
+                </div>
             </div>
 
             <button onclick="onPanicWipe()" class="header-wipe-btn">
@@ -394,6 +393,11 @@
     <footer class="desktop-footer">
         <span>VaultZero &middot; Zero-Knowledge Encryption</span>
         <span>All operations run locally &middot; No data leaves this device</span>
+        <div style="margin-top: 8px;">
+            <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 20px;">
+            </a>
+        </div>
     </footer>
 
     <!-- ==================== MOBILE BOTTOM NAV ==================== -->
@@ -401,12 +405,6 @@
         <button id="nav-symmetric" onclick="switchMainTab('symmetric')" class="mobile-nav-btn active">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             <span>Vault</span>
-        </button>
-
-        <button id="btn-update-mobile-nav" class="mobile-nav-btn update-nav-btn hidden">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
-            <div class="nav-update-dot"></div>
-            <span>Update</span>
         </button>
 
         <button id="nav-asymmetric" onclick="switchMainTab('asymmetric')" class="mobile-nav-btn">
@@ -519,6 +517,30 @@
         </div>
 
         <p class="install-modal-footer">Works offline &middot; No app store needed</p>
+    </div>
+</div>
+
+<!-- Floating Update Icon -->
+<button id="floating-update-btn" class="floating-update-btn hidden" title="Update Available" onclick="document.getElementById('update-confirm-modal').classList.remove('hidden'); requestAnimationFrame(()=> document.getElementById('update-confirm-modal').classList.add('active'));">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
+</button>
+
+<!-- Update Confirm Modal -->
+<div id="update-confirm-modal" class="install-modal hidden">
+    <div class="install-modal-backdrop" onclick="this.parentElement.classList.remove('active'); setTimeout(() => this.parentElement.classList.add('hidden'), 300);"></div>
+    <div class="install-modal-card">
+        <button class="install-modal-close" onclick="this.parentElement.parentElement.classList.remove('active'); setTimeout(() => this.parentElement.parentElement.classList.add('hidden'), 300);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="install-modal-icon pulse-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="12 11 12 17"></polyline><polyline points="9 14 12 11 15 14"></polyline></svg>
+        </div>
+        <h2 class="install-modal-title">Secure Update Available</h2>
+        <p class="install-modal-subtitle">A new version of VaultZero is ready to install. This process will encrypt your local identity and securely refresh the app.</p>
+        <div style="margin-top:24px;">
+            <button id="btn-confirm-update" class="action-btn primary-action">Reload & Apply Fixes</button>
+        </div>
+        <p class="install-modal-footer">Safe to apply. No data will be lost.</p>
     </div>
 </div>
 

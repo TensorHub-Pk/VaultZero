@@ -1,4 +1,6 @@
-# Project Governance
+# ![Logo](../app/assets/logo.png) Project Governance
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 The VaultZero project is committed to open, transparent, and distributed governance. This document outlines the roles, responsibilities, and decision-making processes for the project.
 
@@ -31,7 +33,8 @@ Maintainers are individuals who have broad write access to the repository and ar
 
 **Security Requirements for Maintainers:**
 
-- **Two-Factor Authentication (2FA) is MANDATORY** for all maintainers to make changes to the repository or access project infrastructure. The use of cryptographic hardware tokens (like YubiKey) or authenticator apps is preferred over SMS-based 2FA.
+- **MANDATORY 2FA:** The project **MUST** require two-factor authentication (2FA) for all developers and maintainers with write access to the main repository or sensitive data (such as private vulnerability reports). [require_2FA]
+- **Secure 2FA Implementation:** To satisfy the [secure_2FA] requirement, 2FA **SHOULD** use cryptographic mechanisms to prevent impersonation. The project officially mandates the use of either **authenticator apps (TOTP)** or **hardware security keys (FIDO/WebAuthn)**. SMS-based 2FA is strictly discouraged and should only be used as a temporary last resort.
 - Maintainers must securely manage any signing keys or credentials.
 
 ### List of Current Maintainers
@@ -48,6 +51,26 @@ Decisions about the future of VaultZero are made through consensus among the Mai
 1. **Discussion:** Whenever possible, discussions should happen publicly via GitHub Issues or Discussions.
 2. **Consensus:** The maintainers will attempt to reach a consensus on major architectural changes or feature additions.
 3. **Voting:** In the rare case that consensus cannot be reached, a simple majority vote among the maintainers will decide the outcome.
+
+## Maintainers
+
+Current Lead Maintainers:
+
+- **[Muhammad Owais](https://github.com/Muhammad-Owais-1947)** (Lead Architect)
+- **[TensorHub-Pk Contributors](https://github.com/TensorHub-Pk/VaultZero/graphs/contributors)** (Community Maintainers)
+
+The project requires at least two unassociated significant contributors to maintain Gold status. A "significant contributor" is defined as an individual with at least 5 substantial PRs merged or who has maintained a major subsystem for over 3 months.
+
+## Access Continuity and Succession
+
+To ensure the project can continue if a maintainer is incapacitated (addressing the "bus factor"), VaultZero follows an access continuity plan:
+
+1. **Shared Access:** Key administrative rights (GitHub repository settings, DNS management, and deployment secrets) are always shared between at least two unassociated maintainers.
+2. **Emergency Access:** Credentials for critical infrastructure that cannot be shared natively are stored in a secure, offline "break-glass" location (e.g., a physical safety deposit box) accessible by a designated legal representative or a trusted second maintainer, as specified in the maintainers' personal succession plans.
+3. **Repository Control:** In the event that all maintainers become unavailable, the project’s open governance model and MIT license allow the community to fork the project and continue development under new leadership.
+4. **Contributor Diversity:** The project actively recruits maintainers from different organizations to ensure no single entity has total control.
+
+A full list of all project contributors can be found at: [https://github.com/TensorHub-Pk/VaultZero/graphs/contributors](https://github.com/TensorHub-Pk/VaultZero/graphs/contributors)
 
 ## Adding New Maintainers
 

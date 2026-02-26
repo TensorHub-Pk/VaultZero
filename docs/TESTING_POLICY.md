@@ -1,4 +1,6 @@
-# Testing Policy
+# ![Logo](../app/assets/logo.png) Testing Policy
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 A rigorous testing regimen is mandatory to achieve and maintain our OpenSSF Gold Badge and ensure the functional security of VaultZero.
 

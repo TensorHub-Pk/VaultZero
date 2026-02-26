@@ -1,4 +1,6 @@
-# Reproducible Build Justification
+# ![Logo](../app/assets/logo.png) Reproducible Build Justification
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 A reproducible build ensures that compiled or generated artifacts are a perfect, bit-for-bit duplicate of previous builds given the exact same source code and environment. This practice ensures that no malicious code was injected during the build process, fulfilling an essential OpenSSF Gold requirement.
 

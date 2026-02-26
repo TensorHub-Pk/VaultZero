@@ -1,4 +1,6 @@
-# Continuous Integration and Delivery (CI/CD)
+# ![Logo](../app/assets/logo.png) Continuous Integration and Delivery (CI/CD)
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 This document describes the continuous integration strategy used to automatically test, build, and verify VaultZero. This automated process is required by the OpenSSF Gold practices to ensure that changes are frequently integrated and tested.
 

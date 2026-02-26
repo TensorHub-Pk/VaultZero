@@ -1,4 +1,8 @@
 /**
+ * VaultZero — Zero-Knowledge Offline Encryption
+ * Copyright (c) 2026 VaultZero Contributors
+ * SPDX-License-Identifier: MIT
+ *
  * audit.js — Offline Security Audit Logger
  * Stores tamper-evident security events in localforage.
  * No network access. All data stays local.

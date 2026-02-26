@@ -1,5 +1,11 @@
 ﻿/**
- * app.js â€” VaultZero UI Controller
+ * VaultZero — Zero-Knowledge Offline Encryption
+ * Copyright (c) 2026 VaultZero Contributors
+ * SPDX-License-Identifier: MIT
+ */
+
+/**
+ * app.js — VaultZero UI Controller
  * Dual-UI: Mobile App + Desktop Command Center
  */
 
@@ -106,32 +112,20 @@ async function initElements() {
     };
 
     El.version = {
-        bar: document.getElementById('version-status-bar'),
-        msg: document.getElementById('version-msg'),
-        numbers: document.getElementById('version-numbers'),
-        updateBtn: document.getElementById('btn-update-app'),
-        closeBtn: document.getElementById('btn-close-version-bar'),
-        sideArea: document.getElementById('header-version-area'),
-        sideStatus: document.getElementById('header-status-label'),
-        sideV: document.getElementById('header-version-display'),
-        sideBtn: document.getElementById('btn-update-header'),
+        floatingBtn: document.getElementById('floating-update-btn'),
+        confirmUpdateBtn: document.getElementById('btn-confirm-update'),
         overlay: document.getElementById('updating-overlay'),
-        mobileV: document.getElementById('mobile-version-tag'),
+        desktopVText: document.getElementById('header-version-text'),
         mobileVText: document.getElementById('mobile-v-text'),
-        mobileDot: document.getElementById('mobile-v-dot'),
-        mobileBtn: document.getElementById('btn-update-mobile-nav')
-    };
-
-    El.systemStatus = {
-        sidebar: document.querySelector('.header-version-box'),
-        text: document.getElementById('header-status-label'),
-        dot: document.querySelector('.header-version-box .status-dot')
+        statusText: document.getElementById('header-status-text'),
+        statusDots: document.querySelectorAll('.status-dot')
     };
 }
 
 // --- INITIALIZE ---
 async function start() {
     await initElements();
+    initNetworkStatus();
 
     // Setup install button listeners
     if (El.install.sidebar) El.install.sidebar.addEventListener('click', triggerInstallPrompt);
@@ -142,6 +136,7 @@ async function start() {
     await updateIdentityStatus();
     await SecureCrypto.init();
     await initVersionControl();
+    checkCacheAge();
 
     // Check URL for #payload or ?payload
     const urlParams = new URLSearchParams(window.location.search);
@@ -211,18 +206,23 @@ function goOffline() {
 
     window._offlineLocked = true;
 
-    if (El.systemStatus.text) {
-        El.systemStatus.text.textContent = 'TOTAL OFFLINE SHIELD';
-        El.systemStatus.text.style.fontWeight = '900';
-        El.systemStatus.text.style.color = 'var(--green)';
+    if (El.version.statusText) {
+        El.version.statusText.textContent = 'OFFLINE SHIELD';
+        El.version.statusText.style.fontWeight = '900';
+        El.version.statusText.style.color = '#22c55e';
     }
-    if (El.systemStatus.dot) {
-        El.systemStatus.dot.style.background = 'var(--green)';
-        El.systemStatus.dot.style.boxShadow = '0 0 15px var(--green-glow-strong)';
-        El.systemStatus.dot.classList.add('secure-pulse');
+    if (El.version.statusDots) {
+        El.version.statusDots.forEach(dot => {
+            dot.style.background = '#22c55e';
+            dot.style.boxShadow = '0 0 15px rgba(34, 197, 94, 0.6)';
+            dot.classList.add('secure-pulse');
+            dot.classList.remove('offline');
+            dot.classList.add('online');
+        });
     }
-    if (El.systemStatus.sidebar) {
-        El.systemStatus.sidebar.title = 'Environment Verified & Sealed Offline';
+    const statusBar = document.querySelector('.header-status-area');
+    if (statusBar) {
+        statusBar.title = 'Environment Verified & Sealed Offline';
     }
 }
 
@@ -381,15 +381,12 @@ function listeners() {
     El.id.gen.addEventListener('click', rotateId);
     El.asym.autofill.addEventListener('click', fillMyKey);
 
-    El.version.updateBtn.addEventListener('click', triggerAppUpdate);
+    if (El.version.confirmUpdateBtn) {
+        El.version.confirmUpdateBtn.addEventListener('click', triggerAppUpdate);
+    }
     if (El.version.sideBtn) El.version.sideBtn.addEventListener('click', triggerAppUpdate);
     if (El.version.mobileBtn) El.version.mobileBtn.addEventListener('click', triggerAppUpdate);
-    if (El.version.closeBtn) {
-        El.version.closeBtn.addEventListener('click', () => {
-            El.version.bar.classList.add('dismissed');
-            setTimeout(() => El.version.bar.classList.add('hidden'), 400);
-        });
-    }
+
 
     // --- Drag & Drop Setup ---
     const setupDrag = (box, input, type) => {
@@ -423,6 +420,44 @@ function listeners() {
     // Handle context-specific validation in drag/drop
     El.sym.fileBox.addEventListener('drop', () => { if(State.sym.mode === 'decrypt') checkSym(); });
     El.asym.fileBox.addEventListener('drop', () => { if(State.asym.mode === 'decrypt') checkAsym(); });
+
+    // --- Header Scroll Animation ---
+    let lastScrollY = window.scrollY;
+    let scrollTicking = false;
+    const desktopHeader = document.querySelector('.desktop-header');
+    const mobileHeader = document.querySelector('.mobile-header');
+
+    window.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+            window.requestAnimationFrame(() => {
+                const currentScrollY = window.scrollY;
+                const hideThreshold = 100;
+                const scrollThreshold = 40;
+
+                if (currentScrollY > scrollThreshold) {
+                    if (desktopHeader) desktopHeader.classList.add('scrolled');
+                    if (mobileHeader) mobileHeader.classList.add('scrolled');
+                } else {
+                    if (desktopHeader) desktopHeader.classList.remove('scrolled');
+                    if (mobileHeader) mobileHeader.classList.remove('scrolled');
+                }
+
+                if (currentScrollY > lastScrollY && currentScrollY > hideThreshold) {
+                    // Scrolling down
+                    if (desktopHeader) desktopHeader.classList.add('header-hidden');
+                    if (mobileHeader) mobileHeader.classList.add('header-hidden');
+                } else if (currentScrollY < lastScrollY) {
+                    // Scrolling up
+                    if (desktopHeader) desktopHeader.classList.remove('header-hidden');
+                    if (mobileHeader) mobileHeader.classList.remove('header-hidden');
+                }
+                
+                lastScrollY = currentScrollY;
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    }, { passive: true });
 }
 
 window.switchMainTab = (v) => {
@@ -1187,7 +1222,7 @@ async function verifyScriptIntegrity(manifest) {
 
     for (const [file, expectedHash] of Object.entries(manifest.hashes)) {
         try {
-            const res = await fetcher('/' + file + cacheBuster, { cache: 'no-store' });
+            const res = await fetcher(file + cacheBuster, { cache: 'no-store' });
             if (!res.ok) continue;
             // Hash raw bytes (ArrayBuffer) to match the Node.js signing tool
             const buf = await res.arrayBuffer();
@@ -1211,7 +1246,7 @@ async function initVersionControl() {
     if (!installedVersion) {
         try {
             const fetcher = window._nativeFetch || window.fetch;
-            const cached = await fetcher('/update-info.json');
+            const cached = await fetcher('update-info.json');
             if (cached.ok) {
                 const data = await cached.json();
                 installedVersion = data.version;
@@ -1221,14 +1256,15 @@ async function initVersionControl() {
         await localforage.setItem('app_version', installedVersion);
     }
     APP_VERSION = installedVersion;
-    El.version.numbers.textContent = `V: ${APP_VERSION}`;
+    if (El.version.desktopVText) El.version.desktopVText.textContent = `V${APP_VERSION}`;
+    if (El.version.mobileVText) El.version.mobileVText.textContent = `V${APP_VERSION}`;
 
     // 3. Network check â€” fetch latest update-info.json from server
     let serverVersion = null;
     let manifest = null;
     try {
         const fetcher = window._nativeFetch || fetch;
-        const res = await fetcher('/update-info.json?t=' + Date.now(), { cache: 'no-cache' });
+        const res = await fetcher('update-info.json?t=' + Date.now(), { cache: 'no-cache' });
         if (res.ok) {
             manifest = await res.json();
             serverVersion = manifest.version;
@@ -1267,128 +1303,76 @@ async function initVersionControl() {
     }
 
     if (updateAvailable) {
-        El.version.numbers.textContent = `Installed: V${installedVersion} \u2192 New: V${serverVersion}`;
-        showUpdateBar(serverVersion);
-    } else {
-        const lastSeen = window.localStorage.getItem('last_seen_version');
-        if (lastSeen !== installedVersion) {
-            if (lastSeen !== null) {
-                showUpToDateBar();
-            }
-            window.localStorage.setItem('last_seen_version', installedVersion);
-        }
+        El.version.floatingBtn.classList.remove('hidden');
     }
 
-    // Sidebar status
-    if (El.version.sideArea) {
-        El.version.sideArea.classList.remove('hidden');
-        El.version.sideArea.style.display = 'flex';
-        if (!updateAvailable) {
-            El.version.sideArea.classList.remove('update-available');
-            if (El.version.sideStatus) {
-                El.version.sideStatus.textContent = "System Secure";
-                El.version.sideStatus.style.color = "var(--green)";
-            }
-            if (El.version.sideV) El.version.sideV.textContent = `V: ${APP_VERSION}`;
-            if (El.version.sideBtn) El.version.sideBtn.classList.add('hidden');
-        }
-    }
-
-    // Mobile specific status updates
-    if (!updateAvailable) {
-        if (El.version.mobileVText) El.version.mobileVText.textContent = `V${APP_VERSION}`;
-        if (El.version.mobileDot) El.version.mobileDot.classList.remove('alert');
-    }
-
-    // 6. Register Service Worker with fail-safe timeout
+    // 6. Register Service Worker with proper lifecycle handling
     if ('serviceWorker' in navigator) {
         try {
-            const reg = await navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' });
+            const reg = await navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' });
             swRegistration = reg;
-            reg.update();
-
-            // Fail-safe: if SW gets stuck in 'installing' for >10s, force reload
-            if (reg.installing) {
-                const failSafeTimer = setTimeout(() => {
-                    window.location.reload(true);
-                }, 10000);
-
-                reg.installing.addEventListener('statechange', () => {
-                    if (reg.installing === null || reg.active) {
-                        clearTimeout(failSafeTimer);
+            
+            // Listen for waiting worker (update ready)
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    // Has network content finished downloading?
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // New update is available
+                        El.version.floatingBtn.classList.remove('hidden');
                     }
                 });
-            }
+            });
+
+            reg.update();
+
         } catch(err) {
             /* SW registration failed */
         }
     }
-}
-
-function showUpdateBar(newVersion) {
-    El.version.bar.className = 'version-bar update-available';
-    El.version.msg.textContent = `New secure version V${newVersion || '?'} available.`;
-    El.version.updateBtn.classList.remove('hidden');
-
-    if (El.version.mobileBtn) El.version.mobileBtn.classList.remove('hidden');
-
-    if (El.version.sideArea) {
-        El.version.sideArea.classList.add('update-available');
-        if (El.version.sideBtn) El.version.sideBtn.classList.remove('hidden');
-        if (El.version.sideStatus) {
-            El.version.sideStatus.textContent = "Update Available";
-            El.version.sideStatus.style.color = "var(--red)";
-        }
-        if (El.version.sideV) El.version.sideV.textContent = `V${newVersion}`;
-    }
-
-    // Update mobile specific notification elements
-    if (El.version.mobileDot) El.version.mobileDot.classList.add('alert');
-    if (El.version.mobileVText) El.version.mobileVText.textContent = `Update!`;
-}
-
-function showUpToDateBar() {
-    El.version.bar.className = 'version-bar up-to-date';
-    El.version.msg.textContent = 'System secure \u2014 up to date.';
-    El.version.updateBtn.classList.add('hidden');
-    if (El.version.mobileBtn) El.version.mobileBtn.classList.add('hidden');
-
-    setTimeout(() => {
-        El.version.bar.classList.add('dismissed');
-        setTimeout(() => El.version.bar.classList.add('hidden'), 500);
-    }, 4000);
+    
+    // Listen for the controlling service worker changing (happens after skipWaiting)
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+    });
 }
 
 async function triggerAppUpdate() {
     if (El.version.overlay) El.version.overlay.classList.remove('hidden');
-
-    [El.version.updateBtn, El.version.sideBtn, El.version.mobileBtn].forEach(btn => {
-        if (btn) { btn.classList.add('processing'); btn.textContent = 'UPDATING...'; }
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Animate modal out and floating button away before applying
+    const updateModal = document.getElementById('update-confirm-modal');
+    if (updateModal) {
+        updateModal.classList.remove('active');
+        setTimeout(() => updateModal.classList.add('hidden'), 300);
+    }
+    El.version.floatingBtn.classList.add('hidden');
 
     try {
-        // 1. Delete ALL Service Worker caches
-        const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
-
-
-        // 2. Unregister existing SW so fresh one installs on reload
-        if (swRegistration) {
-            await swRegistration.unregister();
-
-        }
-
-        // 3. Clear stored version so it gets re-set from new version.json
+        // Clear stored version so it matches new installation
         await localforage.removeItem('app_version');
 
-    } catch(e) {
-        /* update cleanup failed */
-    }
+        if (!swRegistration || !swRegistration.waiting) {
+            // No waiting worker or service workers inherently not supported.
+            // Aggressive fallback cache clear
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            if (swRegistration) await swRegistration.unregister();
+            window.location.reload(true);
+            return;
+        }
 
-    // 4. Force hard reload â€” browser will fetch everything fresh from server
-    window.location.reload(true);
+        // Send SKIP_WAITING to the waiting worker.
+        // It will claim clients and trigger the 'controllerchange' event listener
+        // defined in initVersionControl to safely reload once activated.
+        swRegistration.waiting.postMessage('SKIP_WAITING');
+    } catch(e) {
+        // Absolute fallback if messaging fails
+        window.location.reload(true);
+    }
 }
 
 // Sidebar collapse toggle
@@ -1489,6 +1473,89 @@ window.addEventListener('appinstalled', () => {
     closeInstallModal();
     toast('VaultZero installed successfully!');
 });
+
+// --- HEADER SCROLL LOGIC ---
+const desktopHeader = document.querySelector('.desktop-header');
+const mobileHeader = document.querySelector('.mobile-header');
+let scrollTicking = false;
+let lastScrollY = window.scrollY || document.documentElement.scrollTop;
+
+window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(() => {
+            const currentScrollY = window.scrollY || document.documentElement.scrollTop;
+            
+            // Hide on scroll down, show on scroll up (100px threshold)
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                if (desktopHeader) desktopHeader.classList.add('header-hidden');
+                if (mobileHeader) mobileHeader.classList.add('header-hidden');
+            } else if (currentScrollY < lastScrollY) {
+                if (desktopHeader) desktopHeader.classList.remove('header-hidden');
+                if (mobileHeader) mobileHeader.classList.remove('header-hidden');
+            }
+            lastScrollY = currentScrollY;
+            scrollTicking = false;
+        });
+    }
+}, { passive: true });
+
+// --- CACHE AGE CHECK (48 HOURS) ---
+function checkCacheAge() {
+    const CACHE_MAX_AGE_MS = 48 * 60 * 60 * 1000; // 48 hours
+    const now = Date.now();
+    
+    // Attempt to get last load time
+    let lastLoad = localStorage.getItem('vaultzero_last_load');
+    
+    if (!lastLoad) {
+        // First load or cleared storage
+        localStorage.setItem('vaultzero_last_load', now.toString());
+        return;
+    }
+    
+    lastLoad = parseInt(lastLoad, 10);
+    
+    if (now - lastLoad > CACHE_MAX_AGE_MS) {
+        // Cache is older than 48 hours, show gentle prompt
+        showCacheReloadPrompt();
+    } else {
+        // Still fresh, update timestamp slightly to prevent aggressive prompting 
+        // if they open and close frequently, but we only really reset it 
+        // on a true reload. We'll leave it alone here.
+    }
+}
+
+function showCacheReloadPrompt() {
+    // Show the floating button if cache is extremely old
+    if (El.version && El.version.floatingBtn) {
+        El.version.floatingBtn.classList.remove('hidden');
+        El.version.floatingBtn.setAttribute('title', 'Security Notice: Reload App');
+    } else {
+        // Fallback toast
+        toast("App session is over 48 hours old. Please reload for security updates.");
+    }
+}
+
+// --- NETWORK STATUS ---
+function initNetworkStatus() {
+    const update = () => {
+        const isOnline = navigator.onLine;
+        if (El.version.statusText) {
+            El.version.statusText.textContent = isOnline ? 'Online' : 'Secure Offline';
+            // Use a softer warning color for offline ready state
+            El.version.statusText.style.color = isOnline ? '#22c55e' : '#f87171';
+        }
+        El.version.statusDots.forEach(dot => {
+            dot.classList.toggle('online', isOnline);
+            dot.classList.toggle('offline', !isOnline);
+        });
+    };
+
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    update();
+}
 
 // --- START APPLICATION ---
 start();

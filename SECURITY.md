@@ -1,4 +1,6 @@
-# Security Policy
+# ![Logo](app/assets/logo.png) Security Policy
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
 
 The VaultZero team takes the security of our application and the data it protects very seriously. We appreciate the efforts of the wider security community in helping us maintain a high standard of security.
 

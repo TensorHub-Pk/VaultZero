@@ -1,4 +1,8 @@
 /**
+ * VaultZero — Zero-Knowledge Offline Encryption
+ * Copyright (c) 2026 VaultZero Contributors
+ * SPDX-License-Identifier: MIT
+ * 
  * image-hide.js
  * Offline zero-knowledge Robust Threshold Steganography.
  * Hides Base64 encoded encrypted payloads inside HTML5 Canvas image data.

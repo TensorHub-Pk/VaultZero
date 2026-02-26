@@ -1,3 +1,9 @@
+/**
+ * VaultZero — Zero-Knowledge Offline Encryption
+ * Copyright (c) 2026 VaultZero Contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 let isSodiumReady = false;
 async function initCrypto() {
     if (typeof sodium !== 'undefined') {

@@ -1,7 +1,7 @@
-# VaultZero
+# ![Logo](app/assets/logo.png) VaultZero
 
-[![OpenSSF Best Practices]([PLACEHOLDER_FOR_OPENSSF_BADGE_URL])]([PLACEHOLDER_FOR_OPENSSF_BADGE_LINK])
-[![Build Status]([PLACEHOLDER_FOR_CI_BADGE_URL])]([PLACEHOLDER_FOR_CI_LINK])
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
+[![Build Status](https://github.com/TensorHub-Pk/VaultZero/actions/workflows/deploy.yml/badge.svg)](https://github.com/TensorHub-Pk/VaultZero/actions)
 
 VaultZero is a secure, offline-first cryptographic web application designed to protect sensitive information using robust, client-side encryption. The application leverages the Web Crypto API to ensure that all encryption and decryption processes happen locally, ensuring zero-knowledge privacy.
 
@@ -24,7 +24,17 @@ We organize our codebase to ensure clarity and adherence to OpenSSF Gold Best Pr
 - `/compliance/`: Documentation supporting our OpenSSF Best Practices Badge application.
 - `/.github/workflows/`: CI/CD automation workflows.
 
-## Usage
+## 🚀 Quick Start
+
+Get your own secure vault running in seconds:
+
+1.  **Clone the Repo:** `git clone https://github.com/TensorHub-Pk/VaultZero.git`
+2.  **Serve Locally:** Run `npx serve app` from the root directory.
+3.  **Start Encrypting:** Open `localhost:3000` (or the port provided) in your browser.
+
+_Note: Since the app uses the Web Crypto API, it MUST be served over HTTPS or localhost to function._
+
+## 🛠️ Usage & Installation
 
 VaultZero is designed to run entirely in the browser. You can host it statically or run it locally during development.
 
