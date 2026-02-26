@@ -22,7 +22,8 @@ const ASSETS_TO_CACHE = [
   'libs/argon2.wasm',
   'libs/kyber.js',
   'assets/logo.png',
-  'assets/fevicon.jpeg'
+  'assets/fevicon.jpeg',
+  'assets/og-image.jpeg'
 ];
 
 self.addEventListener('install', event => {
@@ -62,7 +63,24 @@ self.addEventListener('fetch', event => {
   // Cache-first for all other requests
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request))
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then(networkResponse => {
+          // Dynamically cache external CDN assets (fonts, icons) for offline support
+          if (event.request.method === 'GET' && networkResponse && networkResponse.ok) {
+            const urlObj = new URL(event.request.url);
+            if (['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'].includes(urlObj.hostname)) {
+              const responseClone = networkResponse.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+              });
+            }
+          }
+          return networkResponse;
+        });
+      })
   );
 });
 

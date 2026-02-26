@@ -86,7 +86,12 @@ button {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid transparent;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease,
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
   will-change: transform, opacity, background-color;
   transform: translateZ(0); /* Hardware accelerate */
 }
@@ -181,18 +186,61 @@ button {
   position: relative;
   z-index: 1;
 }
-.hero-badge {
-  display: inline-block;
-  background: var(--red-soft);
-  color: var(--red);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 8px 20px;
-  border-radius: 100px;
-  border: 1px solid rgba(239, 68, 68, 0.15);
+.hero-badges-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   margin-bottom: 32px;
+  flex-wrap: wrap; /* Good for narrow screens */
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 100px;
+}
+
+.premium-gold-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 174, 0, 0.15) 100%);
+  border: 1.5px solid rgba(255, 215, 0, 0.3);
+  border-radius: 100px;
+  color: #ffd700;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.4s var(--transition);
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.premium-gold-badge i {
+  font-size: 16px;
+  color: #ffae00;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
+}
+
+.premium-gold-badge:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 174, 0, 0.25) 100%);
+  border-color: rgba(255, 215, 0, 0.6);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
+}
+
+.hero-feature-badge {
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  height: 36px;
+  box-sizing: border-box;
 }
 .hero-title {
   font-family: var(--font-heading);
@@ -229,7 +277,12 @@ button {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.2s ease;
   will-change: transform, box-shadow;
   white-space: nowrap;
 }
@@ -338,7 +391,10 @@ button {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 28px;
-  transition: border-color 0.25s, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition:
+    border-color 0.25s,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
   will-change: transform, box-shadow, border-color;
 }
 .feature-card:hover {
@@ -939,25 +995,28 @@ button {
    OPENSSF COMPLIANCE
    ================================================================ */
 .openssf-section {
-  padding: 100px 0;
+  padding: 120px 0;
   background: var(--bg-surface);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Prevent badge clipping */
 }
 
 .openssf-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 48px;
+  border-radius: 32px;
+  padding: 64px 48px;
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 0.8fr 1.5fr;
   gap: 60px;
   align-items: center;
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: visible;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .openssf-card:hover {
@@ -980,19 +1039,33 @@ button {
 }
 
 .badge-float {
-  background: rgba(255, 215, 0, 0.05);
+  background: rgba(255, 215, 0, 0.08);
   border: 1px solid rgba(255, 215, 0, 0.2);
-  padding: 20px;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  padding: 24px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: inline-flex;
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  display: inline-block;
 }
 
 .badge-float:hover {
-  background: rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.4);
-  transform: scale(1.05);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: scale(1.05) rotate(-1deg);
 }
+
+/* Badge styles moved to main Hero section for consistency */
 
 .openssf-content h2 {
   font-family: var(--font-heading);
@@ -1002,12 +1075,7 @@ button {
   letter-spacing: -0.02em;
 }
 
-.gold-text {
-  background: linear-gradient(135deg, #ffd700, #ff8c00);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+/* Handled above */
 
 .openssf-description {
   color: var(--text-secondary);
@@ -1027,9 +1095,10 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: var(--text);
+  color: var(--text-secondary);
   font-size: 15px;
   font-weight: 500;
+  padding: 4px 0;
 }
 
 .criterion-item svg {
@@ -1059,12 +1128,101 @@ button {
 @media (max-width: 992px) {
   .openssf-card {
     grid-template-columns: 1fr;
-    padding: 32px;
-    gap: 40px;
+    padding: 60px 32px;
+    gap: 48px;
+    text-align: center;
+    border-radius: 40px;
+  }
+  
+  .openssf-visual {
+    order: 1;
+    margin-bottom: 0;
+  }
+
+  .openssf-content {
+    order: 2;
+  }
+
+  .openssf-description {
+    margin: 0 auto 32px;
+    font-size: 16px;
+  }
+
+  .openssf-criteria {
+    grid-template-columns: 1fr;
+    text-align: left;
+    max-width: 320px;
+    margin: 0 auto 40px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+@media (max-width: 480px) {
+  .openssf-card {
+    padding: 40px 20px;
+    gap: 32px;
+  }
+  
+  .openssf-content h2 {
+    font-size: 28px;
+  }
+  
+  .openssf-logo-large {
+    width: 110px;
+  }
+  
+  .badge-float {
+    padding: 16px;
+  }
+  
+  .badge-float img {
+    height: 32px !important;
+  }
+  
+  .badge-float {
+    padding: 12px 16px;
+    border-radius: 16px;
+  }
+  
+  .hero-badges-group {
+    padding: 2px;
+    gap: 0;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+  
+  .premium-gold-badge, .hero-feature-badge {
+    height: 30px;
+    font-size: 8.5px;
+    padding: 0 12px;
+  }
+  
+  .hero-feature-badge {
+    padding-left: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .premium-gold-badge i {
+    font-size: 13px;
+  }
+}
+/* Final Responsive Overrides */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(32px, 8vw, 64px);
+    line-height: 1.1;
+  }
+  .new-footer-layout {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
     text-align: center;
   }
-  .openssf-visual { order: 1; }
-  .openssf-content { order: 2; }
-  .openssf-description { margin: 0 auto 32px; }
-  .openssf-criteria { grid-template-columns: 1fr; text-align: left; max-width: 300px; margin: 0 auto 32px; }
+  .new-footer-right {
+    width: 100%;
+    justify-content: center;
+  }
 }

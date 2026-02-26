@@ -42,6 +42,12 @@ async function initElements() {
     };
     El.topbarTitle = document.getElementById('desktop-view-title');
     El.toast = document.getElementById('status-toast');
+    El.infoModal = {
+        root: document.getElementById('info-modal'),
+        title: document.getElementById('info-modal-title'),
+        icon: document.getElementById('info-modal-icon'),
+        content: document.getElementById('info-modal-content')
+    };
 
     El.sym = {
         btns: { enc: document.getElementById('btn-encrypt-sym'), dec: document.getElementById('btn-decrypt-sym') },
@@ -113,6 +119,7 @@ async function initElements() {
 
     El.version = {
         floatingBtn: document.getElementById('floating-update-btn'),
+        mobileNavBtn: document.getElementById('mobile-nav-update'),
         confirmUpdateBtn: document.getElementById('btn-confirm-update'),
         overlay: document.getElementById('updating-overlay'),
         desktopVText: document.getElementById('header-version-text'),
@@ -122,10 +129,74 @@ async function initElements() {
     };
 }
 
+function openInfoModal(topic) {
+    const data = {
+        vault: {
+            title: "About Secret Vault",
+            icon: "ph-lock-key",
+            text: "Think of this as your personal digital safe. You can lock up notes or files using a password. Everything is scrambled right here on your device, so even we can't see what's inside. Only someone with your password can open it."
+        },
+        share: {
+            title: "About Secure Share",
+            icon: "ph-share-network",
+            text: "This lets you send locked messages directly to a friend. You use their unique 'Digital ID' to seal the message so only their device can open it. It's like a digital envelope that only one person has the key for."
+        },
+        identity: {
+            title: "About Digital Identity",
+            icon: "ph-fingerprint",
+            text: "This is your unique digital signature. It's how people know a message is actually from you, and how they lock messages so only you can read them. It stays safe on your phone and never travels across the internet."
+        }
+    };
+
+    const info = data[topic];
+    if (!info) return;
+
+    El.infoModal.root.querySelector('.install-modal-card').innerHTML = `
+        <button class="install-modal-close" onclick="this.parentElement.parentElement.classList.remove('active'); setTimeout(()=>this.parentElement.parentElement.classList.add('hidden'),300);">
+            <i class="ph-bold ph-x" style="font-size: 24px;"></i>
+        </button>
+        <div class="install-modal-icon" style="background: none;">
+          <i class="ph-duotone ${info.icon}" style="font-size: 50px; color: var(--accent);"></i>
+        </div>
+        <h2 class="install-modal-title" style="margin-top: -10px;">${info.title}</h2>
+        <div style="text-align: center; color: var(--text-secondary); line-height: 1.6; margin-top: 10px; font-size: 14px;">
+          ${info.text}
+        </div>
+        <div style="margin-top: 24px">
+          <button class="action-btn primary-action" onclick="this.parentElement.parentElement.parentElement.classList.remove('active'); setTimeout(()=>this.parentElement.parentElement.parentElement.classList.add('hidden'),300);">
+            Got it, thanks!
+          </button>
+        </div>
+    `;
+
+    El.infoModal.root.classList.remove('hidden');
+    requestAnimationFrame(() => El.infoModal.root.classList.add('active'));
+}
+
+function showUpdatePrompt() {
+    if (El.version.floatingBtn) El.version.floatingBtn.classList.remove('hidden');
+    if (El.version.mobileNavBtn) El.version.mobileNavBtn.classList.remove('hidden');
+}
+
 // --- INITIALIZE ---
 async function start() {
     await initElements();
     initNetworkStatus();
+
+    // SEO & Privacy: Dynamically prevent indexing of private/sensitive routes
+    function enforcePrivacySEO() {
+        const url = new URL(window.location.href);
+        const hasPayload = url.hash.includes('payload=');
+        
+        if (hasPayload || url.searchParams.has('payload') || url.searchParams.has('id') || url.searchParams.has('pubkey')) {
+            let meta = document.createElement('meta');
+            meta.name = "robots";
+            meta.content = "noindex, nofollow";
+            document.head.appendChild(meta);
+            console.log("[Privacy] Added noindex tag for sensitive route.");
+        }
+    }
+    enforcePrivacySEO();
 
     // Setup install button listeners
     if (El.install.sidebar) El.install.sidebar.addEventListener('click', triggerInstallPrompt);
@@ -371,7 +442,7 @@ function listeners() {
 
     El.id.shareLink.addEventListener('click', () => {
         const pk = El.id.pubDisplay.value;
-        if (!pk || pk.includes('LOCKED')) return toast("ID not ready. Please generate one.");
+        if (!pk || pk.includes('LOCKED')) return toast("Your ID isn't ready. Please generate one first.", "warning");
         const link = window.location.origin + window.location.pathname + "?pubkey=" + encodeURIComponent(pk);
         nativeShare({
             title: 'My Secure ID',
@@ -884,13 +955,13 @@ async function runSym() {
         }
         El.sym.resultText.textContent = (typeof out === 'string') ? out : 'Decryption successful.';
         El.sym.resultArea.classList.remove('hidden');
-        toast("Success!");
+        toast("Success! Your message is ready.", "success");
         if (window.AuditLog) AuditLog.log(State.sym.mode === 'encrypt' ? AuditLog.EventType.ENCRYPT_SUCCESS : AuditLog.EventType.DECRYPT_SUCCESS, { mode: 'symmetric' });
     } catch (e) {
-        toast(`Error: ${e.message}`);
+        toast(`Something went wrong: ${e.message}`, "error");
         if (window.AuditLog && State.sym.mode === 'decrypt') {
             const isAnomaly = await AuditLog.log(AuditLog.EventType.DECRYPT_FAILED, { mode: 'symmetric', error: e.message });
-            if (isAnomaly) toast('\u26A0 Anomalous activity detected');
+            if (isAnomaly) toast('Warning: Unusual activity detected.', "warning");
         }
     }
     finally { El.sym.action.disabled = false; }
@@ -997,13 +1068,13 @@ async function runAsym() {
 
         El.asym.resultText.textContent = (typeof out === 'string') ? out : 'Decryption successful.';
         El.asym.resultArea.classList.remove('hidden');
-        toast("Success!");
+        toast("Success! Your message is ready.", "success");
         if (window.AuditLog) AuditLog.log(State.asym.mode === 'encrypt' ? AuditLog.EventType.ENCRYPT_SUCCESS : AuditLog.EventType.DECRYPT_SUCCESS, { mode: 'asymmetric' });
     } catch (e) {
-        toast(`Error: ${e.message}`);
+        toast(`Something went wrong: ${e.message}`, "error");
         if (window.AuditLog && State.asym.mode === 'decrypt') {
             const isAnomaly = await AuditLog.log(AuditLog.EventType.DECRYPT_FAILED, { mode: 'asymmetric', error: e.message });
-            if (isAnomaly) toast('\u26A0 Anomalous activity detected');
+            if (isAnomaly) toast('Warning: Unusual activity detected.', "warning");
         }
     }
     finally { El.asym.action.disabled = false; }
@@ -1012,7 +1083,7 @@ async function runAsym() {
 async function rotateId() {
     if (confirm("Replace your current ID? This cannot be undone.")) {
         const pass = prompt("Create a Vault PIN or Password to encrypt your local ID at rest:");
-        if (!pass) return toast("Cancelled. Password required.");
+        if (!pass) return toast("Identity generation cancelled.", "info");
         
         const id = await SecureCrypto.generateKeyPair();
         const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(id), pass);
@@ -1021,21 +1092,21 @@ async function rotateId() {
         El.id.pubDisplay.value = id.publicKeyBase64;
         await updateIdentityStatus();
         if (window.AuditLog) AuditLog.log(AuditLog.EventType.KEY_GENERATED, { hasPQ: !!id.pqSigningPublicKey });
-        toast("New ID Generated & Secured");
+        toast("Your new identity has been created and locked safely.", "success");
     }
 }
 
 async function fillMyKey() {
     const idData = await localforage.getItem('my_identity');
-    if (!idData) return toast("No ID found. Generate one first.");
+    if (!idData) return toast("No ID found. Please generate one first.", "warning");
 
     if (typeof idData === 'object' && idData.privateKeyBase64) {
         // Legacy Plaintext Upgrade
         const pass = prompt("Your ID is currently insecure. Enter a new Vault PIN to encrypt it now:");
-        if (!pass) return toast("Cancelled. Cannot proceed without securing ID.");
+        if (!pass) return toast("Identity setup cancelled.", "info");
         const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(idData), pass);
         await localforage.setItem('my_identity', encryptedId);
-        toast("ID Secured!");
+        toast("Identity locked successfully!", "success");
         await updateIdentityStatus();
         El.asym.keyInput.value = idData.privateKeyBase64;
         checkAsym();
@@ -1051,19 +1122,36 @@ async function fillMyKey() {
         const id = JSON.parse(decryptedStr);
         El.id.pubDisplay.value = id.publicKeyBase64; // Update display
         El.asym.keyInput.value = id.privateKeyBase64;
-        toast("Identity Unlocked");
+        toast("Welcome back! Identity unlocked.", "success");
         checkAsym();
     } catch(e) {
-        toast("Incorrect Vault PIN!");
+        toast("Incorrect PIN. Please try again.", "error");
     }
 }
 
 let _toastTimer;
-function toast(m) {
-    El.toast.textContent = m;
+function toast(m, type = 'info') {
+    const iconMap = {
+        success: 'ph-check-circle',
+        error: 'ph-warning-circle',
+        warning: 'ph-warning',
+        info: 'ph-info'
+    };
+    const colorMap = {
+        success: 'var(--green)',
+        error: 'var(--red)',
+        warning: '#f59e0b',
+        info: '#3b82f6'
+    };
+    
+    const iconName = iconMap[type] || 'ph-info';
+    const color = colorMap[type] || '#3b82f6';
+    const iconHtml = `<i class="ph-duotone ${iconName}" style="font-size:22px; color:${color}"></i>`;
+
+    El.toast.innerHTML = `${iconHtml}<span>${m}</span>`;
     El.toast.classList.add('show');
     clearTimeout(_toastTimer);
-    _toastTimer = setTimeout(() => El.toast.classList.remove('show'), 3000);
+    _toastTimer = setTimeout(() => El.toast.classList.remove('show'), 3500);
 }
 
 function copyTxt(t, b) {
@@ -1141,16 +1229,28 @@ window.onPanicWipe = () => {
  * Returns: -1 if a < b, 0 if equal, 1 if a > b
  */
 function compareVersions(a, b) {
-    const pa = a.split('.').map(Number);
-    const pb = b.split('.').map(Number);
+    const pa = a.split('.');
+    const pb = b.split('.');
     const len = Math.max(pa.length, pb.length);
+    let isNumeric = true;
+
     for (let i = 0; i < len; i++) {
-        const na = pa[i] || 0;
-        const nb = pb[i] || 0;
+        const na = parseInt(pa[i], 10) || 0;
+        const nb = parseInt(pb[i], 10) || 0;
+        
+        if (isNaN(parseInt(pa[i], 10)) && pa[i] !== undefined) isNumeric = false;
+        if (isNaN(parseInt(pb[i], 10)) && pb[i] !== undefined) isNumeric = false;
+
+        if (!isNumeric) break;
+
         if (na < nb) return -1;
         if (na > nb) return 1;
     }
-    return 0;
+
+    if (isNumeric) return 0;
+
+    // Fallback for non-numeric version strings (e.g., "Stable Beta V2")
+    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 }
 
 /**
@@ -1282,14 +1382,10 @@ async function initVersionControl() {
     }
 
     // 4. Compare: server version vs installed version
-    // Anti-downgrade: only allow upgrade (server > installed), never downgrade
     let updateAvailable = false;
     if (serverVersion && serverVersion !== installedVersion) {
         if (compareVersions(serverVersion, installedVersion) > 0) {
             updateAvailable = true;
-
-        } else {
-            /* downgrade blocked */
         }
     }
 
@@ -1297,15 +1393,14 @@ async function initVersionControl() {
     if (updateAvailable && manifest) {
         const integrityOk = await verifyScriptIntegrity(manifest);
         if (!integrityOk) {
-
             updateAvailable = false;
-            toast("Update blocked: integrity check failed.");
+            toast("Update blocked: Security check failed for the new version.", "error");
             if (window.AuditLog) AuditLog.log(AuditLog.EventType.UPDATE_BLOCKED, { version: serverVersion });
         }
     }
 
     if (updateAvailable) {
-        El.version.floatingBtn.classList.remove('hidden');
+        showUpdatePrompt();
     }
 
     // 6. Register Service Worker with proper lifecycle handling
@@ -1321,7 +1416,7 @@ async function initVersionControl() {
                     // Has network content finished downloading?
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                         // New update is available
-                        El.version.floatingBtn.classList.remove('hidden');
+                        showUpdatePrompt();
                     }
                 });
             });
@@ -1556,11 +1651,11 @@ function checkCacheAge() {
 function showCacheReloadPrompt() {
     // Show the floating button if cache is extremely old
     if (El.version && El.version.floatingBtn) {
-        El.version.floatingBtn.classList.remove('hidden');
+        showUpdatePrompt();
         El.version.floatingBtn.setAttribute('title', 'Security Notice: Reload App');
     } else {
         // Fallback toast
-        toast("App session is over 48 hours old. Please reload for security updates.");
+        toast("App session is over 48 hours old. Please reload for security updates.", "warning");
     }
 }
 

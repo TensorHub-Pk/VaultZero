@@ -19,7 +19,7 @@
     />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
     />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
@@ -41,12 +41,13 @@
     />
     <meta
       property="og:image"
-      content="https://vaultzero.tensorhub.pk/assets/logo.png"
+      content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg"
     />
-    <meta property="og:image:width" content="1024" />
-    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="VaultZero encryption vault" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://vaultzero.tensorhub.pk/vault.html" />
     <meta name="twitter:title" content="VaultZero Vault — Secure Encryption" />
     <meta
       name="twitter:description"
@@ -54,7 +55,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://vaultzero.tensorhub.pk/assets/logo.png"
+      content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg"
     />
     <link rel="canonical" href="https://vaultzero.tensorhub.pk/vault.html" />
 
@@ -70,8 +71,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./vault-design.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     <link rel="manifest" href="./app-identity.json" />
-    <link rel="manifest" href="app-identity.json" />
 
     <!-- iOS / Safari Support -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -110,20 +111,7 @@
               class="mobile-install-btn"
               title="Install App"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
+              <i class="ph-bold ph-download-simple" style="font-size: 20px;"></i>
             </button>
 
             <button onclick="onPanicWipe()" class="mobile-wipe-btn">
@@ -152,19 +140,7 @@
             class="header-nav-btn active"
             title="Security Vault"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+            <i class="ph-bold ph-lock-key" style="font-size: 20px;"></i>
             <span>Vault</span>
           </button>
           <button
@@ -173,20 +149,7 @@
             class="header-nav-btn"
             title="Secure Share"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
+            <i class="ph-bold ph-share-network" style="font-size: 20px;"></i>
             <span>Share</span>
           </button>
           <button
@@ -195,19 +158,7 @@
             class="header-nav-btn"
             title="My Identity"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <i class="ph-bold ph-fingerprint" style="font-size: 20px;"></i>
             <span>Identity</span>
           </button>
         </nav>
@@ -218,20 +169,7 @@
             class="header-install-btn"
             title="Install App"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+            <i class="ph-bold ph-download-simple" style="font-size: 18px;"></i>
             <span>Install</span>
           </button>
 
@@ -274,7 +212,12 @@
           <div class="card main-card">
             <div class="card-header-row">
               <div>
-                <h3 class="card-title">Secret Vault</h3>
+                <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  Secret Vault
+                  <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('vault')" title="What is this?">
+                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                  </button>
+                </h3>
                 <p class="card-desc">Lock messages with a password</p>
               </div>
               <div class="tab-bar">
@@ -320,18 +263,7 @@
                   class="file-drop-zone"
                   onclick="document.getElementById('target-file-sym').click()"
                 >
-                  <svg
-                    width="28"
-                    height="28"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
+                  <i class="ph-duotone ph-file-arrow-up" style="font-size: 28px; margin-bottom: 8px;"></i>
                   <span id="file-label-sym">Click to attach file or image</span>
                   <input
                     type="file"
@@ -362,18 +294,7 @@
                   id="stego-drop-zone-sym"
                   onclick="document.getElementById('stego-file-sym').click()"
                 >
-                  <svg
-                    width="28"
-                    height="28"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
+                  <i class="ph-duotone ph-image" style="font-size: 28px; margin-bottom: 8px;"></i>
                   <span id="stego-label-sym">Click or drop image here</span>
                   <input
                     type="file"
@@ -400,26 +321,7 @@
                 disabled
                 class="action-btn primary-action"
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect
-                    x="3"
-                    y="11"
-                    width="18"
-                    height="11"
-                    rx="2"
-                    ry="2"
-                  ></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+                <i class="ph-bold ph-lock-key" style="font-size: 20px; margin-right: 6px;"></i>
                 <span id="btn-action-text-sym">Lock</span>
               </button>
             </div>
@@ -441,73 +343,21 @@
                       stroke="currentColor"
                       stroke-width="2"
                       stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <rect
-                        x="9"
-                        y="9"
-                        width="13"
-                        height="13"
-                        rx="2"
-                        ry="2"
-                      ></rect>
-                      <path
-                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                      ></path>
-                    </svg>
+                    <i class="ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
                     <span>COPY TEXT</span>
                   </button>
                   <button
                     id="btn-download-sym"
-                    class="copy-btn hidden"
-                    style="
-                      background: var(--green-soft);
-                      color: var(--green);
-                      border-color: var(--green);
-                    "
+                    class="copy-btn download-style hidden"
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <path
-                        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                      ></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+                    <i class="ph-bold ph-download-simple" style="font-size: 16px;"></i>
                     <span>DOWNLOAD FILE</span>
                   </button>
                   <button
                     id="btn-copy-link-sym"
                     class="copy-btn secondary-copy"
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <path
-                        d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                      ></path>
-                      <path
-                        d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                      ></path>
-                    </svg>
+                    <i class="ph-bold ph-link" style="font-size: 16px; margin-right: 4px;"></i>
                     <span>SHARE LINK</span>
                   </button>
                 </div>
@@ -522,7 +372,12 @@
           <div class="card main-card">
             <div class="card-header-row">
               <div>
-                <h3 class="card-title">Secure Share</h3>
+                <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  Secure Share
+                  <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('share')" title="What is this?">
+                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                  </button>
+                </h3>
                 <p class="card-desc">Send messages directly to a friend's ID</p>
               </div>
               <div class="tab-bar">
@@ -556,22 +411,7 @@
                     style="min-height: 90px"
                   ></textarea>
                   <button id="btn-load-my-key-asym" class="hidden autofill-btn">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px; vertical-align: middle"
-                    >
-                      <path
-                        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                      ></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                    <i class="ph-bold ph-fingerprint" style="font-size: 14px; margin-right: 4px;"></i>
                     USE MY ID
                   </button>
                 </div>
@@ -683,20 +523,7 @@
                 disabled
                 class="action-btn primary-action"
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <circle cx="12" cy="11.5" r="1"></circle>
-                  <rect x="11.5" y="12.2" width="1" height="2" rx="0.5"></rect>
-                </svg>
+                <i class="ph-bold ph-shield-check" style="font-size: 20px; margin-right: 6px;"></i>
                 <span id="btn-action-text-asym">Secure & Seal</span>
               </button>
             </div>
@@ -710,81 +537,21 @@
                 <span class="form-label">Secure Payload</span>
                 <div class="result-actions">
                   <button id="btn-copy-asym" class="copy-btn">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <rect
-                        x="9"
-                        y="9"
-                        width="13"
-                        height="13"
-                        rx="2"
-                        ry="2"
-                      ></rect>
-                      <path
-                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                      ></path>
-                    </svg>
+                    <i class="ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
                     <span>COPY TEXT</span>
                   </button>
                   <button
                     id="btn-download-asym"
-                    class="copy-btn hidden"
-                    style="
-                      background: var(--green-soft);
-                      color: var(--green);
-                      border-color: var(--green);
-                    "
+                    class="copy-btn download-style hidden"
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <path
-                        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                      ></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+                    <i class="ph-bold ph-download-simple" style="font-size: 16px;"></i>
                     <span>DOWNLOAD FILE</span>
                   </button>
                   <button
                     id="btn-copy-link-asym"
                     class="copy-btn secondary-copy"
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      style="margin-right: 4px"
-                    >
-                      <path
-                        d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                      ></path>
-                      <path
-                        d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                      ></path>
-                    </svg>
+                    <i class="ph-bold ph-link" style="font-size: 16px; margin-right: 4px;"></i>
                     <span>SHARE LINK</span>
                   </button>
                 </div>
@@ -798,7 +565,12 @@
           <div class="card main-card">
             <div class="card-header-row">
               <div>
-                <h3 class="card-title">My Digital Identity</h3>
+                <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  My Digital Identity
+                  <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('identity')" title="What is this?">
+                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                  </button>
+                </h3>
                 <p class="card-desc">
                   Your unique cryptographic signature for secure communication.
                 </p>
@@ -812,19 +584,7 @@
             <div class="identity-profile-card">
               <div class="id-card-top">
                 <div class="profile-avatar">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
+                  <i class="ph-duotone ph-user-circle" style="font-size: 40px; color: var(--accent);"></i>
                 </div>
                 <div class="profile-info">
                   <span class="profile-tag">CRYPTOGRAPHIC PROFILE</span>
@@ -837,20 +597,7 @@
                   <label class="form-label">Public Access ID</label>
                   <div class="key-display-container">
                     <div class="key-shield-icon">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path
-                          d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                        ></path>
-                      </svg>
+                      <i class="ph-duotone ph-shield-check" style="font-size: 20px;"></i>
                     </div>
                     <textarea
                       id="my-public-key-id"
@@ -863,28 +610,7 @@
                       class="id-copy-action"
                       title="Copy ID"
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <rect
-                          x="9"
-                          y="9"
-                          width="13"
-                          height="13"
-                          rx="2"
-                          ry="2"
-                        ></rect>
-                        <path
-                          d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                        ></path>
-                      </svg>
+                      <i class="ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
                       <span>COPY</span>
                     </button>
                   </div>
@@ -893,23 +619,7 @@
 
               <div class="id-card-actions">
                 <button id="btn-share-link-id" class="id-action-btn secondary">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path
-                      d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-                    ></path>
-                    <path
-                      d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-                    ></path>
-                  </svg>
+                  <i class="ph-bold ph-share-network" style="font-size: 16px; margin-right: 6px;"></i>
                   <span>Share ID Link</span>
                 </button>
                 <button id="btn-generate-keys-id" class="id-action-btn danger">
@@ -982,19 +692,7 @@
           onclick="switchMainTab('symmetric')"
           class="mobile-nav-btn active"
         >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
+          <i class="ph-bold ph-lock-key" style="font-size: 24px;"></i>
           <span>Vault</span>
         </button>
 
@@ -1003,20 +701,7 @@
           onclick="switchMainTab('asymmetric')"
           class="mobile-nav-btn"
         >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-            <polyline points="2 17 12 22 22 17"></polyline>
-            <polyline points="2 12 12 17 22 12"></polyline>
-          </svg>
+          <i class="ph-bold ph-share-network" style="font-size: 24px;"></i>
           <span>Share</span>
         </button>
 
@@ -1025,20 +710,24 @@
           onclick="switchMainTab('identity')"
           class="mobile-nav-btn"
         >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
+          <i class="ph-bold ph-fingerprint" style="font-size: 24px;"></i>
           <span>My ID</span>
+        </button>
+
+        <button
+          id="mobile-nav-update"
+          class="mobile-nav-btn hidden pulse-icon"
+          onclick="
+            document.getElementById('update-confirm-modal').classList.remove('hidden');
+            requestAnimationFrame(() =>
+              document.getElementById('update-confirm-modal').classList.add('active'),
+            );
+          "
+          title="Update Available"
+          style="color: var(--accent);"
+        >
+          <i class="ph-bold ph-arrows-clockwise" style="font-size: 24px;"></i>
+          <span>Update</span>
         </button>
       </nav>
     </div>
@@ -1063,59 +752,21 @@
       <div class="install-modal-backdrop" onclick="closeInstallModal()"></div>
       <div class="install-modal-card">
         <button class="install-modal-close" onclick="closeInstallModal()">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          <i class="ph-bold ph-x" style="font-size: 24px;"></i>
         </button>
-        <div class="install-modal-icon">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
+        <div class="install-modal-icon info">
+          <i class="ph-duotone ph-download-simple" style="font-size: 44px;"></i>
         </div>
-        <h2 class="install-modal-title">Install VaultZero</h2>
+        <h2 class="install-modal-title">Take VaultZero Offline</h2>
         <p class="install-modal-subtitle">
-          Use offline &middot; Launch instantly &middot; Zero tracking
+          Install the app to your device for instant access even without an internet connection.
         </p>
 
         <!-- Shown on Chrome/Edge desktop & Android when native prompt is available -->
         <div id="install-native" class="install-section hidden">
-          <button id="btn-install-native" class="install-action-btn">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Install Now
+          <button id="btn-install-native" class="install-action-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);">
+            <i class="ph-bold ph-smartphone" style="font-size: 20px;"></i>
+            Install on Device
           </button>
         </div>
 
@@ -1127,18 +778,7 @@
               <div class="step-text">
                 Tap the <strong>Share</strong> button
                 <span class="step-icon">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
-                    <polyline points="16 6 12 2 8 6" />
-                    <line x1="12" y1="2" x2="12" y2="15" />
-                  </svg>
+                  <i class="ph-bold ph-export" style="font-size: 18px; margin: 0 4px; vertical-align: middle;"></i>
                 </span>
                 at the bottom of Safari
               </div>
@@ -1207,26 +847,15 @@
         <!-- Already installed message -->
         <div id="install-done" class="install-section hidden">
           <div class="install-done-badge">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
+            <i class="ph-duotone ph-check-circle" style="font-size: 32px; color: var(--green);"></i>
             <span>VaultZero is already installed!</span>
           </div>
         </div>
 
-        <p class="install-modal-footer">
-          Works offline &middot; No app store needed
-        </p>
+        <div class="install-modal-footer-badge">
+          <i class="ph-bold ph-shield-check"></i>
+          100% Private &middot; No App Store Required
+        </div>
       </div>
     </div>
 
@@ -1246,20 +875,7 @@
         );
       "
     >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-        <polyline points="12 11 12 17"></polyline>
-        <polyline points="9 14 12 11 15 14"></polyline>
-      </svg>
+      <i class="ph-bold ph-arrows-clockwise" style="font-size: 24px;"></i>
     </button>
 
     <!-- Update Confirm Modal -->
@@ -1282,35 +898,10 @@
             );
           "
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          <i class="ph-bold ph-x" style="font-size: 24px;"></i>
         </button>
         <div class="install-modal-icon pulse-icon">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="12 11 12 17"></polyline>
-            <polyline points="9 14 12 11 15 14"></polyline>
-          </svg>
+          <i class="ph-duotone ph-arrows-clockwise" style="font-size: 42px;"></i>
         </div>
         <h2 class="install-modal-title">Secure Update Available</h2>
         <p class="install-modal-subtitle">
@@ -1318,11 +909,58 @@
           encrypt your local identity and securely refresh the app.
         </p>
         <div style="margin-top: 24px">
-          <button id="btn-confirm-update" class="action-btn primary-action">
+          <button id="btn-confirm-update" class="install-action-btn">
+            <i class="ph-bold ph-arrows-clockwise" style="font-size: 20px;"></i>
             Reload & Apply Fixes
           </button>
         </div>
-        <p class="install-modal-footer">Safe to apply. No data will be lost.</p>
+        <div class="install-modal-footer-badge">
+          <i class="ph-bold ph-check-circle"></i>
+          Safe to apply &middot; No data will be lost
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="install-modal hidden">
+      <div
+        class="install-modal-backdrop"
+        onclick="
+          this.parentElement.classList.remove('active');
+          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
+        "
+      ></div>
+      <div class="install-modal-card">
+        <button
+          class="install-modal-close"
+          onclick="
+            this.parentElement.parentElement.classList.remove('active');
+            setTimeout(
+              () => this.parentElement.parentElement.classList.add('hidden'),
+              300,
+            );
+          "
+        >
+          <i class="ph-bold ph-x" style="font-size: 24px;"></i>
+        </button>
+        <div class="install-modal-icon" style="background: none;">
+          <i id="info-modal-icon" class="ph-duotone ph-info" style="font-size: 50px; color: var(--accent);"></i>
+        </div>
+        <h2 id="info-modal-title" class="install-modal-title" style="margin-top: -10px;">Information</h2>
+        <div id="info-modal-content" style="text-align: center; color: var(--text-secondary); line-height: 1.6; margin-top: 10px; font-size: 14px;">
+          <!-- JS injected -->
+        </div>
+        <div style="margin-top: 24px">
+          <button class="action-btn primary-action" onclick="
+            this.parentElement.parentElement.parentElement.classList.remove('active');
+            setTimeout(
+              () => this.parentElement.parentElement.parentElement.classList.add('hidden'),
+              300,
+            );
+          ">
+            Got it, thanks!
+          </button>
+        </div>
       </div>
     </div>
 

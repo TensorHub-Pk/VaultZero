@@ -35,18 +35,19 @@
     <meta property="og:description" content="Open-source, offline-first encryption with post-quantum resistance. Encrypt messages and files locally. No data ever leaves your device." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://vaultzero.tensorhub.pk/" />
-    <meta property="og:image" content="https://vaultzero.tensorhub.pk/assets/logo.png" />
-    <meta property="og:image:width" content="1024" />
-    <meta property="og:image:height" content="1024" />
-    <meta property="og:image:alt" content="VaultZero official logo" />
+    <meta property="og:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="VaultZero - Secure Offline Encryption" />
     <meta property="og:site_name" content="VaultZero" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://vaultzero.tensorhub.pk/" />
     <meta name="twitter:title" content="VaultZero — Zero-Knowledge Encryption" />
     <meta name="twitter:description" content="Open-source, offline-first encryption with post-quantum resistance. No data ever leaves your device." />
-    <meta name="twitter:image" content="https://vaultzero.tensorhub.pk/assets/logo.png" />
+    <meta name="twitter:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
     <meta name="twitter:image:alt" content="VaultZero shield logo" />
 
     <!-- Structured Data: Organization -->
@@ -170,11 +171,7 @@
                 <a href="#open-source" class="nav-link">Open Source</a>
             </nav>
             <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                <i class="ph-bold ph-list" style="font-size: 28px;"></i>
             </button>
         </div>
     </header>
@@ -182,12 +179,13 @@
     <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="container hero-inner">
-            <div style="margin-bottom: 20px;">
-                <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
-                    <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 32px; filter: drop-shadow(0 0 10px rgba(255,215,0,0.2));">
+            <div class="hero-badges-group">
+                <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank" class="premium-gold-badge">
+                    <i class="ph-fill ph-trophy"></i>
+                    <span>OpenSSF Gold Achievement</span>
                 </a>
+                <div class="hero-feature-badge">Open Source · Offline-First · Zero Knowledge</div>
             </div>
-            <div class="hero-badge">Open Source · Offline-First · Zero Knowledge</div>
             <h1 class="hero-title">
                 Encryption That Never<br>
                 <span class="accent-text">Leaves Your Device</span>
@@ -197,9 +195,7 @@
             </p>
             <div class="hero-actions">
                 <a href="vault.html" target="_blank" rel="noopener noreferrer" class="cta-btn primary-cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
+                    <i class="ph-duotone ph-shield-check" style="font-size: 24px; margin-right: 8px;"></i>
                     Launch VaultZero
                 </a>
                 <a href="#architecture" class="cta-btn secondary-cta">Learn How It Works</a>
@@ -242,25 +238,25 @@
                     </p>
                     <div class="openssf-criteria">
                         <div class="criterion-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Two-Person Code Review</span>
                         </div>
                         <div class="criterion-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>90% Unit Test Coverage</span>
                         </div>
                         <div class="criterion-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Automated CI Security Scans</span>
                         </div>
                         <div class="criterion-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Reproducible Build Path</span>
                         </div>
                     </div>
                     <a href="https://bestpractices.dev/projects/12040" target="_blank" rel="noopener noreferrer" class="compliance-cta">
                         View Compliance Roadmap
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <i class="ph-bold ph-arrow-right" style="font-size: 18px; margin-left: 6px;"></i>
                     </a>
                 </div>
             </div>
@@ -278,23 +274,21 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <i class="ph-duotone ph-lock-key" style="font-size: 32px;"></i>
                     </div>
                     <h3>Zero-Knowledge Architecture</h3>
                     <p>All cryptographic operations execute in your browser. No server ever sees your plaintext, keys, or metadata. We can't read your data — by design.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>
+                        <i class="ph-duotone ph-wifi-slash" style="font-size: 32px;"></i>
                     </div>
                     <h3>Offline-First</h3>
                     <p>After one initial load, VaultZero works entirely offline. No internet required to encrypt, decrypt, sign, or verify. Your vault is always available.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
+                        <i class="ph-duotone ph-atom" style="font-size: 32px;"></i>
                     </div>
                     <h3>Post-Quantum Resistance</h3>
                     <p>Hybrid key exchange combines classical X25519 with ML-KEM-768 (Kyber). WOTS+ Merkle signatures provide quantum-safe digital signatures using only hash functions.</p>
@@ -335,7 +329,7 @@
             <div class="threat-grid">
                 <div class="threat-card protects">
                     <div class="threat-card-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <i class="ph-duotone ph-shield-check" style="font-size: 24px; color: var(--green);"></i>
                         <h3>Protects Against</h3>
                     </div>
                     <ul>
@@ -351,7 +345,7 @@
                 </div>
                 <div class="threat-card does-not">
                     <div class="threat-card-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <i class="ph-duotone ph-shield-warning" style="font-size: 24px; color: var(--red);"></i>
                         <h3>Does NOT Protect Against</h3>
                     </div>
                     <ul>
@@ -424,18 +418,18 @@
             </div>
             <div class="open-source-content">
                 <div class="os-card">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    <i class="ph-duotone ph-code" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>Source Code</h3>
                     <p>Full source available on GitHub. Review the cryptography, report vulnerabilities, or contribute improvements.</p>
                     <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="os-link">View on GitHub →</a>
                 </div>
                 <div class="os-card">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <i class="ph-duotone ph-file-text" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>MIT License</h3>
                     <p>Free to use, modify, and distribute. No restrictions, no vendor lock-in, no hidden terms.</p>
                 </div>
                 <div class="os-card">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <i class="ph-duotone ph-bug" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>Responsible Disclosure</h3>
                     <p>Found a vulnerability? We take security reports seriously. Contact us privately before public disclosure.</p>
                     <a href="mailto:security@tensorhub.pk" class="os-link">security@tensorhub.pk →</a>
