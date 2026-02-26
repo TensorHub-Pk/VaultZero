@@ -131,6 +131,8 @@ async function start() {
     if (El.install.sidebar) El.install.sidebar.addEventListener('click', triggerInstallPrompt);
     if (El.install.mobile) El.install.mobile.addEventListener('click', triggerInstallPrompt);
 
+    updateInstallUI();
+
     listeners();
     theme();
     await updateIdentityStatus();
@@ -1402,6 +1404,7 @@ function getInstallPlatform() {
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
+    updateInstallUI();
 });
 
 // Opens the install modal and shows the correct section
@@ -1467,10 +1470,34 @@ function triggerInstallPrompt() {
     openInstallModal();
 }
 
-window.addEventListener('appinstalled', () => {
+function updateInstallUI() {
+    const platform = getInstallPlatform();
+    const isInstalled = platform === 'installed';
 
+    // Desktop
+    if (El.install.sidebar) {
+        if (isInstalled) {
+            El.install.sidebar.classList.add('hidden');
+        } else {
+            El.install.sidebar.classList.remove('hidden');
+        }
+    }
+
+    // Mobile
+    if (El.install.mobile) {
+        if (isInstalled) {
+            El.install.mobile.classList.add('hidden');
+        } else {
+            // Always show on mobile if not installed so people can see instructions
+            El.install.mobile.classList.remove('hidden');
+        }
+    }
+}
+
+window.addEventListener('appinstalled', () => {
     if (window.AuditLog) AuditLog.log('APP_INSTALLED');
     closeInstallModal();
+    updateInstallUI();
     toast('VaultZero installed successfully!');
 });
 

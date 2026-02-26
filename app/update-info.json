@@ -1,13 +1,13 @@
 {
-  "version": "1.9.0",
-  "released": "2026-02-25",
+  "version": "1.9.1",
+  "released": "2026-02-27",
   "hashes": {
-    "app.js": "dfcf683b0a0544b0e801772d3ea3db67fef7cec193f9bf26c3b0ded7a21ffd8d",
+    "app.js": "cb283cc6b1ed5d9c79d5125acd5c7b2f77756b6dafa0badbdb46d928da551f0f",
     "encryption.js": "7603f8c776d811b4e9d6b99630405f140fd8f71b1976be670f97616abc58102a",
     "service-worker.js": "4baa15e8c1fc5b040eda41519bf33aae00e9009bb32f6dc38a64d9c9d1f27258",
     "security-logs.js": "9d33bdd3aa11b13be9b45a06508fa225b202ead53b5435525f45a9bc52c6791a",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "9s5Hj0p3iWO8OghJs2SE+R00W5q1ViipPNWq1g0MJMiMkU/15M7LT+ZwI+3EV3a4a9Pa72a1iSI9rDFyKEGwBQ==",
+  "signature": "7sAewiE97STHezCdOp0jSQn7WVBRpNGnTspQg3gBbYO9uzCW7Tz6QXAk+wHdWSPZUY3dWz1MPxutpw8OP+EoDA==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
