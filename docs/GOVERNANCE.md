@@ -41,8 +41,8 @@ Maintainers are individuals who have broad write access to the repository and ar
 
 _(Note: To meet OpenSSF Gold Requirements, there must be at least two people listed here, and at least two significant contributors must be unassociated/from different organizations.)_
 
-1. [PLACEHOLDER_MAINTAINER_1_NAME] - ([PLACEHOLDER_MAINTAINER_1_GITHUB_LINK])
-2. [PLACEHOLDER_MAINTAINER_2_NAME] - ([PLACEHOLDER_MAINTAINER_2_GITHUB_LINK])
+1. [Muhammad Owais](https://github.com/Muhammad-Owais-1947) - Lead Architect
+2. [TensorHub-Pk Contributors](https://github.com/TensorHub-Pk/VaultZero/graphs/contributors) - Community Maintainers
 
 ## Decision Making Process
 

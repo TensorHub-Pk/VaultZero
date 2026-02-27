@@ -8,7 +8,7 @@ Following these guidelines helps to communicate that you respect the time of the
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [VaultZero Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [PLACEHOLDER_FOR_CONDUCT_EMAIL].
+This project and everyone participating in it is governed by the [VaultZero Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to `Vaultzero@tensorhub.pk`.
 
 ## How Can I Contribute?
 
@@ -75,6 +75,6 @@ For more information, visit [developercertificate.org](https://developercertific
 
 To set up your local environment:
 
-1. Clone your fork: `git clone https://github.com/[YOUR_USERNAME]/VaultZero.git`
+1. Clone your fork: `git clone https://github.com/[YOUR_USERNAME]/VaultZero.git` (Upstream: `https://github.com/TensorHub-Pk/VaultZero`)
 2. We recommend serving the `app/` directory via a local HTTP server such as `npx serve app/` to avoid CORS issues with the Web Crypto API on `file://` protocols.
 3. Keep your fork synced with the upstream repository.

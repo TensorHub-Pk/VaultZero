@@ -59,7 +59,7 @@
         "url": "https://tensorhub.pk",
         "logo": "https://vaultzero.tensorhub.pk/icon-512.png",
         "sameAs": [
-            "https://github.com/TensorHub-Pk"
+            "https://github.com/TensorHub-Pk/VaultZero"
         ],
         "description": "Tensorhub.pk builds privacy-first, open-source security tools.",
         "contactPoint": {
@@ -148,6 +148,7 @@
     <link rel="preload" href="./assets/logo.png" as="image" />
 
     <!-- Fonts -->
+    <!-- Icons & Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
@@ -157,6 +158,23 @@
 
 </head>
 <body>
+    <!-- Premium Loader Overlay -->
+    <div id="app-loader" class="app-loader-overlay">
+      <div class="loader-card">
+        <img src="assets/logo.png" alt="VaultZero" class="loader-logo" />
+        <div class="loader-spinner-box">
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner-inner"></div>
+        </div>
+        <div class="loader-text-group">
+          <h2 id="loader-title" class="loader-title">Securing Environment</h2>
+          <p id="loader-status" class="loader-status">Initializing cryptographic modules...</p>
+        </div>
+        <div id="loader-progress-container" class="loader-progress hidden">
+          <div id="loader-progress-fill" class="loader-progress-fill"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- ===== HEADER ===== -->
     <header class="site-header" id="site-header">
@@ -195,7 +213,7 @@
             </p>
             <div class="hero-actions">
                 <a href="vault.html" target="_blank" rel="noopener noreferrer" class="cta-btn primary-cta">
-                    <i class="ph-duotone ph-shield-check" style="font-size: 24px; margin-right: 8px;"></i>
+                    <i class="ph-bold ph-shield-check" style="font-size: 24px; margin-right: 8px;"></i>
                     Launch VaultZero
                 </a>
                 <a href="#architecture" class="cta-btn secondary-cta">Learn How It Works</a>
@@ -238,19 +256,19 @@
                     </p>
                     <div class="openssf-criteria">
                         <div class="criterion-item">
-                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Two-Person Code Review</span>
                         </div>
                         <div class="criterion-item">
-                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>90% Unit Test Coverage</span>
                         </div>
                         <div class="criterion-item">
-                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Automated CI Security Scans</span>
                         </div>
                         <div class="criterion-item">
-                            <i class="ph-duotone ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
                             <span>Reproducible Build Path</span>
                         </div>
                     </div>
@@ -274,21 +292,21 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="ph-duotone ph-lock-key" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-lock-key" style="font-size: 32px;"></i>
                     </div>
                     <h3>Zero-Knowledge Architecture</h3>
                     <p>All cryptographic operations execute in your browser. No server ever sees your plaintext, keys, or metadata. We can't read your data — by design.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="ph-duotone ph-wifi-slash" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-wifi-slash" style="font-size: 32px;"></i>
                     </div>
                     <h3>Offline-First</h3>
                     <p>After one initial load, VaultZero works entirely offline. No internet required to encrypt, decrypt, sign, or verify. Your vault is always available.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="ph-duotone ph-atom" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-atom" style="font-size: 32px;"></i>
                     </div>
                     <h3>Post-Quantum Resistance</h3>
                     <p>Hybrid key exchange combines classical X25519 with ML-KEM-768 (Kyber). WOTS+ Merkle signatures provide quantum-safe digital signatures using only hash functions.</p>
@@ -329,7 +347,7 @@
             <div class="threat-grid">
                 <div class="threat-card protects">
                     <div class="threat-card-header">
-                        <i class="ph-duotone ph-shield-check" style="font-size: 24px; color: var(--green);"></i>
+                        <i class="ph-bold ph-shield-check" style="font-size: 24px; color: var(--green);"></i>
                         <h3>Protects Against</h3>
                     </div>
                     <ul>
@@ -345,7 +363,7 @@
                 </div>
                 <div class="threat-card does-not">
                     <div class="threat-card-header">
-                        <i class="ph-duotone ph-shield-warning" style="font-size: 24px; color: var(--red);"></i>
+                        <i class="ph-bold ph-shield-warning" style="font-size: 24px; color: var(--red);"></i>
                         <h3>Does NOT Protect Against</h3>
                     </div>
                     <ul>
@@ -418,18 +436,18 @@
             </div>
             <div class="open-source-content">
                 <div class="os-card">
-                    <i class="ph-duotone ph-code" style="font-size: 32px; color: var(--accent);"></i>
+                    <i class="ph-bold ph-code" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>Source Code</h3>
                     <p>Full source available on GitHub. Review the cryptography, report vulnerabilities, or contribute improvements.</p>
-                    <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="os-link">View on GitHub →</a>
+                    <a href="https://github.com/TensorHub-Pk/VaultZero" target="_blank" rel="noopener noreferrer" class="os-link">View on GitHub →</a>
                 </div>
                 <div class="os-card">
-                    <i class="ph-duotone ph-file-text" style="font-size: 32px; color: var(--accent);"></i>
+                    <i class="ph-bold ph-file-text" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>MIT License</h3>
                     <p>Free to use, modify, and distribute. No restrictions, no vendor lock-in, no hidden terms.</p>
                 </div>
                 <div class="os-card">
-                    <i class="ph-duotone ph-bug" style="font-size: 32px; color: var(--accent);"></i>
+                    <i class="ph-bold ph-bug" style="font-size: 32px; color: var(--accent);"></i>
                     <h3>Responsible Disclosure</h3>
                     <p>Found a vulnerability? We take security reports seriously. Contact us privately before public disclosure.</p>
                     <a href="mailto:security@tensorhub.pk" class="os-link">security@tensorhub.pk →</a>
@@ -612,6 +630,11 @@
                     observer.observe(el);
                 });
             }
+            // Hide loader after a brief "security check" animation
+            setTimeout(function() {
+                var loader = document.getElementById('app-loader');
+                if (loader) loader.classList.add('hidden');
+            }, 300);
         })();
     </script>
 </body>

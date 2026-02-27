@@ -19,7 +19,7 @@ If you discover a security vulnerability within VaultZero, please DO NOT disclos
 
 Instead, please report the vulnerability privately via email:
 
-**Email to Report Vulnerabilities:** [PLACEHOLDER_FOR_SECURITY_EMAIL, e.g., security@vaultzero.com]
+**Email to Report Vulnerabilities:** `Vaultzero@tensorhub.pk`
 
 ### What to Include in Your Report
 

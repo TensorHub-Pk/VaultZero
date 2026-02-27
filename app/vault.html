@@ -90,6 +90,24 @@
     <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
   </head>
   <body>
+    <!-- Premium Loader Overlay -->
+    <div id="app-loader" class="app-loader-overlay">
+      <div class="loader-card">
+        <img src="assets/logo.png" alt="VaultZero" class="loader-logo" />
+        <div class="loader-spinner-box">
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner-inner"></div>
+        </div>
+        <div class="loader-text-group">
+          <h2 id="loader-title" class="loader-title">Securing Environment</h2>
+          <p id="loader-status" class="loader-status">Initializing cryptographic modules...</p>
+        </div>
+        <div id="loader-progress-container" class="loader-progress hidden">
+          <div id="loader-progress-fill" class="loader-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="app-shell">
       <!-- ==================== MOBILE HEADER ==================== -->
       <header class="mobile-header">
@@ -100,21 +118,26 @@
             </div>
           </div>
 
-          <div id="mobile-version-tag" class="mobile-v-compact">
-            <div class="status-dot online"></div>
-            <span id="mobile-v-text">V0.0.0</span>
+          <div class="mobile-version-container">
+            <div id="mobile-version-tag" class="mobile-v-compact">
+              <div class="status-dot online"></div>
+              <span id="mobile-v-text">V0.0.0</span>
+            </div>
           </div>
 
           <div class="mobile-actions-right">
             <button
               id="btn-install-mobile"
               class="mobile-install-btn"
-              title="Install App"
+              title="Add to Home Screen"
             >
-              <i class="ph-bold ph-download-simple" style="font-size: 20px;"></i>
+              <div class="pulse-glow-container">
+                <i class="ph-bold ph-download-simple" style="font-size: 24px;"></i>
+              </div>
             </button>
 
-            <button onclick="onPanicWipe()" class="mobile-wipe-btn">
+            <button onclick="onPanicWipe()" class="mobile-wipe-btn" title="Panic Wipe">
+              <i class="ph-bold ph-broom" style="font-size: 18px; margin-right: 4px;"></i>
               WIPE
             </button>
           </div>
@@ -164,43 +187,35 @@
         </nav>
 
         <div class="desktop-header-right">
-          <button
-            id="btn-install-header"
-            class="header-install-btn"
-            title="Install App"
-          >
-            <i class="ph-bold ph-download-simple" style="font-size: 18px;"></i>
-            <span>Install</span>
-          </button>
+          <div class="header-controls-group">
+            <button onclick="onPanicWipe()" class="header-wipe-btn" title="Panic Wipe">
+              <i class="ph-bold ph-broom" style="font-size: 16px;"></i>
+              <span>Wipe Data</span>
+            </button>
+            <button
+              id="btn-install-header"
+              class="header-install-btn"
+              title="Install Mobile App"
+            >
+              <div class="pulse-glow-container small">
+                <i class="ph-bold ph-download-simple" style="font-size: 14px;"></i>
+              </div>
+              <span>Install App</span>
+            </button>
+          </div>
 
-          <div class="header-status-area">
-            <div class="status-indicator">
+          <div class="header-status-area-stacked">
+            <div class="status-indicator-mini">
               <div class="status-dot online"></div>
               <span id="header-status-text">Online</span>
             </div>
-            <div class="version-tag">
+            <div class="status-indicator-mini">
+              <div class="version-dot"></div>
               <span id="header-version-text">V0.0.0</span>
             </div>
           </div>
 
-          <button onclick="onPanicWipe()" class="header-wipe-btn">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path
-                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-              ></path>
-            </svg>
-            Wipe
-          </button>
+
         </div>
       </header>
 
@@ -215,7 +230,7 @@
                 <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
                   Secret Vault
                   <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('vault')" title="What is this?">
-                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                    <i class="ph-bold ph-info" style="font-size:22px; color:var(--text-muted)"></i>
                   </button>
                 </h3>
                 <p class="card-desc">Lock messages with a password</p>
@@ -263,7 +278,7 @@
                   class="file-drop-zone"
                   onclick="document.getElementById('target-file-sym').click()"
                 >
-                  <i class="ph-duotone ph-file-arrow-up" style="font-size: 28px; margin-bottom: 8px;"></i>
+                  <i class="ph-bold ph-file-arrow-up" style="font-size: 28px; margin-bottom: 8px;"></i>
                   <span id="file-label-sym">Click to attach file or image</span>
                   <input
                     type="file"
@@ -294,7 +309,7 @@
                   id="stego-drop-zone-sym"
                   onclick="document.getElementById('stego-file-sym').click()"
                 >
-                  <i class="ph-duotone ph-image" style="font-size: 28px; margin-bottom: 8px;"></i>
+                  <i class="ph-bold ph-image" style="font-size: 28px; margin-bottom: 8px;"></i>
                   <span id="stego-label-sym">Click or drop image here</span>
                   <input
                     type="file"
@@ -375,7 +390,7 @@
                 <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
                   Secure Share
                   <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('share')" title="What is this?">
-                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                    <i class="ph-bold ph-info" style="font-size:22px; color:var(--text-muted)"></i>
                   </button>
                 </h3>
                 <p class="card-desc">Send messages directly to a friend's ID</p>
@@ -568,96 +583,76 @@
                 <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
                   My Digital Identity
                   <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('identity')" title="What is this?">
-                    <i class="ph-duotone ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                    <i class="ph-bold ph-info" style="font-size:22px; color:var(--text-muted)"></i>
                   </button>
                 </h3>
                 <p class="card-desc">
                   Your unique cryptographic signature for secure communication.
                 </p>
               </div>
-              <div id="identity-status-badge" class="identity-badge">
-                <div class="status-dot"></div>
-                <span>ACTIVE & SECURED</span>
-              </div>
             </div>
 
-            <div class="identity-profile-card">
-              <div class="id-card-top">
-                <div class="profile-avatar">
-                  <i class="ph-duotone ph-user-circle" style="font-size: 40px; color: var(--accent);"></i>
-                </div>
-                <div class="profile-info">
-                  <span class="profile-tag">CRYPTOGRAPHIC PROFILE</span>
-                  <span class="profile-name">Secure User Signature</span>
-                </div>
-              </div>
-
-              <div class="id-card-content">
-                <div class="form-group">
-                  <label class="form-label">Public Access ID</label>
-                  <div class="key-display-container">
-                    <div class="key-shield-icon">
-                      <i class="ph-duotone ph-shield-check" style="font-size: 20px;"></i>
-                    </div>
-                    <textarea
-                      id="my-public-key-id"
-                      readonly
-                      class="id-key-area mono"
-                      placeholder="LOCKED. Generate or Unlock to view ID."
-                    ></textarea>
-                    <button
-                      id="btn-copy-public-id"
-                      class="id-copy-action"
-                      title="Copy ID"
-                    >
-                      <i class="ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
-                      <span>COPY</span>
-                    </button>
+            <div class="identity-console-premium">
+              <!-- Unified Status & Indicator Bar -->
+              <div class="console-status-bar">
+                <div class="status-indicator">
+                  <i id="identity-section-icon" class="ph-bold ph-fingerprint indicator-icon"></i>
+                  <div id="identity-status-badge" class="status-content">
+                    <div class="status-dot"></div>
+                    <span class="status-text">IDENTITY LOCKED</span>
                   </div>
                 </div>
+                <div id="private-key-timer" class="console-timer hidden">02:00</div>
               </div>
 
-              <div class="id-card-actions">
-                <button id="btn-share-link-id" class="id-action-btn secondary">
-                  <i class="ph-bold ph-share-network" style="font-size: 16px; margin-right: 6px;"></i>
-                  <span>Share ID Link</span>
+              <!-- Primary Display Workspace -->
+              <div id="sentinel-workspace" class="console-workspace">
+                <div class="workspace-header">
+                  <span id="sentinel-data-label" class="view-label">SECURE TERMINAL</span>
+                </div>
+                
+                <textarea 
+                  id="my-pub-priv-display" 
+                  class="workspace-display mono" 
+                  readonly 
+                  placeholder="LOCKED. Unlock your profile to access keys."
+                ></textarea>
+
+                <div class="workspace-actions">
+                  <button id="btn-copy-public-id" class="console-btn" title="Copy Public ID">
+                    <i class="ph-bold ph-globe"></i>
+                    <span>COPY PUB</span>
+                  </button>
+                  <button id="btn-copy-private-id" class="console-btn danger hidden" title="Copy Private Key">
+                    <i class="ph-bold ph-copy"></i>
+                    <span>COPY PRIV</span>
+                  </button>
+                  <button id="btn-download-private-id" class="console-btn danger hidden" title="Download Backup">
+                    <i class="ph-bold ph-download-simple"></i>
+                    <span>BACKUP</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Action Console -->
+              <div class="console-quick-actions">
+                <button id="btn-unlock-id" class="quick-btn-card">
+                  <i class="ph-bold ph-key"></i>
+                  <span>Unlock ID</span>
                 </button>
-                <button id="btn-generate-keys-id" class="id-action-btn danger">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path
-                      d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3L15.5 7.5z"
-                    ></path>
-                  </svg>
-                  <span>Regenerate ID</span>
+                <button id="btn-share-link-id" class="quick-btn-card">
+                  <i class="ph-bold ph-share-network"></i>
+                  <span>Share ID</span>
+                </button>
+                <button id="btn-generate-keys-id" class="quick-btn-card danger">
+                  <i class="ph-bold ph-arrows-clockwise"></i>
+                  <span>Reset ID</span>
                 </button>
               </div>
 
-              <div class="id-card-footer">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <span
-                  >Your identity is stored locally using AES-GCM 256-bit
-                  encryption. It never leaves this device.</span
-                >
+              <div id="security-hint-text" class="console-security-notice hidden">
+                <i class="ph-bold ph-info" style="color: var(--red);"></i>
+                <span>Private data is purged after 2 mins.</span>
               </div>
             </div>
           </div>
@@ -710,7 +705,7 @@
           onclick="switchMainTab('identity')"
           class="mobile-nav-btn"
         >
-          <i class="ph-bold ph-fingerprint" style="font-size: 24px;"></i>
+          <i id="mobile-identity-icon" class="ph-bold ph-fingerprint" style="font-size: 24px;"></i>
           <span>My ID</span>
         </button>
 
@@ -754,12 +749,12 @@
         <button class="install-modal-close" onclick="closeInstallModal()">
           <i class="ph-bold ph-x" style="font-size: 24px;"></i>
         </button>
-        <div class="install-modal-icon info">
-          <i class="ph-duotone ph-download-simple" style="font-size: 44px;"></i>
+        <div class="install-modal-icon simple-glow">
+          <i class="ph-duotone ph-download-simple" style="font-size: 48px;"></i>
         </div>
-        <h2 class="install-modal-title">Take VaultZero Offline</h2>
+        <h2 class="install-modal-title">Enable Native Shield</h2>
         <p class="install-modal-subtitle">
-          Install the app to your device for instant access even without an internet connection.
+          Unlock the full potential of VaultZero. Add it to your device for a 100% offline, local-first security experience.
         </p>
 
         <!-- Shown on Chrome/Edge desktop & Android when native prompt is available -->
@@ -844,11 +839,10 @@
           </div>
         </div>
 
-        <!-- Already installed message -->
         <div id="install-done" class="install-section hidden">
           <div class="install-done-badge">
-            <i class="ph-duotone ph-check-circle" style="font-size: 32px; color: var(--green);"></i>
-            <span>VaultZero is already installed!</span>
+            <i class="ph-duotone ph-sparkle" style="font-size: 32px; color: var(--green);"></i>
+            <span>VaultZero Shield is Active</span>
           </div>
         </div>
 

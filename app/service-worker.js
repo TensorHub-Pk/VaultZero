@@ -27,7 +27,6 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', event => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS_TO_CACHE))
@@ -60,26 +59,26 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-first for all other requests
+  // Cache-first for all other requests, with dynamic CDN caching
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then(networkResponse => {
-          // Dynamically cache external CDN assets (fonts, icons) for offline support
-          if (event.request.method === 'GET' && networkResponse && networkResponse.ok) {
+      .then(cachedResponse => {
+        // If it's in cache, return it instantly but refresh for CDNs (Stale-While-Revalidate)
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          if (networkResponse && networkResponse.ok && event.request.method === 'GET') {
             const urlObj = new URL(event.request.url);
-            if (['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'].includes(urlObj.hostname)) {
+            const isCDN = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com'].includes(urlObj.hostname);
+            
+            if (isCDN) {
               const responseClone = networkResponse.clone();
-              caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, responseClone);
-              });
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
             }
           }
           return networkResponse;
-        });
+        }).catch(() => null);
+
+        // Return cached version or wait for network
+        return cachedResponse || fetchPromise;
       })
   );
 });

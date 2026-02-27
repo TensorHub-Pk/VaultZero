@@ -1,65 +1,58 @@
 # ![Logo](app/assets/logo.png) VaultZero
 
+> **"Your Privacy, Sealed Permanently 😉"**
+
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
-[![Build Status](https://github.com/TensorHub-Pk/VaultZero/actions/workflows/deploy.yml/badge.svg)](https://github.com/TensorHub-Pk/VaultZero/actions)
+[![Host Status](https://img.shields.io/website?url=https%3A%2F%2Fvaultzero.tensorhub.pk)](https://vaultzero.tensorhub.pk)
 
-VaultZero is a secure, offline-first cryptographic web application designed to protect sensitive information using robust, client-side encryption. The application leverages the Web Crypto API to ensure that all encryption and decryption processes happen locally, ensuring zero-knowledge privacy.
+VaultZero is a professional-grade, zero-knowledge cryptographic suite designed for **everyone**. It provides a 100% offline-first environment where your data is never uploaded, never shared, and never leaves your device.
 
-## Features
+## ✨ Key Features
 
-- **Client-Side Encryption**: All data is encrypted locally; nothing is sent to a server.
-- **Offline-First PWA**: Can be installed and used fully offline as a Progressive Web App.
-- **Robust Algorithms**: Utilizes modern cryptographic standards.
-- **Image Steganography**: Hide encrypted data securely within images.
-- **Security Logs**: Transparently track cryptographic operations.
+VaultZero is packed with advanced security features typically reserved for enterprise-grade software, all delivered in a beautiful, premium interface:
 
-## Repository Structure
+- 🔒 **Secret Vault (Symmetric)**: Lock messages and files using multi-layered encryption (**Argon2id** key derivation + **AES-GCM/ChaCha20**).
+- 🤝 **Secure Share (Hybrid-PQC)**: Sending a message to a friend? We use **Post-Quantum Cryptography** (ML-KEM/Kyber-768) combined with **X25519** for future-proof key exchange.
+- 🆔 **Digital Identity**: Generate your own decentralized cryptographic identity with **Quantum-Resistant signatures** (ML-DS).
+- 🖼️ **Steganographic Shield**: Hide your encrypted payloads inside standard images (PNG/JPG). To any observer, it looks like a normal photo; to you, it's a hidden vault.
+- 🕒 **Auto-Delete Links**: Set your shared content to automatically "expire" and become undecryptable after a set time (1m to 24h).
+- 🛡️ **Native Shield (PWA)**: Install VaultZero as a native app on iOS, Android, or Desktop. Once installed, it works **100% offline** with zero dependency on the internet.
+- 🧹 **Panic Wipe**: One-click total destruction. Instantly shred all local keys, identities, and session data.
+- 🗒️ **Audit Logs**: A local-only, tamper-evident log of all security events so you can monitor your vault's integrity.
+- ❄️ **Session Lockdown**: High-security sessions that automatically expire every 48 hours to ensure your environment is fresh and updated.
 
-We organize our codebase to ensure clarity and adherence to OpenSSF Gold Best Practices:
+## 🚀 Experience It Now
 
-- `/app/`: The core application source code, HTML, CSS, JavaScript, and service workers (Runtime only).
-- `/internal-tools/`: Maintenance scripts, update signers, and private keys. (Not part of runtime application. For development and release use only.)
-- `/assets/`: Static image assets and logos.
-- `/docs/`: In-depth architectural documentation, maintenance guides, and governance policies.
-- `/compliance/`: Documentation supporting our OpenSSF Best Practices Badge application.
-- `/.github/workflows/`: CI/CD automation workflows.
+You don't need to install anything to start securing your privacy:
+**Live Environment:** [vaultzero.tensorhub.pk](https://vaultzero.tensorhub.pk)
 
-## 🚀 Quick Start
+### Running Your Own Private Instance
 
-Get your own secure vault running in seconds:
+1.  **Clone:** `git clone https://github.com/TensorHub-Pk/VaultZero.git`
+2.  **Serve:** `npx serve app` (or use any static server).
+3.  **Secure:** Open `localhost:3000` in your modern browser.
 
-1.  **Clone the Repo:** `git clone https://github.com/TensorHub-Pk/VaultZero.git`
-2.  **Serve Locally:** Run `npx serve app` from the root directory.
-3.  **Start Encrypting:** Open `localhost:3000` (or the port provided) in your browser.
+_Note: For full security, VaultZero requires HTTPS or Localhost to enable the Web Crypto API._
 
-_Note: Since the app uses the Web Crypto API, it MUST be served over HTTPS or localhost to function._
+## 🛠️ Repository Roadmap
 
-## 🛠️ Usage & Installation
+- `/app/`: The premium frontend and cryptographic engine.
+- `/docs/`: Architectural deep-dives and security audits.
+- `/internal-tools/`: Specialized tools for maintainers (Update signers, etc.).
+- `/compliance/`: Documentation for OpenSSF Best Practices compliance.
 
-VaultZero is designed to run entirely in the browser. You can host it statically or run it locally during development.
+## 🤝 Community & Support
 
-### Running Locally
+VaultZero is built for the community. We welcome all feedback, bug reports, and contributions.
 
-1. Clone the repository.
-2. Serve the `/app` directory using any static web server (e.g., `npx serve app`, `python -m http.server -d app`).
-3. Access the application via `localhost` in your preferred modern web browser.
-
-## Contributing
-
-We welcome contributions from the community! To ensure a healthy and collaborative environment, please review the following documents before participating:
-
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
-- [Security Policy](SECURITY.md)
-
-### OpenSSF Best Practices
-
-VaultZero strives to maintain the highest standards of security and quality. We are actively working towards the **OpenSSF Best Practices Gold Badge**. All contributors must adhere to our [Governance](docs/GOVERNANCE.md) and [Testing Policies](docs/TESTING_POLICY.md).
+- **Support Email:** `Vaultzero@tensorhub.pk`
+- **Contributing:** See [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Security:** See [SECURITY.md](SECURITY.md)
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the **MIT License**.
 
 ---
 
-_Note: Some sections of this project require manual configuration for OpenSSF compliance, such as enabling 2FA for maintainers. Please see the [OpenSSF Compliance Checklist](compliance/OPENSSF_BADGE_CHECKLIST.md) for more details._
+_Created with ❤️ by the VaultZero Contributors._

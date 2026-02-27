@@ -106,10 +106,19 @@ async function initElements() {
 
     El.id = {
         gen: document.getElementById('btn-generate-keys-id'),
-        pubDisplay: document.getElementById('my-public-key-id'),
+        workspace: document.getElementById('sentinel-workspace'),
+        dataLabel: document.getElementById('sentinel-data-label'),
+        display: document.getElementById('my-pub-priv-display'),
+        privTimer: document.getElementById('private-key-timer'),
+        privCopy: document.getElementById('btn-copy-private-id'),
+        privDownload: document.getElementById('btn-download-private-id'),
         copyPub: document.getElementById('btn-copy-public-id'),
         shareLink: document.getElementById('btn-share-link-id'),
+        unlock: document.getElementById('btn-unlock-id'),
         badge: document.getElementById('identity-status-badge'),
+        securityHint: document.getElementById('security-hint-text'),
+        sectionIcon: document.getElementById('identity-section-icon'),
+        mobileIcon: document.getElementById('mobile-identity-icon'),
     };
 
     El.install = {
@@ -121,11 +130,91 @@ async function initElements() {
         floatingBtn: document.getElementById('floating-update-btn'),
         mobileNavBtn: document.getElementById('mobile-nav-update'),
         confirmUpdateBtn: document.getElementById('btn-confirm-update'),
-        overlay: document.getElementById('updating-overlay'),
         desktopVText: document.getElementById('header-version-text'),
         mobileVText: document.getElementById('mobile-v-text'),
         statusText: document.getElementById('header-status-text'),
         statusDots: document.querySelectorAll('.status-dot')
+    };
+
+    El.loader = {
+        root: document.getElementById('app-loader'),
+        title: document.getElementById('loader-title'),
+        status: document.getElementById('loader-status'),
+        progressContainer: document.getElementById('loader-progress-container'),
+        progressFill: document.getElementById('loader-progress-fill')
+    };
+}
+
+function showLoader(title, status, showProgress = false) {
+    if (!El.loader || !El.loader.root) return;
+    El.loader.title.textContent = title;
+    El.loader.status.textContent = status;
+    El.loader.progressContainer.classList.toggle('hidden', !showProgress);
+    if (showProgress) El.loader.progressFill.style.width = '0%';
+    El.loader.root.classList.remove('hidden');
+}
+
+function updateLoaderProgress(percent) {
+    if (El.loader && El.loader.progressFill) {
+        El.loader.progressFill.style.width = percent + '%';
+    }
+}
+
+function hideLoader() {
+    if (El.loader && El.loader.root) {
+        El.loader.root.classList.add('hidden');
+    }
+}
+
+/**
+ * Simulations: Premium "fake" progress animation 
+ * Starts fast, slows down at 95%, hits 100% on actual completion
+ */
+function simulateProgress(duration = 2000) {
+    let progress = 0;
+    const interval = 30;
+    const startTime = Date.now();
+    
+    const timer = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = 96 - progress;
+        
+        // Progress should at least match the elapsed time ratio vs duration
+        const timeRatio = Math.min(elapsed / duration, 1);
+        const targetProgress = 96 * timeRatio;
+        
+        if (progress < targetProgress) {
+            progress += (targetProgress - progress) * 0.1 + (Math.random() * 0.5);
+        } else {
+            progress += Math.random() * 0.1;
+        }
+
+        if (progress >= 96) {
+            progress = 96;
+            clearInterval(timer);
+        }
+        updateLoaderProgress(progress);
+    }, interval);
+    
+    return {
+        finish: (onComplete = null) => {
+            clearInterval(timer);
+            const currentPos = progress;
+            let finalStep = 0;
+            const finalTimer = setInterval(() => {
+                finalStep += 5;
+                const pos = currentPos + (100 - currentPos) * (finalStep / 100);
+                updateLoaderProgress(pos);
+                if (finalStep >= 100) {
+                    clearInterval(finalTimer);
+                    setTimeout(() => {
+                        hideLoader();
+                        if (onComplete) onComplete();
+                    }, 400);
+                }
+            }, 16);
+        },
+        kill: () => clearInterval(timer)
     };
 }
 
@@ -145,6 +234,11 @@ function openInfoModal(topic) {
             title: "About Digital Identity",
             icon: "ph-fingerprint",
             text: "This is your unique digital signature. It's how people know a message is actually from you, and how they lock messages so only you can read them. It stays safe on your phone and never travels across the internet."
+        },
+        error: {
+            title: "Corrupted Data",
+            icon: "ph-warning-octagon",
+            text: "The data in this link is corrupted or invalid. For your security, we've blocked the auto-fill operation to prevent potential attacks. Please ask your friend to generate a new share link."
         }
     };
 
@@ -173,6 +267,141 @@ function openInfoModal(topic) {
     requestAnimationFrame(() => El.infoModal.root.classList.add('active'));
 }
 
+let _privKeyTimer;
+function startPrivateKeyTimer(publicKey, privateKey) {
+    let timeLeft = 120; // 2 minutes
+    if (_privKeyTimer) clearInterval(_privKeyTimer);
+    
+    // Explicit UI Updates for Private Mode
+    if (El.id.dataLabel) {
+        El.id.dataLabel.innerHTML = `<i class="ph-bold ph-shield-check" style="color: var(--green);"></i> SECURE TERMINAL (PRIVATE)`;
+        El.id.dataLabel.style.color = "var(--green)";
+    }
+    if (El.id.display) {
+        El.id.display.value = privateKey;
+        El.id.display.classList.add('danger');
+    }
+    
+    if (El.id.securityHint) El.id.securityHint.classList.remove('hidden');
+    if (El.id.privTimer) El.id.privTimer.classList.remove('hidden');
+    if (El.id.privCopy) El.id.privCopy.classList.remove('hidden');
+    if (El.id.privDownload) El.id.privDownload.classList.remove('hidden');
+
+    const updateDisplay = () => {
+        if (!El.id.privTimer) return;
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        El.id.privTimer.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        
+        if (timeLeft <= 30) {
+            El.id.privTimer.style.background = 'var(--red)';
+            El.id.privTimer.style.color = '#fff';
+        }
+    };
+    
+    updateDisplay();
+    updateIdentityStatus();
+
+    _privKeyTimer = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        
+        if (timeLeft <= 0) {
+            clearInterval(_privKeyTimer);
+            _privKeyTimer = null;
+            
+            // Security: Purge sensitive data completely
+            if (El.id.display) {
+                El.id.display.value = "PURGED. Click 'Unlock My ID' to reveal key.";
+                El.id.display.classList.remove('danger');
+            }
+
+            if (El.id.dataLabel) {
+                 El.id.dataLabel.innerHTML = `<i class="ph-bold ph-lock-simple" style="color: var(--red);"></i> SECURITY TERMINAL (LOCKED)`;
+                 El.id.dataLabel.style.color = "var(--red)";
+            }
+
+            if (El.id.privTimer) El.id.privTimer.classList.add('hidden');
+            if (El.id.securityHint) El.id.securityHint.classList.add('hidden');
+            if (El.id.privCopy) El.id.privCopy.classList.add('hidden');
+            if (El.id.privDownload) El.id.privDownload.classList.add('hidden');
+            
+            updateIdentityStatus();
+            toast("Security: Sensitive data purged.", "info");
+        }
+    }, 1000);
+}
+
+function initShareAutoFill() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        let hashParams = new URLSearchParams();
+        if (window.location.hash.includes('?')) {
+            hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
+        } else if (window.location.hash.startsWith('#')) {
+            const hash = window.location.hash.substring(1);
+            if (hash.includes('=')) hashParams = new URLSearchParams(hash);
+            else hashParams.set('data', hash); // Fallback for raw data in hash
+        }
+
+        const getParam = (name) => params.get(name) || hashParams.get(name);
+
+        const type = getParam('type');
+        let data = getParam('data') || getParam('payload');
+        const key = getParam('key') || getParam('pk'); 
+        const pubkey = getParam('pubkey'); 
+
+        // Case 1: Friend's Public ID Link
+        if (pubkey || type === 'public_key' || (data && (data.length === 44 || data.length === 1248))) {
+            const pk = pubkey || data;
+            if (pk && pk.length > 20) {
+                switchMainTab('asymmetric');
+                setOpModeAsym('encrypt');
+                El.asym.keyInput.value = decodeURIComponent(pk);
+                checkAsym();
+                toast("Friend's Public ID auto-filled!", "success");
+                window.history.replaceState({}, '', window.location.pathname);
+                return;
+            }
+        }
+
+        if (!type && !data) return;
+
+        const decodedData = decodeURIComponent(data || '');
+        
+        if (type === 'vault_item' || type === 'vault') {
+            switchMainTab('symmetric');
+            setOpMode('decrypt');
+            El.sym.msg.value = decodedData;
+            checkSym();
+        } else if (type === 'encrypted_message' || type === 'msg') {
+            switchMainTab('asymmetric');
+            setOpModeAsym('decrypt');
+            El.asym.msg.value = decodedData;
+            if (key) El.asym.keyInput.value = decodeURIComponent(key);
+            checkAsym();
+        } else if (decodedData.startsWith('vVault') || decodedData.length > 100) {
+            // Smart auto-detect if no type but data looks valid
+            if (decodedData.startsWith('vVault')) {
+                switchMainTab('asymmetric');
+                setOpModeAsym('decrypt');
+                El.asym.msg.value = decodedData;
+                checkAsym();
+            } else {
+                switchMainTab('symmetric');
+                setOpMode('decrypt');
+                El.sym.msg.value = decodedData;
+                checkSym();
+            }
+        }
+        
+        toast(`Secure content auto-filled!`, "success");
+        window.history.replaceState({}, '', window.location.pathname);
+    } catch(e) {
+        openInfoModal('error');
+    }
+}
+
 function showUpdatePrompt() {
     if (El.version.floatingBtn) El.version.floatingBtn.classList.remove('hidden');
     if (El.version.mobileNavBtn) El.version.mobileNavBtn.classList.remove('hidden');
@@ -180,84 +409,81 @@ function showUpdatePrompt() {
 
 // --- INITIALIZE ---
 async function start() {
-    await initElements();
-    initNetworkStatus();
-
-    // SEO & Privacy: Dynamically prevent indexing of private/sensitive routes
-    function enforcePrivacySEO() {
-        const url = new URL(window.location.href);
-        const hasPayload = url.hash.includes('payload=');
+    try {
+        await initElements();
+        showLoader("Securing Environment", "Initializing cryptographic modules...", true);
         
-        if (hasPayload || url.searchParams.has('payload') || url.searchParams.has('id') || url.searchParams.has('pubkey')) {
-            let meta = document.createElement('meta');
-            meta.name = "robots";
-            meta.content = "noindex, nofollow";
-            document.head.appendChild(meta);
-            console.log("[Privacy] Added noindex tag for sensitive route.");
+        // Safety timeout: If initialization takes > 8s, force hide loader
+        // This prevents the app from being unusable on slow mobile networks or old devices
+        const safetyLoaderTimeout = setTimeout(() => {
+            hideLoader();
+        }, 8000);
+
+        initNetworkStatus();
+
+        // SEO & Privacy: Dynamically prevent indexing of private/sensitive routes
+        function enforcePrivacySEO() {
+            const url = new URL(window.location.href);
+            const hasPayload = url.hash.includes('payload=');
+            
+            if (hasPayload || url.searchParams.has('payload') || url.searchParams.has('id') || url.searchParams.has('pubkey')) {
+                let meta = document.createElement('meta');
+                meta.name = "robots";
+                meta.content = "noindex, nofollow";
+                document.head.appendChild(meta);
+            }
         }
-    }
-    enforcePrivacySEO();
+        enforcePrivacySEO();
 
-    // Setup install button listeners
-    if (El.install.sidebar) El.install.sidebar.addEventListener('click', triggerInstallPrompt);
-    if (El.install.mobile) El.install.mobile.addEventListener('click', triggerInstallPrompt);
+        // Setup install button listeners
+        if (El.install.sidebar) El.install.sidebar.addEventListener('click', triggerInstallPrompt);
+        if (El.install.mobile) El.install.mobile.addEventListener('click', triggerInstallPrompt);
 
-    updateInstallUI();
+        updateInstallUI();
+        listeners();
+        theme();
+        
+        checkCacheAge();
 
-    listeners();
-    theme();
-    await updateIdentityStatus();
-    await SecureCrypto.init();
-    await initVersionControl();
-    checkCacheAge();
-
-    // Check URL for #payload or ?payload
-    const urlParams = new URLSearchParams(window.location.search);
-    let payload = urlParams.get('payload');
-    
-    if (!payload && window.location.hash.startsWith('#payload=')) {
-        payload = decodeURIComponent(window.location.hash.substring(9));
-    }
-
-    if (payload) {
-        if (El.asym.keyInput) El.asym.keyInput.value = payload;
-        if (El.sym.msg) El.sym.msg.value = payload;
-        switchMainTab(payload.startsWith('vVault') ? 'asymmetric' : 'symmetric');
-        if (payload.startsWith('vVault')) setOpModeAsym('decrypt');
-        else setOpMode('decrypt');
-        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search;
-        window.history.replaceState({path: cleanUrl}, '', cleanUrl);
-        setTimeout(checkAsym, 100);
-    } else if (urlParams.get('pubkey')) {
-        const urlKey = urlParams.get('pubkey');
-        if (urlKey && urlKey.length > 20) {
-            El.asym.keyInput.value = urlKey;
-            switchMainTab('asymmetric');
-            setOpModeAsym('encrypt');
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({path: cleanUrl}, '', cleanUrl);
-            setTimeout(checkAsym, 100);
+        // Soft initialization of non-critical components
+        try {
+            await updateIdentityStatus();
+            await SecureCrypto.init();
+            await initVersionControl();
+        } catch (initErr) {
+            /* Handled */
         }
-    } else if (window.location.hash.startsWith('#pubkey=')) {
-        switchMainTab('symmetric');
-        setOpMode('encrypt');
-    }
+        
+        initShareAutoFill();
 
-    const idData = await localforage.getItem('my_identity');
-    if (idData) {
-        if (typeof idData === 'object' && idData.publicKeyBase64) {
-             El.id.pubDisplay.value = idData.publicKeyBase64;
-        } else if (typeof idData === 'string') {
-             El.id.pubDisplay.value = idData; // Assuming raw ID string
+        const idData = await localforage.getItem('my_identity');
+        if (idData) {
+            if (El.id.display) El.id.display.value = "LOCKED. Click 'Unlock My ID' to reveal your public key.";
+        } else {
+            if (El.id.display) El.id.display.value = "Identity not generated. Click the button below to secure your identity.";
         }
-    } else {
-        El.id.pubDisplay.value = "Identity not generated. Click the button below to secure your identity.";
-    }
-    updateIdentityStatus();
+        updateIdentityStatus();
 
-    // --- FINAL LOCKDOWN ---
-    // Wait a brief moment for any pending SW updates to settle then cut the cord
-    setTimeout(goOffline, 2000);
+        // Initialization done
+        clearTimeout(safetyLoaderTimeout);
+        
+        // Manage session timestamp
+        let sessionStart = localStorage.getItem('vaultzero_last_load');
+        if (!sessionStart) {
+            sessionStart = Date.now().toString();
+            localStorage.setItem('vaultzero_last_load', sessionStart);
+        }
+        // Session started
+
+        // Wait for brief initial sync then cut the cord
+        const sim = simulateProgress(400);
+        setTimeout(() => {
+            sim.finish(() => goOffline());
+        }, 400); 
+    } catch (fatalErr) {
+        hideLoader();
+        toast("App failed to start securely. Please refresh.", "error");
+    }
 }
 
 function goOffline() {
@@ -267,7 +493,6 @@ function goOffline() {
     if (!window._nativeFetch) window._nativeFetch = window.fetch;
 
     // Harden: use Object.defineProperty to prevent reassignment/deletion
-    // fetch stays configurable so version-control can temporarily use _nativeFetch then re-lock
     Object.defineProperty(window, 'fetch', { value: blockedFetch, writable: false, configurable: true });
     Object.defineProperty(window, 'XMLHttpRequest', { value: blockedFn('XHR'), writable: false, configurable: false });
     Object.defineProperty(window, 'WebSocket', { value: blockedFn('WebSocket'), writable: false, configurable: false });
@@ -280,17 +505,17 @@ function goOffline() {
     window._offlineLocked = true;
 
     if (El.version.statusText) {
-        El.version.statusText.textContent = 'OFFLINE SHIELD';
-        El.version.statusText.style.fontWeight = '900';
-        El.version.statusText.style.color = '#22c55e';
+         El.version.statusText.textContent = 'OFFLINE SHIELD';
+         El.version.statusText.style.fontWeight = '900';
+         El.version.statusText.style.color = '#22c55e';
     }
     if (El.version.statusDots) {
         El.version.statusDots.forEach(dot => {
             dot.style.background = '#22c55e';
             dot.style.boxShadow = '0 0 15px rgba(34, 197, 94, 0.6)';
-            dot.classList.add('secure-pulse');
             dot.classList.remove('offline');
             dot.classList.add('online');
+            dot.classList.add('secure-pulse');
         });
     }
     const statusBar = document.querySelector('.header-status-area');
@@ -308,12 +533,19 @@ const nativeShare = (data, btn) => {
 };
 
 const sharePayload = (text, btn) => {
-    if (!text || text.includes('downloads')) return toast("No message to share. Please encrypt something first.");
+    if (!text || text.includes('RESTORED') || text.includes('BINARY DATA')) {
+        return toast("No encrypted content to share. Please encrypt something first.", "warning");
+    }
+    
     const baseUrl = window.location.origin + window.location.pathname;
-    const link = baseUrl + "?payload=" + encodeURIComponent(text);
+    const isAsym = btn.id.includes('asym') || (text && text.startsWith('vVault'));
+    const type = isAsym ? 'msg' : 'vault';
+    
+    const link = `${baseUrl}?type=${type}&data=${encodeURIComponent(text)}`;
+    
     nativeShare({
-        title: 'Secure Message',
-        text: 'I sent you a secure message. Open it here:',
+        title: isAsym ? 'Secure Share Content' : 'Secret Vault Content',
+        text: isAsym ? 'I sent you a PK-encrypted message. Open it here:' : 'I shared a password-protected vault with you. Open it here:',
         url: link
     }, btn);
 };
@@ -442,8 +674,8 @@ function listeners() {
 
     El.id.shareLink.addEventListener('click', () => {
         const pk = El.id.pubDisplay.value;
-        if (!pk || pk.includes('LOCKED')) return toast("Your ID isn't ready. Please generate one first.", "warning");
-        const link = window.location.origin + window.location.pathname + "?pubkey=" + encodeURIComponent(pk);
+        if (!pk || pk.includes('LOCKED') || pk.includes('not generated')) return toast("Your ID isn't ready. Please generate one first.", "warning");
+        const link = window.location.origin + window.location.pathname + "?type=public_key&data=" + encodeURIComponent(pk);
         nativeShare({
             title: 'My Secure ID',
             text: 'Here is my public ID for VaultZero:',
@@ -452,6 +684,7 @@ function listeners() {
     });
 
     El.id.gen.addEventListener('click', rotateId);
+    if (El.id.unlock) El.id.unlock.addEventListener('click', fillMyKey);
     El.asym.autofill.addEventListener('click', fillMyKey);
 
     if (El.version.confirmUpdateBtn) {
@@ -694,52 +927,51 @@ function theme() {
 async function updateIdentityStatus() {
     if (!El.id.badge) return;
     
-    // Check if identity exists in the display field
-    const idValue = El.id.pubDisplay.value.trim();
-    const isLocked = idValue.includes('LOCKED') || idValue.includes('not generated');
-    const hasId = idValue.length > 20 && !isLocked;
+    // Check if identity exists in the display
+    const idValue = El.id.display ? El.id.display.value.trim() : "";
+    const isNotGenerated = idValue.includes('not generated') || idValue.length < 10;
+    const isLocked = idValue.includes('LOCKED') || idValue.includes('PURGED') || idValue.includes('Expired');
+    const isGenerated = !isNotGenerated;
+    const isActive = isGenerated && !isLocked;
     
     const badge = El.id.badge;
-    const card = document.querySelector('.identity-profile-card');
+    const consoleBox = document.querySelector('.identity-console-premium');
     const dot = badge.querySelector('.status-dot');
-    const text = badge.querySelector('span');
-    const btnGroup = document.querySelector('.id-card-actions');
-    const keyContainer = document.querySelector('.key-display-container');
+    const text = badge.querySelector('.status-text');
     
-    // Toggle Button States
-    if (El.id.copyPub) El.id.copyPub.disabled = !hasId;
-    if (El.id.shareLink) El.id.shareLink.disabled = !hasId;
+    if (consoleBox) {
+        consoleBox.classList.toggle('identity-active', isActive);
+    }
     
-    if (hasId) {
-        badge.style.color = 'var(--green)';
-        badge.style.background = 'rgba(34, 197, 94, 0.08)';
-        badge.style.borderColor = 'rgba(34, 197, 94, 0.2)';
-        if (text) text.textContent = 'IDENTITY ACTIVE';
+    if (isGenerated) {
+        // If an ID exists in any state (Active or Locked/Purged), it's considered SECURED
+        if (text) text.textContent = isActive ? 'ACTIVE' : 'SAVED & SECURED';
         if (dot) {
             dot.style.background = 'var(--green)';
-            dot.style.boxShadow = '0 0 12px var(--green-glow)';
+            if (isActive) dot.classList.add('secure-pulse');
+            else dot.classList.remove('secure-pulse');
         }
-        if (card) {
-            card.style.borderColor = 'rgba(34, 197, 94, 0.3)';
-            card.classList.add('identity-active');
-            card.classList.remove('identity-inactive');
+        if (El.id.sectionIcon) El.id.sectionIcon.style.color = 'var(--green)';
+
+        badge.style.opacity = '1';
+        if (El.id.dataLabel) {
+            El.id.dataLabel.innerHTML = `<i class="ph-bold ph-shield-check" style="color: var(--green);"></i> SECURE TERMINAL`;
+            El.id.dataLabel.style.color = "var(--green)";
         }
     } else {
-        badge.style.color = 'var(--red)';
-        badge.style.background = 'rgba(239, 68, 68, 0.08)';
-        badge.style.borderColor = 'rgba(239, 68, 68, 0.2)';
-        if (text) text.textContent = 'IDENTITY NOT GENERATED';
+        // Zero keys = RED (Security risk/Not ready)
+        if (text) text.textContent = 'NO IDENTITY';
         if (dot) {
             dot.style.background = 'var(--red)';
-            dot.style.boxShadow = '0 0 12px var(--red-glow)';
+            dot.classList.remove('secure-pulse');
         }
-        if (card) {
-            card.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-            card.classList.add('identity-inactive');
-            card.classList.remove('identity-active');
+        if (El.id.sectionIcon) El.id.sectionIcon.style.color = 'var(--red)';
+
+        badge.style.opacity = '1';
+        if (El.id.dataLabel) {
+            El.id.dataLabel.innerHTML = `<i class="ph-bold ph-warning-circle" style="color: var(--red);"></i> SECURE TERMINAL (EMPTY)`;
+            El.id.dataLabel.style.color = "var(--red)";
         }
-        // Ensure textarea shows helpful hint if empty
-        if (!idValue) El.id.pubDisplay.value = "Identity not generated. Click the button below to secure your identity.";
     }
 }
 
@@ -851,8 +1083,16 @@ function checkAsym() {
 }
 
 async function runSym() {
+    let sim;
     try {
         El.sym.action.disabled = true;
+        const mode = State.sym.mode === 'encrypt' ? 'Encrypting' : 'Decrypting';
+        showLoader(mode + " Content", "Performing cryptographic computations...", true);
+        sim = simulateProgress(1000);
+
+        // Allow UI to render loader
+        await new Promise(r => setTimeout(r, 100));
+
         const pass = El.sym.pass.value;
         const ttl = State.sym.timer ? Date.now() + parseInt(El.sym.timerSelect.value) : null;
 
@@ -964,12 +1204,24 @@ async function runSym() {
             if (isAnomaly) toast('Warning: Unusual activity detected.', "warning");
         }
     }
-    finally { El.sym.action.disabled = false; }
+    finally { 
+        El.sym.action.disabled = false; 
+        if (typeof sim !== 'undefined') sim.finish();
+        else hideLoader();
+    }
 }
 
 async function runAsym() {
+    let sim;
     try {
         El.asym.action.disabled = true;
+        const mode = State.asym.mode === 'encrypt' ? 'Encrypting' : 'Decrypting';
+        showLoader(mode + " Secret", "Applying post-quantum protection...", true);
+        sim = simulateProgress(1200);
+
+        // Allow UI to render loader
+        await new Promise(r => setTimeout(r, 100));
+
         const ttl = State.asym.timer ? Date.now() + parseInt(El.asym.timerSelect.value) : null;
         let out;
 
@@ -987,6 +1239,7 @@ async function runAsym() {
                 out = 'Secure payload hidden in image. Ready for sharing.';
                 isImageResult = true;
             } else out = cipher;
+
 
             // UI State Correction: Show/Hide based on type
             if (isImageResult) {
@@ -1077,7 +1330,11 @@ async function runAsym() {
             if (isAnomaly) toast('Warning: Unusual activity detected.', "warning");
         }
     }
-    finally { El.asym.action.disabled = false; }
+    finally { 
+        El.asym.action.disabled = false; 
+        if (typeof sim !== 'undefined') sim.finish();
+        else hideLoader();
+    }
 }
 
 async function rotateId() {
@@ -1085,14 +1342,43 @@ async function rotateId() {
         const pass = prompt("Create a Vault PIN or Password to encrypt your local ID at rest:");
         if (!pass) return toast("Identity generation cancelled.", "info");
         
-        const id = await SecureCrypto.generateKeyPair();
-        const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(id), pass);
-        
-        await localforage.setItem('my_identity', encryptedId);
-        El.id.pubDisplay.value = id.publicKeyBase64;
-        await updateIdentityStatus();
-        if (window.AuditLog) AuditLog.log(AuditLog.EventType.KEY_GENERATED, { hasPQ: !!id.pqSigningPublicKey });
-        toast("Your new identity has been created and locked safely.", "success");
+        let sim;
+        try {
+            El.id.gen.disabled = true;
+            showLoader("Generating Identity", "Computing post-quantum key pair...", true);
+            sim = simulateProgress(3000); 
+            
+            // Brief timeout to let the loader render before heavy CPU work
+            await new Promise(r => setTimeout(r, 150));
+            
+            const id = await SecureCrypto.generateKeyPair();
+            const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(id), pass);
+            
+            await localforage.setItem('my_identity', encryptedId);
+            await updateIdentityStatus();
+            
+            // Unified Core Reveal
+            startPrivateKeyTimer(id.publicKeyBase64, id.privateKeyBase64);
+            
+            if (El.id.privCopy) El.id.privCopy.onclick = () => copyTxt(id.privateKeyBase64, El.id.privCopy);
+            if (El.id.privDownload) {
+                El.id.privDownload.onclick = () => {
+                    const blob = new Blob([id.privateKeyBase64], {type: 'text/plain'});
+                    const url = URL.createObjectURL(blob);
+                    downloadFile(url, `vaultzero_private_backup_${Date.now()}.txt`);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                };
+            }
+
+            if (window.AuditLog) AuditLog.log(AuditLog.EventType.KEY_GENERATED, { hasPQ: !!id.pqSigningPublicKey });
+            toast("NEW Identity Core Generated! Backup now.", "warning");
+        } catch (e) {
+            toast("Identity generation failed: " + e.message, "error");
+        } finally {
+            El.id.gen.disabled = false;
+            if (sim) sim.finish();
+            else hideLoader();
+        }
     }
 }
 
@@ -1117,15 +1403,48 @@ async function fillMyKey() {
     const pass = prompt("Enter your Vault PIN to unlock your Identity:");
     if (!pass) return;
 
+    let sim;
     try {
+        if (El.id.unlock) El.id.unlock.disabled = true;
+        showLoader("Unlocking Identity", "Decrypting secure vault...", true);
+        sim = simulateProgress(1200);
+        
+        // Minimal delay to let loader show before Argon2 starts
+        await new Promise(r => setTimeout(r, 100));
+
         const decryptedStr = await SecureCrypto.decryptSymmetric(idData, pass);
         const id = JSON.parse(decryptedStr);
-        El.id.pubDisplay.value = id.publicKeyBase64; // Update display
-        El.asym.keyInput.value = id.privateKeyBase64;
-        toast("Welcome back! Identity unlocked.", "success");
-        checkAsym();
+        
+        // Unified Core Reveal
+        startPrivateKeyTimer(id.publicKeyBase64, id.privateKeyBase64);
+        
+        // Setup Temporary Listeners
+        if (El.id.privCopy) {
+            El.id.privCopy.onclick = () => copyTxt(id.privateKeyBase64, El.id.privCopy);
+        }
+        if (El.id.privDownload) {
+            El.id.privDownload.onclick = () => {
+                const blob = new Blob([id.privateKeyBase64], {type: 'text/plain'});
+                const url = URL.createObjectURL(blob);
+                downloadFile(url, `vaultzero_private_backup_${Date.now()}.txt`);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            };
+        }
+
+        // Auto-fill Asymmetric if in use
+        if (State.view === 'asymmetric' && El.asym.keyInput) {
+            El.asym.keyInput.value = State.asym.mode === 'encrypt' ? id.publicKeyBase64 : id.privateKeyBase64;
+            checkAsym();
+        }
+
+        updateIdentityStatus();
+        toast("Identity UNLOCKED! Purging in 2 minutes.", "success");
     } catch(e) {
         toast("Incorrect PIN. Please try again.", "error");
+    } finally {
+        if (El.id.unlock) El.id.unlock.disabled = false;
+        if (sim) sim.finish();
+        else hideLoader();
     }
 }
 
@@ -1229,28 +1548,34 @@ window.onPanicWipe = () => {
  * Returns: -1 if a < b, 0 if equal, 1 if a > b
  */
 function compareVersions(a, b) {
-    const pa = a.split('.');
-    const pb = b.split('.');
+    // Helper to normalize strings for comparison (remove 'V' prefix)
+    const normalize = (v) => v.trim().replace(/^v/i, '');
+    const na = normalize(a);
+    const nb = normalize(b);
+
+    const pa = na.split('.');
+    const pb = nb.split('.');
     const len = Math.max(pa.length, pb.length);
-    let isNumeric = true;
 
     for (let i = 0; i < len; i++) {
-        const na = parseInt(pa[i], 10) || 0;
-        const nb = parseInt(pb[i], 10) || 0;
+        const segA = pa[i] || "0";
+        const segB = pb[i] || "0";
         
-        if (isNaN(parseInt(pa[i], 10)) && pa[i] !== undefined) isNumeric = false;
-        if (isNaN(parseInt(pb[i], 10)) && pb[i] !== undefined) isNumeric = false;
+        const numA = parseInt(segA, 10);
+        const numB = parseInt(segB, 10);
 
-        if (!isNumeric) break;
-
-        if (na < nb) return -1;
-        if (na > nb) return 1;
+        // If both segments start with numbers, compare numerically
+        if (!isNaN(numA) && !isNaN(numB)) {
+            if (numA < numB) return -1;
+            if (numA > numB) return 1;
+        }
+        
+        // If numeric parts are equal or one is non-numeric, fall back to string comparison for this segment
+        const cmp = segA.localeCompare(segB, undefined, { numeric: true, sensitivity: 'base' });
+        if (cmp !== 0) return cmp;
     }
 
-    if (isNumeric) return 0;
-
-    // Fallback for non-numeric version strings (e.g., "Stable Beta V2")
-    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+    return 0;
 }
 
 /**
@@ -1267,7 +1592,7 @@ async function sha256Text(text) {
  * Hardcoded trusted public key for verifying update manifest signatures.
  * Generated by internal-tools/sign-updates.js. Must match the signing keypair.
  */
-const TRUSTED_UPDATE_PUBLIC_KEY = 'JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI=';
+const TRUSTED_UPDATE_PUBLIC_KEY = '1ZQIijEEPTu7C8hC6Da9TPTw7z5GzQxIjsraNAuk0oI=';
 
 /**
  * Verify Ed25519 signature of the manifest payload.
@@ -1361,18 +1686,27 @@ async function initVersionControl() {
     if (El.version.desktopVText) El.version.desktopVText.textContent = `V${APP_VERSION}`;
     if (El.version.mobileVText) El.version.mobileVText.textContent = `V${APP_VERSION}`;
 
-    // 3. Network check â€” fetch latest update-info.json from server
+    // 3. Network check — fetch latest update-info.json from server
     let serverVersion = null;
     let manifest = null;
     try {
         const fetcher = window._nativeFetch || fetch;
-        const res = await fetcher('update-info.json?t=' + Date.now(), { cache: 'no-cache' });
+        // Add a 5s timeout to the fetch to prevent hanging on flaky mobile networks
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const res = await fetcher('update-info.json?t=' + Date.now(), { 
+            cache: 'no-cache',
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
         if (res.ok) {
             manifest = await res.json();
             serverVersion = manifest.version;
         }
     } catch(e) {
-        /* offline — skip update check */
+        /* offline or timeout — skip update check */
     }
 
     // Re-lock fetch if offline lockdown was active
@@ -1428,17 +1762,21 @@ async function initVersionControl() {
         }
     }
     
-    // Listen for the controlling service worker changing (happens after skipWaiting)
-    let refreshing = false;
+    // Listen for the controlling service worker changing
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        refreshing = true;
-        window.location.reload();
+        // Only reload if the update was explicitly triggered by the user/system
+        if (window._isUpdatingIntentional) {
+            window.location.reload();
+        }
     });
 }
 
 async function triggerAppUpdate() {
-    if (El.version.overlay) El.version.overlay.classList.remove('hidden');
+    window._isUpdatingIntentional = true;
+    showLoader("Applying Update", "Verifying security signatures...", true);
+    const sim = simulateProgress(3000);
+
+    // No need to hide loader as page will reload
     
     // Animate modal out and floating button away before applying
     const updateModal = document.getElementById('update-confirm-modal');
@@ -1622,50 +1960,66 @@ window.addEventListener('scroll', () => {
     }
 }, { passive: true });
 
-// --- CACHE AGE CHECK (48 HOURS) ---
+// --- CACHE AGE CHECK (48 HOURS FOR SECURITY) ---
 function checkCacheAge() {
-    const CACHE_MAX_AGE_MS = 48 * 60 * 60 * 1000; // 48 hours
+    const CACHE_MAX_AGE_MS = 48 * 60 * 60 * 1000; // 48 hours security limit
     const now = Date.now();
-    
-    // Attempt to get last load time
     let lastLoad = localStorage.getItem('vaultzero_last_load');
     
     if (!lastLoad) {
-        // First load or cleared storage
         localStorage.setItem('vaultzero_last_load', now.toString());
-        return;
+        lastLoad = now.toString();
     }
-    
-    lastLoad = parseInt(lastLoad, 10);
-    
-    if (now - lastLoad > CACHE_MAX_AGE_MS) {
-        // Cache is older than 48 hours, show gentle prompt
+
+    const diffMs = now - parseInt(lastLoad, 10);
+    const delay = CACHE_MAX_AGE_MS - diffMs;
+
+    // Clear any existing timer to prevent duplicates
+    if (window._cacheAgeTimer) clearTimeout(window._cacheAgeTimer);
+
+    if (delay <= 0) {
+        // Already expired
         showCacheReloadPrompt();
+        localStorage.setItem('vaultzero_last_load', now.toString());
     } else {
-        // Still fresh, update timestamp slightly to prevent aggressive prompting 
-        // if they open and close frequently, but we only really reset it 
-        // on a true reload. We'll leave it alone here.
+        // Log exactly how much time is left until the trigger
+        const hours = Math.floor(delay / 3600000);
+        const mins = Math.floor((delay % 3600000) / 60000);
+        
+        window._cacheAgeTimer = setTimeout(() => {
+            showCacheReloadPrompt();
+            localStorage.setItem('vaultzero_last_load', Date.now().toString());
+        }, delay);
     }
 }
 
 function showCacheReloadPrompt() {
-    // Show the floating button if cache is extremely old
+    // Show the floating button and proactively trigger the modal
     if (El.version && El.version.floatingBtn) {
         showUpdatePrompt();
         El.version.floatingBtn.setAttribute('title', 'Security Notice: Reload App');
-    } else {
-        // Fallback toast
-        toast("App session is over 48 hours old. Please reload for security updates.", "warning");
+        
+        // Proactively show the update modal to catch user attention
+        const modal = document.getElementById('update-confirm-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('active'), 100);
+        }
     }
+    
+    // Always show feedback
+    toast("Security Session Notice: App is over 48 hours old. Please reload for the latest updates.", "warning");
 }
 
 // --- NETWORK STATUS ---
 function initNetworkStatus() {
     const update = () => {
+        // If the offline shield is already active, don't overwrite it
+        if (window._offlineLocked) return;
+
         const isOnline = navigator.onLine;
         if (El.version.statusText) {
             El.version.statusText.textContent = isOnline ? 'Online' : 'Secure Offline';
-            // Use a softer warning color for offline ready state
             El.version.statusText.style.color = isOnline ? '#22c55e' : '#f87171';
         }
         El.version.statusDots.forEach(dot => {
