@@ -64,7 +64,7 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
   // Skip cross-origin requests that aren't CDNs we care about
-  const allowedCDNs = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com'];
+  const allowedCDNs = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com', 'bestpractices.dev', 'www.bestpractices.dev'];
   if (url.origin !== self.location.origin && !allowedCDNs.includes(url.hostname)) {
     return;
   }
@@ -77,31 +77,35 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // For navigation requests (page loads from shortcut/address bar), use Network-first with cache fallback
+  // For navigation requests (page loads from shortcut/address bar)
+  // Cache-first with network fallback for offline support
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).then(response => {
-        // If the response is a redirect (301/302), follow it naturally — don't cache it
-        if (response.redirected) {
-          return response;
+      caches.match(event.request, { ignoreSearch: true }).then(cached => {
+        if (cached) {
+          return cached;
         }
-        return response;
+        // Not in cache by exact URL — try vault.html directly
+        return caches.match('vault.html', { ignoreSearch: true });
+      }).then(cached => {
+        if (cached) {
+          return cached;
+        }
+        // Nothing in cache — try network
+        return fetch(event.request);
       }).catch(() => {
-        // Network failed — serve from cache
-        return caches.match(event.request, { ignoreSearch: true }).then(cached => {
-          return cached || caches.match('vault.html', { ignoreSearch: true });
-        }).then(cached => {
-          return cached || new Response(
-            '<!DOCTYPE html><html><body><h1>VaultZero Offline</h1><p>Please connect to the internet to load VaultZero for the first time.</p></body></html>',
-            { status: 503, headers: { 'Content-Type': 'text/html' } }
-          );
-        });
+        // Both cache and network failed
+        return new Response(
+          '<!DOCTYPE html><html><body><h1>VaultZero Offline</h1><p>Please connect to the internet to load VaultZero for the first time.</p></body></html>',
+          { status: 503, headers: { 'Content-Type': 'text/html' } }
+        );
       })
     );
     return;
   }
 
   // Cache-first for all other assets (CSS, JS, images, fonts, WASM)
+  // On cache miss, fetch from network and cache the response for offline use
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then(cachedResponse => {
       if (cachedResponse) {
@@ -109,12 +113,10 @@ self.addEventListener('fetch', event => {
       }
 
       return fetch(event.request).then(networkResponse => {
-        // Dynamically cache CDN resources
+        // Cache ALL successful GET responses for full offline support
         if (networkResponse && networkResponse.ok) {
-          if (allowedCDNs.includes(url.hostname)) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
-          }
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
         }
         return networkResponse;
       }).catch(() => {
