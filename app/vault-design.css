@@ -1,4 +1,4 @@
-﻿/* ================================================================
+/* ================================================================
    VaultZero — Zero-Knowledge Offline Encryption
    Copyright (c) 2026 VaultZero Contributors
    SPDX-License-Identifier: MIT
@@ -567,8 +567,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 10px 0;
+  gap: 8px;
+  padding: 12px 0;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -589,8 +589,8 @@ body {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .mobile-nav-btn.active svg {
-  transform: scale(1.2) translateY(-2px);
-  filter: drop-shadow(0 0 8px var(--accent-glow));
+  transform: scale(1.25) translateY(-3px);
+  filter: drop-shadow(0 0 10px var(--accent-glow-strong));
 }
 
 /* â”€â”€ Mobile Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -631,10 +631,13 @@ body {
 /* â”€â”€ Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .card,
 .main-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  background: rgba(17, 17, 24, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 .card-header-row {
   display: flex;
@@ -743,6 +746,7 @@ body {
     box-shadow var(--transition);
 }
 .form-input:focus {
+  background: rgba(255, 255, 255, 0.03);
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
@@ -2555,4 +2559,51 @@ textarea.input-inactive {
   0% { transform: scale(1); box-shadow: 0 4px 15px var(--accent-glow); }
   50% { transform: scale(1.03); box-shadow: 0 8px 30px var(--accent-glow-strong); }
   100% { transform: scale(1); box-shadow: 0 4px 15px var(--accent-glow); }
+}
+
+/* Modal Mobile Responsiveness */
+@media (max-width: 480px) {
+  .install-modal-card {
+    padding: 32px 20px 24px;
+    width: 94%;
+    border-radius: 20px;
+  }
+
+  .install-modal-title {
+    font-size: 22px;
+  }
+
+  .install-modal-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+    padding: 0 5px;
+  }
+
+  .install-modal-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+
+  .install-modal-icon i {
+    font-size: 32px !important;
+  }
+
+  .install-modal-card .form-group .form-input {
+    font-size: 16px; /* Prevents iOS auto-zoom */
+    padding: 14px;
+  }
+
+  /* Stack buttons on very small screens if needed, but here we use the flex gap */
+  .install-modal-card .action-btn {
+    padding: 14px 10px;
+    font-size: 14px !important;
+  }
+
+  .install-modal-footer-badge {
+    margin-top: 18px;
+    font-size: 10px;
+    padding: 4px 10px;
+  }
 }

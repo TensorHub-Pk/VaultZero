@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v1';
+const CACHE_NAME = 'vault-v2';
 const ASSETS_TO_CACHE = [
   '/',
   'index.html',

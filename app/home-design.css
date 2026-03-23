@@ -257,11 +257,11 @@ button {
   color: var(--red);
 }
 .hero-subtitle {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--text-secondary);
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto 40px;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 .hero-actions {
   display: flex;
@@ -290,20 +290,20 @@ button {
   white-space: nowrap;
 }
 .primary-cta {
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red) 0%, #dc2626 100%);
   color: #fff;
   box-shadow:
-    0 4px 20px var(--red-glow),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-}
-.primary-cta:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 8px 30px var(--red-glow),
+    0 8px 25px var(--red-glow),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
+.primary-cta:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 35px var(--red-glow-strong),
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+}
 .primary-cta:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.97);
 }
 .secondary-cta {
   background: var(--bg-elevated);
@@ -401,9 +401,9 @@ button {
   will-change: transform, box-shadow, border-color;
 }
 .feature-card:hover {
-  border-color: rgba(239, 68, 68, 0.2);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.05);
 }
 .feature-icon {
   width: 48px;
@@ -533,8 +533,9 @@ button {
     transform 0.2s;
 }
 .arch-card:hover {
-  border-color: rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 .arch-label {
   font-size: 11px;
@@ -575,8 +576,9 @@ button {
     transform 0.2s;
 }
 .os-card:hover {
-  border-color: rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 .os-card svg {
   color: var(--red);

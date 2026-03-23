@@ -1337,9 +1337,69 @@ async function runAsym() {
     }
 }
 
+function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm", cancelText = "Cancel") {
+    return new Promise((resolve) => {
+        const modalId = 'custom-modal-' + Date.now();
+        const html = `
+        <div id="${modalId}" class="install-modal hidden">
+            <div class="install-modal-backdrop"></div>
+            <div class="install-modal-card" style="text-align: center;">
+                <h2 class="install-modal-title" style="margin-top:0;">${title}</h2>
+                <p class="install-modal-subtitle">${message}</p>
+                ${isPrompt ? `<div class="form-group" style="margin-top: 15px; text-align: left;">
+                    <input type="password" id="${modalId}-input" class="form-input" placeholder="Type here..."/>
+                </div>` : ''}
+                <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: center;">
+                    <button id="${modalId}-cancel" class="action-btn" style="background: var(--surface-light); color: var(--text-main); flex: 1;">
+                        ${cancelText}
+                    </button>
+                    <button id="${modalId}-confirm" class="action-btn primary-action" style="background: var(--accent); flex: 1;">
+                        ${confirmText}
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+        const modal = document.getElementById(modalId);
+        const input = isPrompt ? document.getElementById(`${modalId}-input`) : null;
+        const btnCancel = document.getElementById(`${modalId}-cancel`);
+        const btnConfirm = document.getElementById(`${modalId}-confirm`);
+
+        const cleanup = () => {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        };
+
+        const onCancel = () => { cleanup(); resolve(isPrompt ? null : false); };
+        const onConfirm = () => { cleanup(); resolve(isPrompt ? (input ? input.value : '') : true); };
+
+        btnCancel.addEventListener('click', onCancel);
+        btnConfirm.addEventListener('click', onConfirm);
+        if (input) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') onConfirm();
+                if (e.key === 'Escape') onCancel();
+            });
+        }
+
+        // Show modal with animation
+        requestAnimationFrame(() => {
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.add('active');
+                if (input) input.focus();
+            });
+        });
+    });
+}
+
+const customConfirm = (message, title="Confirm Action") => runCustomModal(title, message, false, "Proceed", "Cancel");
+const customPrompt = (message, title="Vault Input") => runCustomModal(title, message, true, "Submit", "Cancel");
+
 async function rotateId() {
-    if (confirm("Replace your current ID? This cannot be undone.")) {
-        const pass = prompt("Create a Vault PIN or Password to encrypt your local ID at rest:");
+    if (await customConfirm("Replace your current ID? This cannot be undone.", "Rotate Identity")) {
+        const pass = await customPrompt("Create a Vault PIN or Password to encrypt your local ID at rest:", "Set Vault PIN");
         if (!pass) return toast("Identity generation cancelled.", "info");
         
         let sim;
@@ -1388,7 +1448,7 @@ async function fillMyKey() {
 
     if (typeof idData === 'object' && idData.privateKeyBase64) {
         // Legacy Plaintext Upgrade
-        const pass = prompt("Your ID is currently insecure. Enter a new Vault PIN to encrypt it now:");
+        const pass = await customPrompt("Your ID is currently insecure. Enter a new Vault PIN to encrypt it now:", "Secure Your Identity");
         if (!pass) return toast("Identity setup cancelled.", "info");
         const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(idData), pass);
         await localforage.setItem('my_identity', encryptedId);
@@ -1400,7 +1460,7 @@ async function fillMyKey() {
     }
 
     // Encrypted Flow
-    const pass = prompt("Enter your Vault PIN to unlock your Identity:");
+    const pass = await customPrompt("Enter your Vault PIN to unlock your Identity:", "Unlock Identity");
     if (!pass) return;
 
     let sim;
@@ -1531,8 +1591,8 @@ function downloadFile(url, filename) {
         if (url.startsWith('blob:')) URL.revokeObjectURL(url);
     }, 100);
 }
-window.onPanicWipe = () => {
-    if (confirm("ERASE EVERYTHING? All keys and data will be lost forever.")) {
+window.onPanicWipe = async () => {
+    if (await customConfirm("ERASE EVERYTHING? All keys and data will be lost forever.", "Panic Wipe")) {
         if (window.AuditLog) AuditLog.log(AuditLog.EventType.WIPE_EXECUTED);
         localforage.clear().then(() => location.reload());
     }
@@ -1592,7 +1652,7 @@ async function sha256Text(text) {
  * Hardcoded trusted public key for verifying update manifest signatures.
  * Generated by internal-tools/sign-updates.js. Must match the signing keypair.
  */
-const TRUSTED_UPDATE_PUBLIC_KEY = '1ZQIijEEPTu7C8hC6Da9TPTw7z5GzQxIjsraNAuk0oI=';
+const TRUSTED_UPDATE_PUBLIC_KEY = 'bwMJMERQznk3yTNfVQJJmALjES1QFOp78+AVQG5JAv4=';
 
 /**
  * Verify Ed25519 signature of the manifest payload.
