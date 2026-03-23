@@ -27,17 +27,36 @@ const ASSETS_TO_CACHE = [
   'assets/og-image.jpeg'
 ];
 
+// Helper to cache assets and bypass Chrome's restriction on caching redirected responses
+async function cacheAsset(cache, url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Status ${response.status}`);
+    
+    // If the response is redirected (e.g. vault.html -> /vault via Clean URLs),
+    // we MUST reconstruct the response. Chrome rejects `cache.put` for redirected responses.
+    if (response.redirected) {
+      const cleanResponse = new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers
+      });
+      await cache.put(url, cleanResponse);
+    } else {
+      await cache.put(url, response);
+    }
+  } catch (err) {
+    console.warn('[SW] Failed to cache:', url, err.message);
+  }
+}
+
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // Cache each asset individually so one failure doesn't abort the entire install
+      // Cache each asset individually using our custom redirect-safe fetcher
       return Promise.allSettled(
-        ASSETS_TO_CACHE.map(url =>
-          cache.add(url).catch(err => {
-            console.warn('[SW] Failed to cache:', url, err.message);
-          })
-        )
+        ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
       );
     })
   );
@@ -134,7 +153,7 @@ self.addEventListener('message', event => {
     caches.delete(CACHE_NAME).then(() => {
       caches.open(CACHE_NAME).then(cache => {
         Promise.allSettled(
-          ASSETS_TO_CACHE.map(url => cache.add(url).catch(() => {}))
+          ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
         );
       });
     });

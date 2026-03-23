@@ -4,10 +4,10 @@
   "hashes": {
     "app.js": "049f856e25e0f261a85619f73f2be67935f1a56333b9434164981a3c9be37b1e",
     "encryption.js": "7603f8c776d811b4e9d6b99630405f140fd8f71b1976be670f97616abc58102a",
-    "service-worker.js": "87ab7cbe8e2a3d7061f46b4765066d74b36f2dd5914257f66d7219007128108f",
+    "service-worker.js": "a62c46468b720ca73f150bbd4b4be1a162d0ceb4aa5db0e5b1faf885fea1a913",
     "security-logs.js": "9d33bdd3aa11b13be9b45a06508fa225b202ead53b5435525f45a9bc52c6791a",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "1IugcmAjBOhQ/uM/qG5mR/1uOMGBU5KXLDf5+qwgmAeUXrTp5die5WwO2dCQc5QyKaqsyKsWbMiURbwzuwx7Bg==",
+  "signature": "lYcIML8Rwwz2isA5Zvg/h252CQGLw8G9xtktEUWNGP33HzcqGM7L3xIC6eV5BWX08hi4Mpflld8sBSFOft1LDg==",
   "signerPublicKey": "1LiUFRx+qmg91b/ku3KzZR/xSGOV44JAL5X+9LMObYk="
 }
