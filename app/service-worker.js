@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v4-stable';
+const CACHE_NAME = 'vault-v7-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 const ASSETS_TO_CACHE = [
