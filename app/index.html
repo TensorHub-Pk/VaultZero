@@ -637,14 +637,6 @@
                 var loader = document.getElementById('app-loader');
                 if (loader) loader.classList.add('hidden');
             }, 300);
-
-            // Register Service Worker for offline support
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' })
-                        .catch(function(err) { /* silent fail */ });
-                });
-            }
         })();
     </script>
 </body>
