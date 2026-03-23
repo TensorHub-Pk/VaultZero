@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v6';
+const CACHE_NAME = 'vault-v4-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 const ASSETS_TO_CACHE = [
@@ -41,9 +41,10 @@ async function cacheAsset(cache, url) {
     
     if (!response.ok) throw new Error(`Status ${response.status}`);
     
-    // Integrity Verification (Stage 2)
-    // If we have a trusted hash for this file (synced from app.js), verify it before caching.
-    const expectedHash = trustedHashes[url] || trustedHashes[url.split('/').pop()];
+    // Stage 2: Integrity Verification
+    // Strip query params and fragments to get the base filename for hash lookup
+    const filename = url.split('/').pop().split('?')[0].split('#')[0];
+    const expectedHash = trustedHashes[url] || trustedHashes[filename];
     if (expectedHash) {
       let text = await response.clone().text();
       // Normalize CRLF to LF to match the signing tool

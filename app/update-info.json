@@ -1,13 +1,13 @@
 {
-  "version": "3 Stable",
+  "version": "4 Stable",
   "released": "2026-03-24",
   "hashes": {
     "app.js": "acf7f9b51b7958ba865ce9e6727b15ca274aba2f1f1b2ad269584322a0f12b58",
     "encryption.js": "8846ecd337d82bac90b3374f604832e8ea0867c19ad4fca6d5f9eb2d2b288605",
-    "service-worker.js": "8731ad14f7760a634c170e107031ebf727c3ec170fae94c5d72056695a63e01b",
+    "service-worker.js": "d9cc3f9fd11f32ba5df6cc3351ca7d71e1b68f5dc1f5dbd972ecac7bde334f8a",
     "security-logs.js": "373cfbba4b9e4ab40e71dcda45150f201108b383024997ff681a4743e3b7e78f",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "6wqVyQOfkqjPWFuhKCDGULUoPng2hWrMoUpEMfLO3lO5qqbNviXJcJDPOzC6Ed0aUhZ9NfdpZw5FvHXMOFWBCw==",
+  "signature": "cymWaJGDafJV1Dx8STOLXyEbGVkzgn5oHTBiXTJOwjfxDFtaAjGWaQEArXh8AYz7wBA48/xJRPH7QO5HYaPcAA==",
   "signerPublicKey": "eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4="
 }
