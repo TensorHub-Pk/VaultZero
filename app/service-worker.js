@@ -59,43 +59,33 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-first for all other requests, with dynamic CDN caching
+  // Cache-first for all other requests
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then(cachedResponse => {
-      // 1. Fire off the network fetch to update CDNs or just fetch if no cache
-      const fetchPromise = fetch(event.request).then(networkResponse => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      
+      // If not in cache, fetch from network
+      return fetch(event.request).then(networkResponse => {
+        // Cache CDNs dynamically
         if (networkResponse && networkResponse.ok && event.request.method === 'GET') {
           const urlObj = new URL(event.request.url);
           const isCDN = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com'].includes(urlObj.hostname);
+          
           if (isCDN) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
           }
         }
         return networkResponse;
-      }).catch(err => {
-        // Network failed (offline). Return null so we can check it later.
-        return null; 
-      });
-
-      // 2. If we found a cached response, return it immediately!
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      // 3. If NOT in cache, wait for the network response.
-      return fetchPromise.then(networkResponse => {
-        if (networkResponse) {
-          return networkResponse; // Network succeeded
-        }
-        // 4. Network failed AND not in cache. Fallback for navigation requests.
+      }).catch(() => {
+        // Network failed (offline) and not in cache
         if (event.request.mode === 'navigate') {
-          return caches.match('./vault.html', { ignoreSearch: true }).then(fallbackResponse => {
-             // Return fallback if exists, otherwise a generic error to prevent crash
-             return fallbackResponse || new Response('Offline and not cached.', { status: 503, statusText: 'Service Unavailable' });
+          return caches.match('./vault.html', { ignoreSearch: true }).then(fallback => {
+            return fallback || new Response('Offline and not cached.', { status: 503, statusText: 'Service Unavailable' });
           });
         }
-        // For images/css, just return a generic error instead of crashing
         return new Response('', { status: 503, statusText: 'Service Unavailable' });
       });
     })
