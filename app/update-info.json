@@ -1,5 +1,5 @@
 {
-  "version": "1.5 Stable",
+  "version": "2.0 Stable",
   "released": "2026-03-24",
   "hashes": {
     "app.js": "acf7f9b51b7958ba865ce9e6727b15ca274aba2f1f1b2ad269584322a0f12b58",
@@ -8,6 +8,6 @@
     "security-logs.js": "373cfbba4b9e4ab40e71dcda45150f201108b383024997ff681a4743e3b7e78f",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "uK8nXq7/6AL8PnzE+27WsvCo1Jh2AF5iomJVkzjMmVztGxgyT9amNfSyhLgEdFT9eQLbWV3tngnR0vptkJodAg==",
+  "signature": "JmEC/qz/PCC+gUpl+/5beOcB9w2NXHmdu4kP3+cGkyObibzmFhPBmRRRyD7bcF0SR937fkgcREBXLQyj8KHzCg==",
   "signerPublicKey": "eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4="
 }

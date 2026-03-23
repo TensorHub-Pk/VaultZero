@@ -1300,9 +1300,9 @@ textarea.input-inactive {
   position: fixed;
   bottom: 110px;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--bg-surface);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateX(-50%) translateY(20px) scale(0.95);
+  background: rgba(13, 13, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text-primary);
   padding: 12px 24px;
   border-radius: 100px;
@@ -1313,18 +1313,33 @@ textarea.input-inactive {
   gap: 12px;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
   opacity: 0;
   pointer-events: none;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: auto;
+  max-width: 90vw;
+  text-align: center;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(0) scale(1);
 }
+
+@media (max-width: 767px) {
+  .toast {
+    bottom: 96px; /* Positioned perfectly above mobile bottom nav */
+    width: calc(100% - 40px);
+    max-width: 450px;
+    padding: 14px 20px;
+    font-size: 14px;
+    border-radius: 18px; /* Slightly softer for mobile */
+  }
+}
+
 
 .hidden {
   display: none !important;
@@ -1623,75 +1638,80 @@ textarea.input-inactive {
     }
   }
 
-  .header-install-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-1px);
+  /* Header Controls (Wipe & Install) */
+  .header-controls-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Perfect spacing for the stack */
+    align-items: flex-end;
+    margin-right: 28px;
+    width: auto;
   }
 
-  .header-wipe-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 0 14px;
-    height: 32px;
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 8px;
+  .header-wipe-btn,
+  .header-install-btn {
+    height: 38px;
+    min-width: 145px;
+    padding: 0 16px;
+    border-radius: 12px;
     font-family: var(--font-button);
     font-size: 11px;
     font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s;
     text-transform: uppercase;
+    letter-spacing: 0.08em; /* Matched to mobile style */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1.5px solid rgba(255, 255, 255, 0.08); /* More refined border */
+    position: relative;
+    overflow: hidden;
   }
 
-  .header-wipe-btn span {
-    display: none; /* Hide 'Wipe' text on small desktop */
+  .header-wipe-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.2);
   }
 
-  @media (min-width: 1100px) {
-    .header-wipe-btn span {
-      display: inline;
-    }
+  .header-install-btn {
+    background: rgba(34, 197, 94, 0.1); /* Integrated Green Theme */
+    color: #4ade80; /* Brighter Green */
+    border-color: rgba(34, 197, 94, 0.25);
+  }
+
+  .header-wipe-btn i, .header-install-btn i {
+    font-size: 18px;
+    opacity: 1; /* More visible icons */
   }
 
   .header-wipe-btn:hover {
     background: #ef4444;
-    color: #fff;
-    box-shadow: 0 0 15px var(--red-glow);
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    border-color: #ef4444;
   }
 
-  .header-wipe-btn:active {
+  .header-install-btn:hover {
+    background: #22c55e;
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.45);
+    border-color: #22c55e;
+  }
+
+
+  .header-wipe-btn span, .header-install-btn span {
+    display: inline !important;
+  }
+
+  .header-wipe-btn:active, .header-install-btn:active {
     transform: translateY(0) scale(0.96);
   }
 
-  .header-controls-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-end;
-    margin-right: 15px;
-  }
-
-  .header-controls-group .header-wipe-btn,
-  .header-controls-group .header-install-btn {
-    height: 34px;
-    padding: 0 14px;
-    font-size: 11px;
-    border-radius: 8px;
-    width: 130px;
-    justify-content: flex-start;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  
-  .header-controls-group .header-wipe-btn i,
-  .header-controls-group .header-install-btn i {
-    font-size: 16px;
-    margin-right: 8px;
-  }
 
   /* â”€â”€ Main Content Adjustments â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .main-content {
