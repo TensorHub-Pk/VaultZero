@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v2';
+const CACHE_NAME = 'vault-v3';
 const ASSETS_TO_CACHE = [
   '/',
   'index.html',
@@ -27,6 +27,7 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Force immediate activation over any old SW
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS_TO_CACHE))
@@ -43,9 +44,8 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
