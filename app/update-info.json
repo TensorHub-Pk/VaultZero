@@ -1,13 +1,13 @@
 {
-  "version": "1.3 Stable",
+  "version": "1.5 Stable",
   "released": "2026-03-24",
   "hashes": {
-    "app.js": "35d4daa11005b79d2eebb23de1d8026e3d5d76a9758e5cdbeafa38e7aace5309",
+    "app.js": "acf7f9b51b7958ba865ce9e6727b15ca274aba2f1f1b2ad269584322a0f12b58",
     "encryption.js": "8846ecd337d82bac90b3374f604832e8ea0867c19ad4fca6d5f9eb2d2b288605",
-    "service-worker.js": "8e0db3e6e8c5a389d15ed4ad034e7bd198b77575fa64c2c53e6030217dff98a1",
+    "service-worker.js": "8389bd54a06048c7ea198ecc29cc95a7492595dd0a8a547c981927584e7310e1",
     "security-logs.js": "373cfbba4b9e4ab40e71dcda45150f201108b383024997ff681a4743e3b7e78f",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "YmAWpBY+pbkvY4rPD7tc1v9Twuo4VtO1I7LcSW3uepMInc3AO5DmvivMTEgBKG93/sV6u1CZJUF5IP//rC2PBA==",
+  "signature": "uK8nXq7/6AL8PnzE+27WsvCo1Jh2AF5iomJVkzjMmVztGxgyT9amNfSyhLgEdFT9eQLbWV3tngnR0vptkJodAg==",
   "signerPublicKey": "eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4="
 }

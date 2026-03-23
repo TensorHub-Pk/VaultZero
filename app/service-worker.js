@@ -27,12 +27,34 @@ const ASSETS_TO_CACHE = [
   'assets/og-image.jpeg'
 ];
 
-// Helper to cache assets and bypass Chrome's restriction on caching redirected responses
+// In-memory store for hashes verified by the main thread's manifest signature check
+let trustedHashes = {};
+
+// Helper to cache assets and bypass Chrome's restriction on caching redirected responses.
+// Also performs cryptographic integrity verification if trustedHashes are available.
 async function cacheAsset(cache, url) {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Status ${response.status}`);
     
+    // Integrity Verification (Stage 2)
+    // If we have a trusted hash for this file (synced from app.js), verify it before caching.
+    const expectedHash = trustedHashes[url] || trustedHashes[url.split('/').pop()];
+    if (expectedHash) {
+      let text = await response.clone().text();
+      // Normalize CRLF to LF to match the signing tool
+      text = text.replace(/\r\n/g, '\n');
+      const buf = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
+      const actualHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+      
+      if (actualHash !== expectedHash) {
+        console.error(`[SW] Integrity Check Failed for ${url}. Expected ${expectedHash}, got ${actualHash}`);
+        throw new Error(`Integrity mismatch for ${url}`);
+      }
+      console.log(`[SW] Integrity Verified: ${url}`);
+    }
+
     // If the response is redirected (e.g. vault.html -> /vault via Clean URLs),
     // we MUST reconstruct the response. Chrome rejects `cache.put` for redirected responses.
     if (response.redirected) {
@@ -146,6 +168,13 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SET_TRUSTED_HASHES') {
+    trustedHashes = event.data.hashes || {};
+    console.log('[SW] Trusted hashes updated:', Object.keys(trustedHashes).length, 'files');
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({ status: 'ok' });
+    }
+  }
   if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }

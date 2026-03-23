@@ -1657,6 +1657,8 @@ const TRUSTED_UPDATE_PUBLIC_KEY = 'eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4='
 /**
  * Verify Ed25519 signature of the manifest payload.
  */
+
+
 function verifyManifestSignature(manifest) {
     if (!TRUSTED_UPDATE_PUBLIC_KEY) {
         return true;
@@ -1694,37 +1696,35 @@ function verifyManifestSignature(manifest) {
  * the actual server files, not stale cached versions.
  */
 async function verifyScriptIntegrity(manifest) {
-    // Step 1: Verify manifest signature
-    if (!verifyManifestSignature(manifest)) {
-        return false;
-    }
+    // Stage 1: Verify the cryptographic signature of the manifest itself
+    // If the manifest is signed by the trusted key, we trust the hashes inside it.
+    const signatureOk = verifyManifestSignature(manifest);
+    if (!signatureOk) return false;
 
-    // Step 2: Verify individual file hashes from the NETWORK
-    if (!manifest.hashes || Object.keys(manifest.hashes).length === 0) return true;
-    const fetcher = window._nativeFetch || fetch;
-
-    // Cache-busting param ensures SW falls through to network
-    // (SW only caches exact pathname matches like '/app.js', not '/app.js?_v=...')
-    const cacheBuster = `?_v=${Date.now()}`;
-
-    for (const [file, expectedHash] of Object.entries(manifest.hashes)) {
-        try {
-            const res = await fetcher(file + cacheBuster, { cache: 'no-store' });
-            if (!res.ok) continue;
-            // Read as text, normalize CRLF to LF, then hash to match the signing tool exactly
-            let text = await res.text();
-            text = text.replace(/\r\n/g, '\n');
-            const buf = new TextEncoder().encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
-            const actualHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-            if (actualHash !== expectedHash) {
-                return false;
-            }
-        } catch(e) {
-            /* offline — skip file verification */
-        }
-    }
+    // Stage 2: Sync these trusted hashes to the Service Worker
+    // The Service Worker will perform the actual file hashing during the download phase.
+    await syncHashesToWorker(manifest.hashes);
+    
     return true;
+}
+
+/**
+ * Sends trusted hashes from the signed manifest to the Service Worker.
+ */
+async function syncHashesToWorker(hashes) {
+    if (!hashes || !('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
+    
+    return new Promise((resolve) => {
+        const channel = new MessageChannel();
+        channel.port1.onmessage = () => resolve();
+        navigator.serviceWorker.controller.postMessage({
+            type: 'SET_TRUSTED_HASHES',
+            hashes: hashes
+        }, [channel.port2]);
+        
+        // Fallback resolve after 500ms if SW doesn't respond
+        setTimeout(resolve, 500);
+    });
 }
 
 async function initVersionControl() {
@@ -1785,17 +1785,20 @@ async function initVersionControl() {
         }
     }
 
-    // 5. If update available, verify script integrity before prompting
-    if (updateAvailable && manifest) {
-        const integrityOk = await verifyScriptIntegrity(manifest);
-        if (!integrityOk) {
-            updateAvailable = false;
-            toast("Update blocked: Security check failed for the new version.", "error");
-            if (window.AuditLog) AuditLog.log(AuditLog.EventType.UPDATE_BLOCKED, { version: serverVersion });
-        }
+    // 5. Security Check: Verify manifest signature on EVERY load if online
+    let integrityOk = true;
+    if (manifest) {
+        integrityOk = await verifyScriptIntegrity(manifest);
+    }
+    
+    // 6. Handle Security Failures or Display Update Prompt
+    if (!integrityOk) {
+        updateAvailable = false;
+        toast("Security check failed: The version signature is invalid.", "error");
+        if (window.AuditLog) AuditLog.log(AuditLog.EventType.UPDATE_BLOCKED, { version: serverVersion });
     }
 
-    if (updateAvailable) {
+    if (updateAvailable && integrityOk) {
         showUpdatePrompt();
     }
 
