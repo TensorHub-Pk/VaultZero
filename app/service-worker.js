@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v5';
+const CACHE_NAME = 'vault-v6';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 const ASSETS_TO_CACHE = [
@@ -34,7 +34,11 @@ let trustedHashes = {};
 // Also performs cryptographic integrity verification if trustedHashes are available.
 async function cacheAsset(cache, url) {
   try {
-    const response = await fetch(url);
+    // Force network fetch to bypass edge CDN caching during installations/updates
+    const fetchUrl = new URL(url, location.origin);
+    fetchUrl.searchParams.set('vault_bust', Date.now()); 
+    const response = await fetch(fetchUrl.toString(), { cache: 'no-store' });
+    
     if (!response.ok) throw new Error(`Status ${response.status}`);
     
     // Integrity Verification (Stage 2)
