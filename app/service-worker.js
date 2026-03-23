@@ -132,8 +132,8 @@ self.addEventListener('fetch', event => {
       }
 
       return fetch(event.request).then(networkResponse => {
-        // Cache ALL successful GET responses for full offline support
-        if (networkResponse && networkResponse.ok) {
+        // Cache ALL successful GET responses (including opaque no-cors responses from CDNs) for full offline support
+        if (networkResponse && (networkResponse.ok || networkResponse.type === 'opaque')) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
         }
