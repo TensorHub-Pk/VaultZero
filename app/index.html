@@ -8,8 +8,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VaultZero — Zero-Knowledge Encryption | Offline-First, Post-Quantum Ready</title>
-    <meta name="description" content="VaultZero is an open-source, client-side encryption tool with post-quantum resistance. Secure message encryption online. No data ever leaves your device." />
+    <title>VaultZero: Zero-Knowledge & Post-Quantum Encryption</title>
+    <meta name="description" content="VaultZero is an open-source, purely client-side true zero-knowledge encryption tool with Post-Quantum resistance. Encrypt files & messages locally." />
     <meta name="theme-color" content="#08080d" />
     <meta name="author" content="Tensorhub.pk" />
     <meta name="keywords" content="client-side encryption tool, zero knowledge encryption, secure message encryption online, offline encryption web app, privacy-first encryption tool, secure document encryption online, browser-based encryption, post-quantum ready encryption, ChaCha20, Argon2id, ML-KEM-768, secure messaging" />
@@ -196,6 +196,7 @@
     </header>
 
     <!-- ===== HERO ===== -->
+    <main id="main-content">
     <section class="hero">
         <div class="container hero-inner">
             <div class="hero-badges-group">
@@ -457,7 +458,7 @@
         </div>
     </section>
 
-    </section>
+    </main>
 
     <!-- ===== FOOTER ===== -->
     <footer class="site-footer new-footer">
@@ -494,10 +495,10 @@
                 <!-- Social & Compliance (Right) -->
                 <div class="new-footer-right">
                     <div class="new-footer-socials">
-                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
-                        <a href="https://github.com/TensorHub-Pk" target="_blank" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
-                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
-                        <a href="mailto:info@tensorhub.pk" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
+                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" rel="noopener noreferrer" aria-label="Founder GitHub" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="https://github.com/TensorHub-Pk" target="_blank" rel="noopener noreferrer" aria-label="TensorHub GitHub Organization" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
+                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="mailto:info@tensorhub.pk" aria-label="Contact via Email" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
                     </div>
                     <div class="footer-badge">
                         <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
@@ -636,6 +637,14 @@
                 var loader = document.getElementById('app-loader');
                 if (loader) loader.classList.add('hidden');
             }, 300);
+
+            // Register Service Worker for offline support
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' })
+                        .catch(function(err) { /* silent fail */ });
+                });
+            }
         })();
     </script>
 </body>
