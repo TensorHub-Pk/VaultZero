@@ -127,8 +127,7 @@ async function initElements() {
     };
 
     El.version = {
-        banner: document.getElementById('update-banner'),
-        shell: document.querySelector('.app-shell'),
+        mobileNavBtn: document.getElementById('mobile-nav-update'),
         confirmUpdateBtn: document.getElementById('btn-confirm-update'),
         desktopVText: document.getElementById('header-version-text'),
         mobileVText: document.getElementById('mobile-v-text'),
@@ -403,9 +402,8 @@ function initShareAutoFill() {
 }
 
 function showUpdatePrompt() {
-    if (El.version.banner) {
-        El.version.banner.classList.remove('hidden');
-        if (El.version.shell) El.version.shell.classList.add('has-banner');
+    if (El.version.mobileNavBtn) {
+        El.version.mobileNavBtn.classList.remove('hidden');
     }
 }
 
@@ -1846,9 +1844,8 @@ async function triggerAppUpdate() {
     // No need to hide loader as page will reload
     
     // Animate modal out and floating button away before applying
-    if (El.version.banner) {
-        El.version.banner.classList.add('hidden');
-        if (El.version.shell) El.version.shell.classList.remove('has-banner');
+    if (El.version.mobileNavBtn) {
+        El.version.mobileNavBtn.classList.add('hidden');
     }
 
     try {
