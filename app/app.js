@@ -127,6 +127,7 @@ async function initElements() {
     };
 
     El.version = {
+        headerNavBtn: document.getElementById('header-nav-update'),
         mobileNavBtn: document.getElementById('mobile-nav-update'),
         confirmUpdateBtn: document.getElementById('btn-confirm-update'),
         desktopVText: document.getElementById('header-version-text'),
@@ -402,9 +403,11 @@ function initShareAutoFill() {
 }
 
 function showUpdatePrompt() {
-    if (El.version.mobileNavBtn) {
-        El.version.mobileNavBtn.classList.remove('hidden');
-    }
+    window._isUpdateWaiting = true;
+    
+    // 1. Universal Nav Update Buttons
+    if (El.version.mobileNavBtn) El.version.mobileNavBtn.classList.remove('hidden');
+    if (El.version.headerNavBtn) El.version.headerNavBtn.classList.remove('hidden');
 }
 
 // --- INITIALIZE ---
@@ -1844,8 +1847,14 @@ async function triggerAppUpdate() {
     // No need to hide loader as page will reload
     
     // Animate modal out and floating button away before applying
-    if (El.version.mobileNavBtn) {
-        El.version.mobileNavBtn.classList.add('hidden');
+    // Hide all update triggers
+    if (El.version.mobileNavBtn) El.version.mobileNavBtn.classList.add('hidden');
+    if (El.version.headerNavBtn) El.version.headerNavBtn.classList.add('hidden');
+    
+    const updateModal = document.getElementById('update-confirm-modal');
+    if (updateModal) {
+        updateModal.classList.remove('active');
+        setTimeout(() => updateModal.classList.add('hidden'), 300);
     }
 
     try {
@@ -1971,7 +1980,7 @@ function updateInstallUI() {
 
     // Desktop
     if (El.install.sidebar) {
-        if (isInstalled) {
+        if (isInstalled && !window._isUpdateWaiting) {
             El.install.sidebar.classList.add('hidden');
         } else {
             El.install.sidebar.classList.remove('hidden');
@@ -1980,7 +1989,10 @@ function updateInstallUI() {
 
     // Mobile
     if (El.install.mobile) {
-        if (isInstalled) {
+        if (isInstalled && !window._isUpdateWaiting) {
+            El.install.mobile.classList.add('hidden');
+        } else if (window._isUpdateWaiting) {
+            // Keep hidden in mobile nav for the 4th button instead
             El.install.mobile.classList.add('hidden');
         } else {
             // Always show on mobile if not installed so people can see instructions
