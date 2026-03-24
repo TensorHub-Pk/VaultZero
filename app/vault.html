@@ -110,7 +110,10 @@
     </div>
 
     <div class="app-shell">
+      <!-- Top Update Banner (Professional Notification) -->
+
       <!-- ==================== MOBILE HEADER ==================== -->
+
       <header class="mobile-header">
         <div class="mobile-header-inner">
           <div class="mobile-branding">
@@ -127,11 +130,7 @@
           </div>
 
           <div class="mobile-actions-right">
-            <button
-              id="btn-install-mobile"
-              class="mobile-install-btn"
-              title="Add to Home Screen"
-            >
+            <button id="btn-install-mobile" class="mobile-install-btn" title="Add to Home Screen">
               <div class="pulse-glow-container">
                 <i class="ph-duotone ph-download" style="font-size: 26px;"></i>
               </div>
@@ -144,6 +143,7 @@
           </div>
         </div>
       </header>
+
 
       <!-- ==================== DESKTOP HEADER ==================== -->
       <header class="desktop-header">
@@ -711,19 +711,15 @@
         <button
           id="mobile-nav-update"
           class="mobile-nav-btn hidden pulse-icon"
-          onclick="
-            document.getElementById('update-confirm-modal').classList.remove('hidden');
-            requestAnimationFrame(() =>
-              document.getElementById('update-confirm-modal').classList.add('active'),
-            );
-          "
-          title="Update Available"
+          onclick="triggerAppUpdate()"
+          title="Security Update Ready"
           style="color: var(--accent);"
         >
           <i class="ph-bold ph-arrows-clockwise" style="font-size: 24px;"></i>
           <span>Update</span>
         </button>
       </nav>
+
     </div>
 
     <!-- Updating Overlay -->
@@ -854,66 +850,11 @@
     </div>
 
     <!-- Floating Update Icon -->
-    <button
-      id="floating-update-btn"
-      class="floating-update-btn hidden"
-      title="Update Available"
-      onclick="
-        document
-          .getElementById('update-confirm-modal')
-          .classList.remove('hidden');
-        requestAnimationFrame(() =>
-          document
-            .getElementById('update-confirm-modal')
-            .classList.add('active'),
-        );
-      "
-    >
-      <i class="ph-bold ph-arrows-clockwise" style="font-size: 24px;"></i>
-    </button>
+
 
     <!-- Update Confirm Modal -->
-    <div id="update-confirm-modal" class="install-modal hidden">
-      <div
-        class="install-modal-backdrop"
-        onclick="
-          this.parentElement.classList.remove('active');
-          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
-        "
-      ></div>
-      <div class="install-modal-card">
-        <button
-          class="install-modal-close"
-          onclick="
-            this.parentElement.parentElement.classList.remove('active');
-            setTimeout(
-              () => this.parentElement.parentElement.classList.add('hidden'),
-              300,
-            );
-          "
-        >
-          <i class="ph-bold ph-x" style="font-size: 24px;"></i>
-        </button>
-        <div class="install-modal-icon pulse-icon">
-          <i class="ph-duotone ph-arrows-clockwise" style="font-size: 42px;"></i>
-        </div>
-        <h2 class="install-modal-title">Secure Update Available</h2>
-        <p class="install-modal-subtitle">
-          A new version of VaultZero is ready to install. This process will
-          encrypt your local identity and securely refresh the app.
-        </p>
-        <div style="margin-top: 24px">
-          <button id="btn-confirm-update" class="install-action-btn">
-            <i class="ph-bold ph-arrows-clockwise" style="font-size: 20px;"></i>
-            Reload & Apply Fixes
-          </button>
-        </div>
-        <div class="install-modal-footer-badge">
-          <i class="ph-bold ph-check-circle"></i>
-          Safe to apply &middot; No data will be lost
-        </div>
-      </div>
-    </div>
+
+
 
     <!-- Info Modal -->
     <div id="info-modal" class="install-modal hidden">

@@ -127,8 +127,8 @@ async function initElements() {
     };
 
     El.version = {
-        floatingBtn: document.getElementById('floating-update-btn'),
-        mobileNavBtn: document.getElementById('mobile-nav-update'),
+        banner: document.getElementById('update-banner'),
+        shell: document.querySelector('.app-shell'),
         confirmUpdateBtn: document.getElementById('btn-confirm-update'),
         desktopVText: document.getElementById('header-version-text'),
         mobileVText: document.getElementById('mobile-v-text'),
@@ -403,8 +403,10 @@ function initShareAutoFill() {
 }
 
 function showUpdatePrompt() {
-    if (El.version.floatingBtn) El.version.floatingBtn.classList.remove('hidden');
-    if (El.version.mobileNavBtn) El.version.mobileNavBtn.classList.remove('hidden');
+    if (El.version.banner) {
+        El.version.banner.classList.remove('hidden');
+        if (El.version.shell) El.version.shell.classList.add('has-banner');
+    }
 }
 
 // --- INITIALIZE ---
@@ -1844,12 +1846,10 @@ async function triggerAppUpdate() {
     // No need to hide loader as page will reload
     
     // Animate modal out and floating button away before applying
-    const updateModal = document.getElementById('update-confirm-modal');
-    if (updateModal) {
-        updateModal.classList.remove('active');
-        setTimeout(() => updateModal.classList.add('hidden'), 300);
+    if (El.version.banner) {
+        El.version.banner.classList.add('hidden');
+        if (El.version.shell) El.version.shell.classList.remove('has-banner');
     }
-    El.version.floatingBtn.classList.add('hidden');
 
     try {
         // Clear stored version so it matches new installation

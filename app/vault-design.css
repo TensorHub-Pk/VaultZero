@@ -113,48 +113,17 @@ body {
   min-height: 100dvh;
 }
 
-/* â”€â”€ Floating Update Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.floating-update-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--bg-elevated);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 9900;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, opacity 0.4s, box-shadow 0.3s;
-  will-change: transform, opacity, box-shadow;
-  transform: translateZ(0);
-}
-.floating-update-btn:hover {
-  background: var(--accent);
-  color: #fff;
-  transform: translateY(-4px) scale(1.05) translateZ(0);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 25px var(--accent-glow-strong);
-}
-.floating-update-btn:active {
-  transform: translateY(0) scale(0.95) translateZ(0);
-}
-.floating-update-btn.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px) scale(0.8) translateZ(0);
+/* â”€â”€ Mobile Header Elements Override â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-width: 767px) {
+  .mobile-version-container {
+    display: flex !important;
+  }
+  .mobile-install-btn {
+    display: flex !important;
+  }
 }
 
-/* --- Premium Animations --- */
-@keyframes glowing-update {
-  0% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 5px var(--accent-glow); }
-  50% { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow-strong); }
-  100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 5px var(--accent-glow); }
-}
+
 .floating-update-btn:not(.hidden) {
   animation: glowing-update 3s infinite ease-in-out;
 }
@@ -1331,14 +1300,23 @@ textarea.input-inactive {
 
 @media (max-width: 767px) {
   .toast {
-    bottom: 96px; /* Positioned perfectly above mobile bottom nav */
-    width: calc(100% - 40px);
-    max-width: 450px;
-    padding: 14px 20px;
-    font-size: 14px;
-    border-radius: 18px; /* Slightly softer for mobile */
+    bottom: 86px; /* Positioned perfectly above mobile bottom nav */
+    width: calc(100% - 32px);
+    max-width: 400px;
+    padding: 12px 20px;
+    font-size: 13px;
+    border-radius: 100px; /* Keep pill shape but responsive */
+    left: 16px; 
+    right: 16px;
+    transform: translateY(20px) scale(0.95);
+  }
+  .toast.show {
+    transform: translateY(0) scale(1);
+    left: 50%;
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
+
 
 
 .hidden {
@@ -2358,12 +2336,21 @@ textarea.input-inactive {
 
 .install-action-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(201, 33, 33, 0.4);
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.45);
 }
 
 .install-action-btn:active {
   transform: translateY(1px);
 }
+
+@media (max-width: 767px) {
+  .install-modal-card {
+    width: 92% !important;
+    padding: 32px 20px 24px !important;
+    max-width: none !important;
+  }
+}
+
 
 .install-modal-footer-badge {
   display: inline-flex;
