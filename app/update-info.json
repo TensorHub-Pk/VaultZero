@@ -1,13 +1,13 @@
 {
-  "version": "1.7 Stable",
+  "version": "2.0 Stable",
   "released": "2026-03-24",
   "hashes": {
-    "app.js": "dbe3947fe42b3661906ace90569f02a670b08716930272f1eb88d8aa5a8504d6",
+    "app.js": "afa85ac09ed3df02db31f2892c2442fa4e9e03d61ae0c06eccc59a63b9c06e16",
     "encryption.js": "8846ecd337d82bac90b3374f604832e8ea0867c19ad4fca6d5f9eb2d2b288605",
-    "service-worker.js": "c679f6cc74dfba72759b8a16012f3b7290d8aa04819fdb19419c07494a2f3de1",
+    "service-worker.js": "ebc884e47f348a212c3775b3a92080ea1ea50a870151286926c9f886a6c2fc37",
     "security-logs.js": "373cfbba4b9e4ab40e71dcda45150f201108b383024997ff681a4743e3b7e78f",
     "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
   },
-  "signature": "x0HgfDnMWOGfsxsy6JMSp/q8LrUFBWICgEKkAhBqFQhrivvQeG5NRyjZx6IjTxuItnGlW11Vzg1b+t3hXk6XCA==",
+  "signature": "oUVlgS/n+rXRi6wsQ0++Smn/kFuTG3gROtPLWb6yB9p+Q7AbQfD8LHjyZ1i5MHgBQPM+oU63N2v07d8UIIfLBA==",
   "signerPublicKey": "eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4="
 }
