@@ -1,0 +1,832 @@
+<!--
+  VaultZero — Zero-Knowledge Offline Encryption
+  Copyright (c) 2026 VaultZero Contributors
+  SPDX-License-Identifier: MIT
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VaultZero | Professional Zero-Knowledge & Post-Quantum Encryption</title>
+    <meta name="description" content="VaultZero: The definitive open-source, client-side zero-knowledge encryption suite. Securely encrypt files and messages locally with post-quantum resistance. No data leaves your device." />
+    <meta name="theme-color" content="#08080d" />
+    <meta name="author" content="TensorHub Inc." />
+    <meta name="keywords" content="VaultZero, client-side encryption, zero knowledge, post-quantum cryptography, secure file encryption, private messaging, browser encryption, ML-KEM-768, Argon2id, privacy tools" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+
+    <!-- Performance & Pre-connect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <!-- JSON-LD Structured Data (SEO Pro) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "VaultZero",
+      "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
+      "applicationCategory": "SecurityApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Professional zero-knowledge offline encryption tool with post-quantum resistance.",
+      "softwareVersion": "3.0.0",
+      "author": {
+        "@type": "Organization",
+        "name": "TensorHub Inc.",
+        "url": "https://tensorhub.pk"
+      }
+    }
+    </script>
+
+    <!-- Security Headers & SEO -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" />
+    <meta name="copyright" content="TensorHub Inc." />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+    <!-- Canonical & Favicon -->
+    <link rel="canonical" href="https://vaultzero.tensorhub.pk/" />
+    <link rel="alternate" hreflang="en" href="https://vaultzero.tensorhub.pk/" />
+    <link rel="icon" sizes="512x512" href="./assets/fevicon.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
+
+    <!-- Open Graph (1200x630 optimized) -->
+    <meta property="og:title" content="VaultZero — Zero-Knowledge Encryption" />
+    <meta property="og:description" content="Open-source, offline-first encryption with post-quantum resistance. Encrypt messages and files locally. No data ever leaves your device." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vaultzero.tensorhub.pk/" />
+    <meta property="og:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="VaultZero - Secure Offline Encryption" />
+    <meta property="og:site_name" content="VaultZero" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://vaultzero.tensorhub.pk/" />
+    <meta name="twitter:title" content="VaultZero — Zero-Knowledge Encryption" />
+    <meta name="twitter:description" content="Open-source, offline-first encryption with post-quantum resistance. No data ever leaves your device." />
+    <meta name="twitter:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
+    <meta name="twitter:image:alt" content="VaultZero shield logo" />
+
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Tensorhub.pk",
+        "url": "https://tensorhub.pk",
+        "logo": "https://vaultzero.tensorhub.pk/icon-512.png",
+        "sameAs": [
+            "https://github.com/TensorHub-Pk/VaultZero"
+        ],
+        "description": "Tensorhub.pk builds privacy-first, open-source security tools.",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "info@tensorhub.pk",
+            "contactType": "Customer Support"
+        }
+    }
+    </script>
+
+    <!-- Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "VaultZero",
+        "alternateName": ["Vault Zero", "Vault-Zero"],
+        "applicationCategory": "SecurityApplication",
+        "applicationSubCategory": "Encryption Tool",
+        "operatingSystem": "Web",
+        "description": "VaultZero (also known as Vault Zero) is an open-source, offline-first, zero-knowledge encryption platform powered by Post-Quantum Encryption. Supports ChaCha20-Poly1305, Argon2id, X25519 + ML-KEM-768 hybrid key exchange, browser-based Steganography, and WOTS+ Merkle signatures. Developed by Tensor Hub.",
+        "url": "https://vaultzero.tensorhub.pk/",
+        "downloadUrl": "https://vaultzero.tensorhub.pk/vault.html",
+        "screenshot": "https://vaultzero.tensorhub.pk/icon-512.png",
+        "softwareVersion": "1.0.0",
+        "releaseNotes": "Initial open-source release with full post-quantum cryptographic suite.",
+        "author": {
+            "@type": "Organization",
+            "name": "Tensorhub.pk",
+            "url": "https://tensorhub.pk"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true,
+        "featureList": [
+            "ChaCha20-Poly1305 AEAD Encryption",
+            "AES-256-GCM Hardware-Accelerated Fallback",
+            "Argon2id Memory-Hard Key Derivation",
+            "X25519 + ML-KEM-768 Hybrid Key Exchange",
+            "Ed25519 Digital Signatures",
+            "WOTS+ Merkle Post-Quantum Signatures",
+            "LSB Steganography",
+            "Offline-First Progressive Web App",
+            "Total Network Isolation After Init",
+            "Signed Update Verification"
+        ],
+        "permissions": "No permissions required. Runs entirely in the browser."
+    }
+    </script>
+
+    <!-- Structured Data: WebPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "VaultZero — Zero-Knowledge Encryption",
+        "description": "Official homepage for VaultZero, an open-source encryption platform.",
+        "url": "https://vaultzero.tensorhub.pk/",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "VaultZero",
+            "url": "https://vaultzero.tensorhub.pk/"
+        },
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [{
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://vaultzero.tensorhub.pk/"
+            }]
+        }
+    }
+    </script>
+
+    <!-- Performance: DNS Prefetch + Preconnect (consolidated) -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" as="style" />
+    <link rel="preload" href="./assets/logo.png" as="image" />
+
+    <!-- Fonts -->
+    <!-- Icons & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./home-design.css" />
+    <link rel="manifest" href="./app-identity.json" />
+
+</head>
+<body>
+    <!-- Premium Loader Overlay -->
+    <div id="app-loader" class="app-loader-overlay">
+      <div class="loader-card">
+        <img src="assets/logo.png" alt="VaultZero" class="loader-logo" />
+        <div class="loader-spinner-box">
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner-inner"></div>
+        </div>
+        <div class="loader-text-group">
+          <h2 id="loader-title" class="loader-title">Securing Environment</h2>
+          <p id="loader-status" class="loader-status">Initializing cryptographic modules...</p>
+        </div>
+        <div id="loader-progress-container" class="loader-progress hidden">
+          <div id="loader-progress-fill" class="loader-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" id="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo-link" aria-label="VaultZero Home">
+                <img src="assets/logo.png" alt="VaultZero Logo" class="logo-img" width="130" height="auto">
+            </a>
+            <nav class="site-nav" id="site-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="protocol.html" class="nav-link">How it Works</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="vault.html" class="nav-link nav-btn">Launch App</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
+                <i class="ph-bold ph-list" style="font-size: 28px;"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <main id="main-content">
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-badges-group">
+                <span class="premium-gold-badge">
+                    <i class="ph-fill ph-shield-checkered"></i>
+                    <span>3.0.0 TITANIUM PULSE RELEASE</span>
+                </span>
+                <div class="hero-feature-badge">PQC-READY · ZERO-KNOWLEDGE · OFFLINE-FIRST</div>
+            </div>
+            <h1 class="hero-title">
+                The New Standard for<br>
+                <span class="accent-text">Privacy 3.0.0</span>
+            </h1>
+            <p class="hero-subtitle">
+                Engineered for total autonomy. Your keys and data are protected with military-grade, post-quantum cryptography — entirely client-side. No servers. No trust required.
+            </p>
+            <div class="hero-actions">
+                <a href="vault.html" target="_blank" rel="noopener noreferrer" class="cta-btn primary-cta">
+                    <i class="ph-bold ph-shield-check" style="font-size: 24px; margin-right: 8px;"></i>
+                    Launch VaultZero
+                </a>
+                <a href="protocol.html" class="cta-btn secondary-cta">Learn How It Works</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">256-bit</span>
+                    <span class="stat-label">Encryption</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">Offline</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">0 bytes</span>
+                    <span class="stat-label">Sent to servers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== OPENSSF COMPLIANCE ===== -->
+    <section class="openssf-section reveal" id="compliance">
+        <div class="container">
+            <div class="openssf-card">
+                <div class="openssf-visual">
+                    <img src="https://raw.githubusercontent.com/ossf/artwork/e1d53fab943dfd4379b1f181d4078e2ea238c324/openssf/stacked/color/openssf-stacked-color.svg" alt="Official OpenSSF Logo" class="openssf-logo-large">
+                    <div class="badge-float">
+                        <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 48px;">
+                        </a>
+                    </div>
+                </div>
+                <div class="openssf-content">
+                    <h2>Committed to <span class="gold-text">OpenSSF Gold</span> Standards</h2>
+                    <p class="openssf-description">
+                        VaultZero is actively pursuing the OpenSSF Best Practices <strong>Gold Badge</strong>. This represents the highest tier of security and quality in open-source software maintenance.
+                    </p>
+                    <div class="openssf-criteria">
+                        <div class="criterion-item">
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <span>Two-Person Code Review</span>
+                        </div>
+                        <div class="criterion-item">
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <span>90% Unit Test Coverage</span>
+                        </div>
+                        <div class="criterion-item">
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <span>Automated CI Security Scans</span>
+                        </div>
+                        <div class="criterion-item">
+                            <i class="ph-bold ph-check-circle" style="font-size: 24px; color: var(--green);"></i>
+                            <span>Reproducible Build Path</span>
+                        </div>
+                    </div>
+                    <a href="https://bestpractices.dev/projects/12040" target="_blank" rel="noopener noreferrer" class="compliance-cta">
+                        View Compliance Roadmap
+                        <i class="ph-bold ph-arrow-right" style="font-size: 18px; margin-left: 6px;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROTOCOL & USAGE ===== -->
+    <section class="section" id="protocol">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">User Guide</span>
+                <h2 class="section-title">The VaultZero Protocol</h2>
+                <p class="section-desc">Understand how to leverage military-grade encryption for your daily digital life.</p>
+            </div>
+            
+            <div class="usage-grid">
+                <!-- Usage Step 1 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">01</div>
+                    <div class="usage-content">
+                        <h3>Secure Your Entry</h3>
+                        <p>Set a strong <strong>Master PIN</strong>. VaultZero uses Argon2id to derive your encryption keys locally. Your PIN is never stored and never leaves your browser.</p>
+                        <ul class="usage-list">
+                            <li><i class="ph-fill ph-check"></i> 100% Zero-Knowledge</li>
+                            <li><i class="ph-fill ph-check"></i> Memory-Hard Protection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Usage Step 2 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">02</div>
+                    <div class="usage-content">
+                        <h3>Choose Your Action</h3>
+                        <p>Access specialized modules for every privacy need:</p>
+                        <div class="usage-modules">
+                            <div class="u-module"><i class="ph-bold ph-key"></i> <span>Passwords</span></div>
+                            <div class="u-module"><i class="ph-bold ph-file-lock"></i> <span>Secrets</span></div>
+                            <div class="u-module"><i class="ph-bold ph-share-network"></i> <span>Secure Share</span></div>
+                            <div class="u-module"><i class="ph-bold ph-fingerprint"></i> <span>Identity</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Step 3 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">03</div>
+                    <div class="usage-content">
+                        <h3>Sync or Isolate</h3>
+                        <p>Use the <strong>Titanium Pulse</strong> engine to sync across devices via anonymous relays, or toggle <strong>Isolation Mode</strong> for total air-gapped security.</p>
+                        <ul class="usage-list">
+                            <li><i class="ph-fill ph-check"></i> Real-time Mesh Sync</li>
+                            <li><i class="ph-fill ph-check"></i> One-click Lockdown</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="usage-cases-box reveal">
+                <div class="cases-header">
+                    <i class="ph-bold ph-book-open"></i>
+                    <h3>Feature Reference Guide</h3>
+                    <p>A breakdown of every button and control within the VaultZero suite.</p>
+                </div>
+                <div class="reference-grid">
+                    <div class="ref-item">
+                        <span class="ref-badge">Master PIN Input</span>
+                        <p><strong>Action:</strong> Root encryption salt.</p>
+                        <p><strong>Usage:</strong> Enter 4-12 digits to generate your local security identity.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Unlock Vault</span>
+                        <p><strong>Action:</strong> Verifies PIN & opens dashboard.</p>
+                        <p><strong>Usage:</strong> Click after entering PIN. No server-side check is performed.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Add Password (+)</span>
+                        <p><strong>Action:</strong> Encrypts new credentials.</p>
+                        <p><strong>Usage:</strong> Click the plus icon, enter details, and hit "Save Securely".</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Copy / View</span>
+                        <p><strong>Action:</strong> Transient decryption.</p>
+                        <p><strong>Usage:</strong> Click eye/clipboard. Plaintext is auto-wiped after 30 seconds.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Encrypt File</span>
+                        <p><strong>Action:</strong> Packages files in AES-256.</p>
+                        <p><strong>Usage:</strong> Drag a file, set expiry, and click "Seal Secret".</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Titanium Pulse</span>
+                        <p><strong>Action:</strong> Anonymous mesh sync.</p>
+                        <p><strong>Usage:</strong> Toggle 'ON' to sync your vault across linked devices in real-time.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Isolation Mode</span>
+                        <p><strong>Action:</strong> Network lockdown.</p>
+                        <p><strong>Usage:</strong> Click to sever all browser network APIs for a private session.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Panic Wipe</span>
+                        <p><strong>Action:</strong> Irreversible data shredding.</p>
+                        <p><strong>Usage:</strong> Click to delete all local keys and data instantly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="usage-cases-box reveal" style="margin-top: 40px;">
+                <div class="cases-header">
+                    <i class="ph-bold ph-lightning"></i>
+                    <h3>When to Use VaultZero?</h3>
+                </div>
+                <div class="cases-grid">
+                    <div class="case-item">
+                        <h4>High-Security Comms</h4>
+                        <p>Sharing passwords, credentials, or sensitive documents with colleagues or family without leaving a digital trail.</p>
+                    </div>
+                    <div class="case-item">
+                        <h4>Zero-Trust Storage</h4>
+                        <p>Storing your most sensitive digital assets on public devices or cloud environments without risk of exposure.</p>
+                    </div>
+                    <div class="case-item">
+                        <h4>Air-Gapped Ops</h4>
+                        <p>Working in environments with no internet where you still need reliable, military-grade encryption tools.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHY VAULTZERO v3.0 ===== -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Titanium Pulse 3.0.0</span>
+                <h2 class="section-title">The "Titanium Pulse" Standard</h2>
+                <p class="section-desc">Version 3.0 represents a total hardening of the VaultZero ecosystem. Every component has been re-audited for zero-knowledge integrity, ensuring your data is mathematically unreachable by third parties.</p>
+            </div>
+            <div class="features-grid">
+                <!-- Card 1: ZK -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-lock-key"></i>
+                    </div>
+                    <h3>Zero-Knowledge Core</h3>
+                    <p>All cryptographic operations execute locally in your browser. No server ever sees your plaintext, keys, or metadata. v3.0 introduces Argon2id memory-hard hardening for all entry points.</p>
+                </div>
+                <!-- Card 2: Offline -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-wifi-slash"></i>
+                    </div>
+                    <h3>True Offline Autonomy</h3>
+                    <p>VaultZero v3.0 is built to run in air-gapped environments. Once loaded, the entire engine works without an active connection, providing a secure sanctuary for your digital life anywhere.</p>
+                </div>
+                <!-- Card 3: PQC -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-atom"></i>
+                    </div>
+                    <h3>Quantum-Resistant Sync</h3>
+                    <p>Titanium Pulse (v3.0) leverages a hybrid key exchange, combining classical X25519 with ML-KEM-768 (Kyber) to protect your synced data against future quantum decryption threats.</p>
+                </div>
+                <!-- Card 4: Files -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-file-lock"></i>
+                    </div>
+                    <h3>AES-256-GCM Vaults</h3>
+                    <p>v3.0 enhances file encryption with authenticated GCM mode and SHA-256 tamper detection. Secure your documents with auto-expiration and memory-wipe protection.</p>
+                </div>
+                <!-- Card 5: Share -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-users-three"></i>
+                    </div>
+                    <h3>Secure Share Hub</h3>
+                    <p>Generate cryptographic identities and share messages using hybrid post-quantum key encapsulation. Only the verified recipient's private key can decrypt the payload.</p>
+                </div>
+                <!-- Card 6: Stealth -->
+                <div class="feature-card reveal">
+                    <div class="feature-icon">
+                        <i class="ph-bold ph-eye-closed"></i>
+                    </div>
+                    <h3>Steganographic Stealth</h3>
+                    <p>Hide encrypted payloads inside ordinary images using LSB-3 encoding. In v3.0, the existence of your message is invisible — not just unreadable.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== THREAT MODEL ===== -->
+    <section class="section section-alt" id="threat-model">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Honest Security</span>
+                <h2 class="section-title">Threat Model</h2>
+                <p class="section-desc">Transparency about what we protect against — and what we don't — is the foundation of real security.</p>
+            </div>
+            <div class="threat-grid">
+                <div class="threat-card protects">
+                    <div class="threat-card-header">
+                        <i class="ph-bold ph-shield-check" style="font-size: 24px; color: var(--green);"></i>
+                        <h3>Protects Against</h3>
+                    </div>
+                    <ul>
+                        <li>Server-side data breaches — there is no server</li>
+                        <li>Man-in-the-middle interception of plaintext</li>
+                        <li>Mass surveillance and bulk data collection</li>
+                        <li>Future quantum computer attacks on key exchange</li>
+                        <li>Timing side-channel attacks on hash comparisons</li>
+                        <li>Payload tampering via integrity hash verification</li>
+                        <li>Downgrade attacks on app updates</li>
+                        <li>Unauthorized update injection (Ed25519 signed manifests)</li>
+                    </ul>
+                </div>
+                <div class="threat-card does-not">
+                    <div class="threat-card-header">
+                        <i class="ph-bold ph-shield-warning" style="font-size: 24px; color: var(--red);"></i>
+                        <h3>Does NOT Protect Against</h3>
+                    </div>
+                    <ul>
+                        <li>Compromised device or OS-level keyloggers</li>
+                        <li>Physically coerced disclosure of passwords</li>
+                        <li>Malicious browser extensions with DOM access</li>
+                        <li>Side-channel attacks on the host hardware</li>
+                        <li>Weak or reused passwords chosen by the user</li>
+                        <li>Screenshots or screen recording during use</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="threat-assumptions">
+                <h3>Assumptions</h3>
+                <p>VaultZero assumes the user's device, operating system, and browser are not compromised. It assumes the initial download of the application is authentic. All security guarantees depend on these assumptions being true.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ARCHITECTURE ===== -->
+    <section class="section" id="architecture">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Under the Hood</span>
+                <h2 class="section-title">Security Architecture</h2>
+                <p class="section-desc">The cryptographic primitives and design decisions that make VaultZero trustworthy.</p>
+            </div>
+            <div class="arch-grid">
+                <div class="arch-card">
+                    <div class="arch-label">Symmetric Encryption</div>
+                    <div class="arch-value">ChaCha20-Poly1305</div>
+                    <p>AEAD cipher via Libsodium WASM. Hardware-accelerated AES-256-GCM fallback via Web Crypto API.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-label">Key Derivation</div>
+                    <div class="arch-value">Argon2id</div>
+                    <p>Memory-hard KDF with t=3, 64MB memory cost. PBKDF2-SHA256 fallback with 600,000 iterations.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-label">Key Exchange</div>
+                    <div class="arch-value">X25519 + ML-KEM-768</div>
+                    <p>Hybrid classical/post-quantum key exchange. Shared secrets combined via BLAKE2b hash derivation.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-label">Classical Signatures</div>
+                    <div class="arch-value">Ed25519</div>
+                    <p>Detached signatures for identity verification and signed update manifests. Keys zeroed after use.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-label">PQ Signatures</div>
+                    <div class="arch-value">WOTS+ / Merkle</div>
+                    <p>Hash-based quantum-resistant signatures. Winternitz w=16, 67 chains, tree height 4. Pure SHA-256.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-label">Network Policy</div>
+                    <div class="arch-value">Total Isolation</div>
+                    <p>After init, fetch/XHR/WebSocket/EventSource/sendBeacon are all permanently disabled for the session.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== OPEN SOURCE ===== -->
+    <section class="section section-alt" id="open-source">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Transparency</span>
+                <h2 class="section-title">Open Source</h2>
+                <p class="section-desc">Every line of code is public. Audit it yourself.</p>
+            </div>
+            <div class="open-source-content">
+                <div class="os-card">
+                    <i class="ph-bold ph-code" style="font-size: 32px; color: var(--accent);"></i>
+                    <h3>Source Code</h3>
+                    <p>Full source available on GitHub. Review the cryptography, report vulnerabilities, or contribute improvements.</p>
+                    <a href="https://github.com/TensorHub-Pk/VaultZero" target="_blank" rel="noopener noreferrer" class="os-link">View on GitHub →</a>
+                </div>
+                <div class="os-card">
+                    <i class="ph-bold ph-file-text" style="font-size: 32px; color: var(--accent);"></i>
+                    <h3>MIT License</h3>
+                    <p>Free to use, modify, and distribute. No restrictions, no vendor lock-in, no hidden terms.</p>
+                </div>
+                <div class="os-card">
+                    <i class="ph-bold ph-bug" style="font-size: 32px; color: var(--accent);"></i>
+                    <h3>Responsible Disclosure</h3>
+                    <p>Found a vulnerability? We take security reports seriously. Contact us privately before public disclosure.</p>
+                    <a href="mailto:security@tensorhub.pk" class="os-link">security@tensorhub.pk →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer new-footer">
+        <div class="container">
+            <div class="new-footer-layout">
+                <!-- Left: Branding & GPG -->
+                <div class="new-footer-left">
+                    <div class="footer-brand-row">
+                        <a href="https://tensorhub.pk" class="new-footer-logo">
+                            <img src="assets/logo.png" alt="VaultZero Logo" width="110" height="auto">
+                        </a>
+                        <div class="gpg-verification-badge">
+                            <i class="ph-bold ph-seal-check"></i>
+                            <code>4C51 58A4 6046 CE4C</code>
+                        </div>
+                    </div>
+                    <p class="new-footer-copy">&copy; 2026 TensorHub Inc. Built for privacy.</p>
+                </div>
+
+                <!-- Center: Tagline & Projects (Side-by-Side) -->
+                <div class="new-footer-center">
+                    <p class="new-footer-tagline">Innovating at the Edge with <a href="https://tensorhub.pk" class="tensorhub-link">TensorHub</a></p>
+                    <div class="new-footer-projects">
+                        <div class="projects-list">
+                            <a href="https://scamshield.tensorhub.pk/" target="_blank" class="project-link">ScamShield</a>
+                            <span class="project-dot">•</span>
+                            <a href="https://timespace.tensorhub.pk" target="_blank" class="project-link">Time Space</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Socials & OpenSSF -->
+                <div class="new-footer-right">
+                    <div class="new-footer-socials">
+                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" title="Founder GitHub"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="https://github.com/TensorHub-Pk" target="_blank" title="Organization GitHub"><i class="ph-bold ph-buildings"></i></a>
+                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="mailto:info@tensorhub.pk" title="Email"><i class="ph-fill ph-envelope"></i></a>
+                    </div>
+                    <div class="footer-badge">
+                        <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF" style="height: 20px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Structured Data: FAQ -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is VaultZero?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "VaultZero is an open-source, client-side encryption tool that runs entirely in your browser. It uses post-quantum cryptography including ChaCha20-Poly1305, Argon2id, and ML-KEM-768 to protect your messages and files. No data ever leaves your device."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Does VaultZero store my data on any server?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "No. VaultZero is a zero-knowledge tool. All encryption and decryption operations happen locally in your browser. There is no server-side processing, no accounts, and no data transmission. After initial load, the app works entirely offline."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What encryption algorithms does VaultZero use?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "VaultZero uses ChaCha20-Poly1305 (via Libsodium WASM) for symmetric encryption with AES-256-GCM fallback, Argon2id for key derivation, X25519 + ML-KEM-768 hybrid key exchange, Ed25519 digital signatures, and WOTS+ Merkle hash-based post-quantum signatures."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is VaultZero resistant to quantum computer attacks?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "VaultZero includes post-quantum resistance through hybrid key exchange combining classical X25519 with ML-KEM-768 (Kyber), and WOTS+ Merkle signatures built on SHA-256 hash functions. This provides defense-in-depth against both current and future quantum threats."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can I use VaultZero offline?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. VaultZero is an offline-first Progressive Web App. After the initial page load, it caches all resources locally and works without any internet connection. You can also install it as a standalone app on your device."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- Minimal inline script: menu toggle, throttled scroll, reduced-motion aware -->
+    <script>
+        (function() {
+            'use strict';
+            var header = document.getElementById('site-header');
+            var nav = document.getElementById('site-nav');
+            var menuBtn = document.getElementById('mobile-menu-btn');
+            var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+            // Mobile menu toggle
+            menuBtn.addEventListener('click', function() {
+                nav.classList.toggle('open');
+                menuBtn.classList.toggle('active');
+            });
+
+            // Smooth scroll for anchor links (respects reduced-motion)
+            document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+                a.addEventListener('click', function(e) {
+                    var target = document.querySelector(a.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        nav.classList.remove('open');
+                        menuBtn.classList.remove('active');
+                        target.scrollIntoView({ behavior: scrollBehavior, block: 'start' });
+                    }
+                });
+            });
+
+            // Throttled scroll handler for header (16ms = ~60fps)
+            var scrollTicking = false;
+            var lastScrollY = window.scrollY;
+            window.addEventListener('scroll', function() {
+                if (!scrollTicking) {
+                    scrollTicking = true;
+                    requestAnimationFrame(function() {
+                        var currentScrollY = window.scrollY;
+                        if (currentScrollY > 40) {
+                            header.classList.add('scrolled');
+                        } else {
+                            header.classList.remove('scrolled');
+                        }
+                        
+                        // Hide on scroll down, show on scroll up
+                        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                            header.classList.add('header-hidden');
+                        } else if (currentScrollY < lastScrollY) {
+                            header.classList.remove('header-hidden');
+                        }
+                        lastScrollY = currentScrollY;
+                        
+                        scrollTicking = false;
+                    });
+                }
+            }, { passive: true });
+
+            // Intersection Observer for section fade-in (CLS-safe, no layout shift)
+            if ('IntersectionObserver' in window && !prefersReducedMotion) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+                // Track both auto-revealed and manually tagged reveal elements
+                document.querySelectorAll('.feature-card, .threat-card, .arch-card, .os-card, .openssf-section, .usage-card, .usage-cases-box, .reveal').forEach(function(el) {
+                    if (!el.classList.contains('reveal')) el.classList.add('reveal');
+                    observer.observe(el);
+                });
+            }
+            // Hide loader after a brief "security check" animation
+            setTimeout(function() {
+                var loader = document.getElementById('app-loader');
+                if (loader) loader.classList.add('hidden');
+            }, 300);
+        })();
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('mobile-menu-btn');
+                var nav = document.getElementById('site-nav');
+                if (!btn || !nav) return;
+
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    var isOpen = nav.classList.toggle('mobile-open');
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = isOpen ? 'ph-bold ph-x' : 'ph-bold ph-list';
+                    }
+                    document.body.style.overflow = isOpen ? 'hidden' : '';
+                };
+
+                // Close menu when a nav link is clicked
+                nav.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.onclick = function() {
+                        nav.classList.remove('mobile-open');
+                        var icon = btn.querySelector('i');
+                        if (icon) icon.className = 'ph-bold ph-list';
+                        document.body.style.overflow = '';
+                    };
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

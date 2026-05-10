@@ -1,0 +1,1189 @@
+<!--
+  VaultZero — Zero-Knowledge Offline Encryption
+  Copyright (c) 2026 VaultZero Contributors
+  SPDX-License-Identifier: MIT
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <title>VaultZero — Secure Encryption Tool | Offline-First</title>
+    <meta name="theme-color" content="#08080d" />
+    <meta
+      name="description"
+      content="VaultZero is a zero-knowledge, offline-first encryption vault with post-quantum resistance. Encrypt messages and files locally in your browser."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdn.lordicon.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self' https://ntfy.sh https://cdn.lordicon.com; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta
+      http-equiv="Permissions-Policy"
+      content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
+    />
+
+    <!-- Open Graph for WhatsApp/Social Clickability -->
+    <meta property="og:title" content="VaultZero" />
+    <meta
+      property="og:description"
+      content="I sent you an encrypted message. Tap to unlock."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://vaultzero.tensorhub.pk/vault.html"
+    />
+    <meta
+      property="og:image"
+      content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="VaultZero encryption vault" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://vaultzero.tensorhub.pk/vault.html" />
+    <meta name="twitter:title" content="VaultZero Vault — Secure Encryption" />
+    <meta
+      name="twitter:description"
+      content="Zero-knowledge, offline-first encryption vault with post-quantum resistance."
+    />
+    <meta
+      name="twitter:image"
+      content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg"
+    />
+    <link rel="canonical" href="https://vaultzero.tensorhub.pk/vault.html" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+      as="style"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./vault-design.css" />
+    <link rel="stylesheet" href="./vault-pro.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <link rel="manifest" href="./app-identity.json" />
+
+    <!-- iOS / Safari Support -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="VaultZero" />
+    <link
+      rel="icon"
+      sizes="512x512"
+      href="./assets/fevicon.jpeg"
+      type="image/jpeg"
+    />
+    <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
+  </head>
+  <body>
+    <!-- Premium Loader Overlay -->
+    <div id="app-loader" class="app-loader-overlay">
+      <div class="loader-card">
+        <img src="assets/logo.png" alt="VaultZero" class="loader-logo" />
+        <div class="loader-spinner-box">
+          <div class="loader-spinner"></div>
+          <div class="loader-spinner-inner"></div>
+        </div>
+        <div class="loader-text-group">
+          <h2 id="loader-title" class="loader-title">Securing Environment</h2>
+          <p id="loader-status" class="loader-status">Initializing cryptographic modules...</p>
+        </div>
+        <div id="loader-progress-container" class="loader-progress hidden">
+          <div id="loader-progress-fill" class="loader-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <!-- Top Update Banner (Professional Notification) -->
+
+      <!-- ==================== MOBILE HEADER ==================== -->
+
+      <header class="mobile-header">
+        <div class="mobile-header-inner">
+          <div class="mobile-branding">
+            <div class="logo-version-stack">
+              <img src="assets/logo.png" alt="Logo" width="90" height="auto" />
+              <div class="header-version-indicator">
+                <span id="mobile-v-text">V3.0.0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mobile-actions-right">
+            <button id="btn-install-mobile" class="mobile-install-btn pulse-premium" title="Add to Home Screen">
+              <div class="pulse-glow-container">
+                <i class="ph ph-duotone ph-download" style="font-size: 26px;"></i>
+              </div>
+            </button>
+
+            <!-- Isolation moved to bottom nav for mobile -->
+
+            <button onclick="onPanicWipe()" class="mobile-wipe-btn" title="Panic Wipe">
+              <i class="ph ph-bold ph-broom" style="font-size: 18px; margin-right: 4px;"></i>
+              WIPE
+            </button>
+          </div>
+        </div>
+      </header>
+
+
+      <!-- ==================== DESKTOP HEADER ==================== -->
+      <header class="desktop-header">
+        <div class="desktop-header-left">
+          <div class="logo-version-stack">
+            <img
+              src="assets/logo.png"
+              alt="VaultZero Logo"
+              width="130"
+              height="auto"
+              style="object-fit: contain"
+            />
+            <div class="header-version-indicator">
+              <div class="version-dot"></div>
+              <span id="header-version-text">V3.0.0</span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="header-nav">
+          <button
+            id="header-nav-sym"
+            onclick="switchMainTab('symmetric')"
+            class="header-nav-btn active"
+            title="Security Vault"
+          >
+            <i class="ph ph-bold ph-lock-key" style="font-size: 20px;"></i>
+            <span>Vault</span>
+          </button>
+          <button
+            id="header-nav-asym"
+            onclick="switchMainTab('asymmetric')"
+            class="header-nav-btn"
+            title="Secure Share"
+          >
+            <i class="ph ph-bold ph-share-network" style="font-size: 20px;"></i>
+            <span>Share</span>
+          </button>
+          <button
+            id="header-nav-passwords"
+            onclick="switchMainTab('passwords')"
+            class="header-nav-btn"
+            title="Password Manager"
+          >
+            <i class="ph ph-bold ph-key" style="font-size: 20px;"></i>
+            <span>Passwords</span>
+          </button>
+          <button
+            id="header-nav-identity"
+            onclick="switchMainTab('identity')"
+            class="header-nav-btn"
+            title="My Identity"
+          >
+            <i class="ph ph-bold ph-fingerprint" style="font-size: 20px;"></i>
+            <span>Identity</span>
+          </button>
+          <button
+            id="header-nav-update"
+            onclick="triggerAppUpdate()"
+            class="header-nav-btn hidden"
+            title="Update Available"
+            style="color: var(--accent);"
+          >
+            <i class="ph ph-bold ph-arrows-clockwise" style="font-size: 20px;"></i>
+            <span>Update</span>
+          </button>
+        </nav>
+
+        <div class="desktop-header-right">
+          <div class="header-controls-group">
+            <button id="header-airgap-desktop" class="header-airgap-btn" title="Toggle Isolation Mode">
+              <i class="ph ph-bold ph-broadcast" style="font-size: 18px;"></i>
+              <span>Isolation</span>
+            </button>
+
+            <button onclick="onPanicWipe()" class="header-wipe-btn" title="Panic Wipe">
+              <i class="ph ph-bold ph-broom" style="font-size: 16px;"></i>
+              <span>Wipe Data</span>
+            </button>
+
+            <button id="btn-install-header" class="header-install-btn pulse-premium" title="Install Mobile App">
+              <i class="ph ph-duotone ph-download" style="font-size: 18px;"></i>
+              <span>Install App</span>
+            </button>
+          </div>
+
+          <div id="status-container-isolation" class="status-indicator-mini hidden">
+            <div class="status-dot online"></div>
+            <span id="header-status-text">Online</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==================== MAIN CONTENT ==================== -->
+      <main class="main-content">
+        <!-- ============ SYMMETRIC VIEW ============ -->
+        <section id="view-symmetric" class="view-section">
+          <!-- Single wide card for symmetric -->
+          <div class="card main-card">
+            <div class="card-header-row">
+              <div>
+                <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  Secret Vault
+                  <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('vault')" title="What is this?">
+                    <i class="ph ph-bold ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                  </button>
+                </h3>
+                <p class="card-desc">Lock messages with a password</p>
+              </div>
+              <div class="tab-bar">
+                <button
+                  id="btn-encrypt-sym"
+                  onclick="setOpMode('encrypt')"
+                  class="tab-btn active"
+                >
+                  Create
+                </button>
+                <button
+                  id="btn-decrypt-sym"
+                  onclick="setOpMode('decrypt')"
+                  class="tab-btn"
+                >
+                  Open
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="password-input-wrapper">
+                <input
+                  type="password"
+                  id="password-sym"
+                  placeholder="Enter password"
+                  class="form-input"
+                />
+                <div id="pass-strength-sym" class="pass-strength-bar">
+                  <div class="pass-strength-fill"></div>
+                </div>
+              </div>
+              <div id="pass-hint-sym" class="pass-strength-hint"><i class="ph ph-bold ph-key"></i> Enter Password</div>
+            </div>
+
+            <div class="form-group">
+              <div class="form-label-row">
+                <label id="text-label" class="form-label">Input Content</label>
+              </div>
+              <div class="input-row-group">
+                <textarea
+                  id="message-sym"
+                  placeholder="Type your secrets..."
+                  class="form-input form-textarea"
+                ></textarea>
+                <div
+                  id="file-input-container"
+                  class="file-drop-zone"
+                  onclick="document.getElementById('target-file-sym').click()"
+                >
+                  <i class="ph ph-bold ph-file-arrow-up" style="font-size: 28px; margin-bottom: 8px;"></i>
+                  <span id="file-label-sym">Click to attach file or image</span>
+                  <input
+                    type="file"
+                    id="target-file-sym"
+                    accept=".txt,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp"
+                    class="hidden"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div id="sym-options-area">
+              <div class="options-row">
+                <label class="option-chip">
+                  <input type="checkbox" id="stego-toggle-sym" />
+                  <span>Hide in Photo</span>
+                  <button type="button" class="info-i-btn" onclick="openInfoModal('stego')" title="What is this?">
+                    <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                  </button>
+                </label>
+                <label class="option-chip">
+                  <input type="checkbox" id="device-lock-sym" />
+                  <span>Device Lock</span>
+                  <button type="button" class="info-i-btn" onclick="openInfoModal('device_lock')" title="What is this?">
+                    <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                  </button>
+                </label>
+                <label class="option-chip">
+                  <input type="checkbox" id="timer-toggle-sym" />
+                  <span>Auto-Delete After Use</span>
+                  <button type="button" class="info-i-btn" onclick="openInfoModal('expiration')" title="What is this?">
+                    <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                  </button>
+                </label>
+              </div>
+
+              <div id="stego-file-container-sym" class="hidden form-group">
+                <label class="form-label">Upload Cover Image</label>
+                <div
+                  class="file-drop-zone"
+                  id="stego-drop-zone-sym"
+                  onclick="document.getElementById('stego-file-sym').click()"
+                >
+                  <i class="ph ph-bold ph-image" style="font-size: 28px; margin-bottom: 8px;"></i>
+                  <span id="stego-label-sym">Click or drop image here</span>
+                  <input
+                    type="file"
+                    id="stego-file-sym"
+                    accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                    class="hidden"
+                  />
+                </div>
+              </div>
+              <div id="timer-options-sym" class="hidden form-group">
+                <label class="form-label">Link Expiration</label>
+                <select id="timer-select-sym" class="form-input">
+                  <option value="60000">1 Minute</option>
+                  <option value="1800000">30 Minutes</option>
+                  <option value="3600000">1 Hour</option>
+                  <option value="86400000" selected>24 Hours</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="centered-action-wrap">
+              <button
+                id="btn-action-sym"
+                disabled
+                class="action-btn primary-action"
+              >
+                <i class="ph ph-bold ph-lock-key" style="font-size: 20px; margin-right: 6px;"></i>
+                <span id="btn-action-text-sym">Lock</span>
+              </button>
+            </div>
+
+            <div
+              id="result-area-sym"
+              class="hidden result-card-inner"
+              style="margin-top: 1.5rem"
+            >
+              <div class="result-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <span class="form-label" style="margin-bottom:0;">Output</span>
+                  <div id="res-badge-sym" class="security-badge hidden">Portable</div>
+                </div>
+                <div class="result-actions">
+                  <button id="btn-copy-sym" class="copy-btn">
+                    <i class="ph ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
+                    <span>COPY TEXT</span>
+                  </button>
+                  <button
+                    id="btn-download-sym"
+                    class="copy-btn download-style hidden"
+                  >
+                    <i class="ph ph-bold ph-download-simple" style="font-size: 16px;"></i>
+                    <span>DOWNLOAD FILE</span>
+                  </button>
+                  <button
+                    id="btn-copy-link-sym"
+                    class="copy-btn secondary-copy"
+                  >
+                    <i class="ph ph-bold ph-link" style="font-size: 16px; margin-right: 4px;"></i>
+                    <span>SHARE LINK</span>
+                  </button>
+                </div>
+              </div>
+              <div id="result-text-sym" class="result-box"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ ASYMMETRIC VIEW ============ -->
+        <section id="view-asymmetric" class="hidden view-section">
+          <div class="card main-card">
+            <div class="card-header-row">
+              <div>
+                <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+                  Secure Share
+                  <button type="button" style="background:none; border:none; cursor:pointer;" onclick="openInfoModal('share')" title="What is this?">
+                    <i class="ph ph-bold ph-info" style="font-size:22px; color:var(--text-muted)"></i>
+                  </button>
+                </h3>
+                <p id="asym-card-desc" class="card-desc">Send messages directly to a friend's ID</p>
+              </div>
+              <div class="tab-bar">
+                <button
+                  id="btn-encrypt-asym"
+                  onclick="setOpModeAsym('encrypt')"
+                  class="tab-btn active"
+                >
+                  Send
+                </button>
+                <button
+                  id="btn-decrypt-asym"
+                  onclick="setOpModeAsym('decrypt')"
+                  class="tab-btn"
+                >
+                  Receive
+                </button>
+              </div>
+            </div>
+
+            <!-- ============ SEND FORM ============ -->
+            <div id="asym-send-form">
+              <div class="form-columns">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label id="asym-key-label" class="form-label"
+                      >Recipient's Public ID
+                      <button type="button" class="info-i-btn" onclick="openInfoModal('recipient')" title="What is this?">
+                        <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                      </button>
+                    </label>
+                    <textarea
+                      id="key-input-asym"
+                      placeholder="e.g. jS7x... (ask your friend for their ID)"
+                      class="form-input form-textarea mono"
+                      style="min-height: 90px"
+                    ></textarea>
+                  </div>
+
+                  <div id="asym-input-group" class="form-group">
+                    <div class="form-label-row">
+                      <label id="asym-msg-label" class="form-label"
+                        >Message or Document to Send</label
+                      >
+                    </div>
+                    <div class="input-row-group">
+                      <textarea
+                        id="message-asym"
+                        placeholder="Only your friend can read this..."
+                        class="form-input form-textarea"
+                      ></textarea>
+                      <div
+                        id="file-input-container-asym"
+                        class="file-drop-zone"
+                        onclick="
+                          document.getElementById('target-file-asym').click()
+                        "
+                      >
+                        <i class="ph ph-bold ph-file-arrow-up" style="font-size: 28px; margin-bottom: 8px;"></i>
+                        <span id="file-label-asym"
+                          >Click to attach file or image</span
+                        >
+                        <input
+                          type="file"
+                          id="target-file-asym"
+                          accept=".txt,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp"
+                          class="hidden"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="asym-options-area">
+                    <div class="options-row">
+                      <label class="option-chip">
+                        <input type="checkbox" id="stego-toggle-asym" />
+                        <span>Hide in Photo</span>
+                        <button type="button" class="info-i-btn" onclick="openInfoModal('stego')" title="What is this?">
+                          <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                        </button>
+                      </label>
+
+                      <label class="option-chip">
+                        <input type="checkbox" id="timer-toggle-asym" />
+                        <span>Auto-Delete After Use</span>
+                        <button type="button" class="info-i-btn" onclick="openInfoModal('expiration')" title="What is this?">
+                          <i class="ph ph-bold ph-info" style="font-size: 14px;"></i>
+                        </button>
+                      </label>
+                    </div>
+
+                    <div id="stego-file-container-asym" class="hidden form-group">
+                      <label class="form-label">Upload Cover Image</label>
+                      <div
+                        class="file-drop-zone"
+                        id="stego-drop-zone-asym"
+                        onclick="
+                          document.getElementById('stego-file-asym').click()
+                        "
+                      >
+                        <i class="ph ph-bold ph-image" style="font-size: 28px; margin-bottom: 8px;"></i>
+                        <span id="stego-label-asym"
+                          >Click or drop image here</span
+                        >
+                        <input
+                          type="file"
+                          id="stego-file-asym"
+                          accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                          class="hidden"
+                        />
+                      </div>
+                    </div>
+                    <div id="timer-options-asym" class="hidden form-group">
+                      <label class="form-label">Link Expiration</label>
+                      <select id="timer-select-asym" class="form-input">
+                        <option value="60000">1 Minute</option>
+                        <option value="1800000">30 Minutes</option>
+                        <option value="3600000">1 Hour</option>
+                        <option value="86400000" selected>24 Hours</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="centered-action-wrap">
+                <button
+                  id="btn-action-asym"
+                  disabled
+                  class="action-btn primary-action"
+                >
+                  <i class="ph ph-bold ph-shield-check" style="font-size: 20px; margin-right: 6px;"></i>
+                  <span id="btn-action-text-asym">Secure & Seal</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ============ RECEIVE FORM ============ -->
+            <div id="asym-receive-form" class="hidden">
+              <div class="form-columns">
+                <div class="form-col">
+                  <div class="form-group">
+                    <div class="form-label-row">
+                      <label class="form-label">Encrypted Payload or Share Link</label>
+                    </div>
+                    <div class="input-row-group">
+                      <textarea
+                        id="message-asym-receive"
+                        placeholder="Paste the ciphertext or secure link here..."
+                        class="form-input form-textarea mono"
+                      ></textarea>
+                      <div
+                        id="file-input-container-asym-receive"
+                        class="file-drop-zone"
+                        onclick="
+                          document.getElementById('target-file-asym-receive').click()
+                        "
+                      >
+                        <i class="ph ph-bold ph-file-arrow-down" style="font-size: 28px; margin-bottom: 8px;"></i>
+                        <span id="file-label-asym-receive">Drop encrypted file or photo</span>
+                        <input
+                          type="file"
+                          id="target-file-asym-receive"
+                          accept=".txt,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.webp, .bin, .enc"
+                          class="hidden"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="identity-auto-fetch-box">
+                    <div style="display:flex; align-items:center; gap:12px; text-align:left;">
+                        <i class="ph ph-duotone ph-fingerprint" style="font-size: 32px; color: var(--green);"></i>
+                        <div>
+                            <div style="font-family: var(--font-button); font-weight: 800; font-size: 14px; color: var(--green);">Automated Identity Resolution</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Your Private ID will be automatically retrieved to decrypt this payload.</div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="centered-action-wrap">
+                <button
+                  id="btn-action-asym-receive"
+                  disabled
+                  class="action-btn primary-action"
+                >
+                  <i class="ph ph-bold ph-lock-key-open" style="font-size: 20px; margin-right: 6px;"></i>
+                  <span>Decrypt & Read</span>
+                </button>
+              </div>
+            </div>
+
+            <div
+              id="result-area-asym"
+              class="hidden result-card-inner"
+              style="margin-top: 1.5rem"
+            >
+              <div class="result-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <span class="form-label" style="margin-bottom:0;">Secure Payload</span>
+                  <div id="res-badge-asym" class="security-badge hidden">Verified</div>
+                </div>
+                <div class="result-actions">
+                  <button id="btn-copy-asym" class="copy-btn">
+                    <i class="ph ph-bold ph-copy" style="font-size: 16px; margin-right: 4px;"></i>
+                    <span>COPY TEXT</span>
+                  </button>
+                  <button
+                    id="btn-download-asym"
+                    class="copy-btn download-style hidden"
+                  >
+                    <i class="ph ph-bold ph-download-simple" style="font-size: 16px;"></i>
+                    <span>DOWNLOAD FILE</span>
+                  </button>
+                  <button
+                    id="btn-copy-link-asym"
+                    class="copy-btn secondary-copy"
+                  >
+                    <i class="ph ph-bold ph-link" style="font-size: 16px; margin-right: 4px;"></i>
+                    <span>SHARE LINK</span>
+                  </button>
+                </div>
+              </div>
+              <div id="result-text-asym" class="result-box"></div>
+            </div>
+        </section>
+
+        <section id="view-identity" class="hidden view-section">
+          <div class="card main-card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            
+            <!-- Holographic Identity Card -->
+            <div class="holographic-id-card">
+               <div class="holo-header">
+                   <div style="display: flex; align-items: center; gap: 8px;">
+                       <i class="ph ph-bold ph-shield-check" style="font-size: 16px; color: var(--accent);"></i>
+                       <span>VaultZero Identity Card</span>
+                       <button type="button" class="info-i-btn" onclick="openInfoModal('identity')" title="What is this?">
+                          <i class="ph ph-bold ph-info" style="font-size: 14px; margin-left: 2px;"></i>
+                       </button>
+                   </div>
+                   <!-- Hidden elements to keep app.js happy -->
+                   <div id="identity-status-badge" style="display:none;"><div class="status-dot"></div><span class="status-text"></span></div>
+               </div>
+               
+               <div class="holo-body">
+                   <div class="holo-avatar">
+                       <i class="ph ph-duotone ph-fingerprint"></i>
+                   </div>
+                   <div class="holo-details">
+                       <label>MY PUBLIC KEY</label>
+                       <textarea 
+                          id="my-public-display" 
+                          class="holo-address-box" 
+                          readonly 
+                          placeholder="Your unique cryptographic address will appear here..."
+                       ></textarea>
+                   </div>
+               </div>
+               
+               <div class="holo-actions">
+                   <button id="btn-copy-public-id" class="holo-btn">
+                       <i class="ph ph-bold ph-copy"></i> COPY PUBLIC KEY
+                   </button>
+                   <button id="btn-share-link-id" class="holo-btn primary">
+                       <i class="ph ph-bold ph-share-network"></i> SHARE LINK
+                   </button>
+               </div>
+            </div>
+
+            <!-- Management Tools -->
+            <div class="id-management-row">
+               <button id="btn-generate-keys-id" class="id-manage-btn danger">
+                  <i class="ph ph-bold ph-arrows-clockwise"></i> Create New
+               </button>
+               <button id="btn-unlock-id" class="id-manage-btn">
+                  <i class="ph ph-bold ph-key"></i> Backup / Unlock
+               </button>
+                <button id="btn-download-private-id" class="id-manage-btn hidden" style="color: var(--accent); border-color: var(--accent); border-style: solid;">
+                   <i class="ph ph-bold ph-download-simple"></i> Download private key
+                </button>
+            </div>
+            
+            <!-- Timer Context -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding: 0 10px;">
+                <div id="security-hint-text" class="hidden" style="color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                     <i class="ph ph-bold ph-info" style="color: var(--red);"></i> Private backup closes in 2 mins.
+                </div>
+                <div id="private-key-timer" class="hidden" style="color: var(--accent); font-size: 14px; font-weight: bold; font-family: var(--font-mono);">02:00</div>
+            </div>
+
+            <!-- SECURITY AUDIT SECTION -->
+            <div class="card main-card" style="margin-top: 2rem;">
+              <div class="card-header-row">
+                <div>
+                  <h3 class="card-title">Security Intelligence</h3>
+                  <p class="card-desc">Zero-knowledge local audit trail</p>
+                </div>
+                <div id="audit-integrity-badge" class="security-badge portable hidden">
+                  <i class="ph ph-bold ph-shield-check"></i> Chain Verified
+                </div>
+              </div>
+              
+              <div class="audit-stats-grid">
+                <div class="audit-stat-item">
+                  <span class="audit-stat-label">Total Events</span>
+                  <span id="audit-stat-total" class="audit-stat-value">0</span>
+                </div>
+                <div class="audit-stat-item">
+                  <span class="audit-stat-label">Anomalies</span>
+                  <span id="audit-stat-anomalies" class="audit-stat-value" style="color: var(--red);">0</span>
+                </div>
+                <div class="audit-stat-item">
+                  <span class="audit-stat-label">Live Guard</span>
+                  <span id="audit-stat-heartbeat" class="audit-stat-value" style="color: var(--accent);">Active</span>
+                </div>
+                <div class="audit-stat-item">
+                  <span class="audit-stat-label">Integrity</span>
+                  <span id="audit-stat-integrity" class="audit-stat-value" style="color: var(--green);">Secure</span>
+                </div>
+                <div class="audit-stat-item">
+                  <span class="audit-stat-label">Last Activity</span>
+                  <span id="audit-stat-last" class="audit-stat-value">Never</span>
+                </div>
+              </div>
+
+              <div class="audit-log-container">
+                <div id="audit-log-list" class="audit-log-list">
+                   <div class="audit-empty">No security events recorded yet.</div>
+                </div>
+              </div>
+
+              <div class="centered-action-wrap" style="margin-top: 1.5rem; display:flex; gap:12px;">
+                <button id="btn-refresh-audit" class="copy-btn" style="flex:1; justify-content:center; padding:12px;">
+                  <i class="ph ph-bold ph-arrows-clockwise" style="margin-right:6px;"></i> REFRESH
+                </button>
+                <button id="btn-clear-audit" class="copy-btn" style="flex:1; justify-content:center; padding:12px; color: var(--red);">
+                  <i class="ph ph-bold ph-trash" style="margin-right:6px;"></i> CLEAR
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== PASSWORDS VIEW ==================== -->
+        <section id="view-passwords" class="main-view hidden">
+          <div class="card main-card vault-pro-container" style="padding: 0;">
+            
+            <!-- ── STATE: CHOICE ── -->
+            <div id="pass-manager-choice" class="vault-pro-state">
+              <div class="vp-hero">
+                <div class="vp-hero-icon"><i class="ph-duotone ph-fingerprint"></i></div>
+                <h2 class="vp-title">Zero-Knowledge Vault</h2>
+                <p class="vp-desc">Military-grade offline encryption. Your credentials never leave this device.</p>
+              </div>
+              
+              <div class="vp-action-grid">
+                <button class="vp-action-card green" id="btn-pass-init" onclick="showPassState('setup')">
+                  <div class="vp-card-icon"><i class="ph-duotone ph-plus"></i></div>
+                  <div class="vp-card-text">
+                    <h4>Initialize Vault</h4>
+                    <span>Create a new encrypted database</span>
+                  </div>
+                  <i class="ph ph-caret-right vp-caret"></i>
+                </button>
+                
+                <button class="vp-action-card blue" id="btn-pass-unlock" onclick="showPassState('locked')">
+                  <div class="vp-card-icon"><i class="ph-duotone ph-lock-key"></i></div>
+                  <div class="vp-card-text">
+                    <h4>Unlock Vault</h4>
+                    <span>Access existing credentials</span>
+                  </div>
+                  <i class="ph ph-caret-right vp-caret"></i>
+                </button>
+              </div>
+              
+              <div class="vp-footer-links">
+                <button class="vp-text-btn" onclick="syncPasswords()" style="color: var(--green);">
+                  <i class="ph ph-link"></i> Link via Vault ID
+                </button>
+              </div>
+            </div>
+
+            <!-- ── STATE: SETUP ── -->
+            <div id="pass-manager-setup" class="vault-pro-state hidden">
+              <div class="vp-topbar">
+                <button class="vp-back-btn" onclick="showPassState('choice')"><i class="ph ph-arrow-left"></i></button>
+                <span class="vp-topbar-title">Setup Master Password</span>
+              </div>
+              
+              <div class="vp-auth-body">
+                <div class="vp-auth-icon" style="color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);"><i class="ph-duotone ph-shield-check"></i></div>
+                <p class="vp-auth-desc">Set a Master Password (min 10 chars) to encrypt your data locally. <strong style="color:var(--red);">It cannot be recovered.</strong></p>
+                
+                <div class="vp-input-wrapper">
+                  <input type="password" id="pass-setup-pin" class="vp-input" placeholder="Enter Password (min 10 chars)" autocomplete="new-password">
+                </div>
+                
+                <button id="btn-setup-passwords" class="vp-btn-primary green">
+                  <i class="ph-bold ph-check"></i> Initialize
+                </button>
+              </div>
+            </div>
+
+            <!-- ── STATE: LOCKED ── -->
+            <div id="pass-manager-locked" class="vault-pro-state hidden">
+              <div class="vp-topbar">
+                <button class="vp-back-btn" onclick="showPassState('choice')"><i class="ph ph-arrow-left"></i></button>
+                <span class="vp-topbar-title">Security Unlock</span>
+              </div>
+              
+              <div class="vp-auth-body">
+                <div class="vp-auth-icon" style="color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);"><i class="ph-duotone ph-lock"></i></div>
+                <p class="vp-auth-desc">Your vault is encrypted. Enter your Master Password to unlock.</p>
+                
+                <div class="vp-input-wrapper">
+                  <input type="password" id="pass-master-pin" class="vp-input" placeholder="••••••••" autocomplete="current-password" style="letter-spacing: 0.3em; font-size: 24px;">
+                </div>
+                
+                <button id="btn-unlock-passwords" class="vp-btn-primary green">
+                  <i class="ph-bold ph-lock-open"></i> Decrypt & Unlock
+                </button>
+              </div>
+            </div>
+
+            <!-- ── STATE: ACTIVE ── -->
+            <div id="pass-manager-active" class="vault-pro-state hidden">
+              <div class="vp-active-header">
+                <div class="vp-search">
+                  <i class="ph ph-magnifying-glass"></i>
+                  <input type="text" id="pass-search" placeholder="Search credentials...">
+                </div>
+                <button id="btn-add-pass" class="vp-btn-icon-solid" title="New Credential"><i class="ph ph-plus"></i></button>
+              </div>
+              
+              <div id="pass-list" class="vp-list">
+                <!-- Empty State is dynamically generated by app.js -->
+              </div>
+              
+              <div class="vp-active-footer">
+                <button id="btn-sync-passwords" class="vp-footer-action green"><i class="ph-duotone ph-cloud-arrow-up"></i> Sync</button>
+                <div class="vp-divider"></div>
+                <button id="btn-lock-passwords" class="vp-footer-action red"><i class="ph-duotone ph-lock"></i> Lock Vault</button>
+              </div>
+              <div class="vp-vault-info">
+                Vault ID: <span id="pass-vault-id-display">VZ-XXXX-XXXX</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </main>
+
+      <!-- ==================== DESKTOP FOOTER ==================== -->
+      <footer class="desktop-footer">
+        <span>VaultZero &middot; Zero-Knowledge Encryption</span>
+        <span
+          >All operations run locally &middot; No data leaves this device</span
+        >
+        <div style="margin-top: 8px">
+          <a
+            href="https://bestpractices.dev/projects/12040"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img
+              src="https://bestpractices.dev/projects/12040/badge"
+              alt="OpenSSF Best Practices Badge"
+              style="height: 20px"
+            />
+          </a>
+        </div>
+      </footer>
+
+      <!-- ==================== MOBILE BOTTOM NAV ==================== -->
+      <nav class="mobile-nav">
+        <button
+          id="nav-symmetric"
+          onclick="switchMainTab('symmetric')"
+          class="mobile-nav-btn active"
+        >
+          <i class="ph ph-bold ph-lock-key" style="font-size: 24px;"></i>
+          <span>Vault</span>
+        </button>
+
+        <button
+          id="nav-asymmetric"
+          onclick="switchMainTab('asymmetric')"
+          class="mobile-nav-btn"
+        >
+          <i class="ph ph-bold ph-share-network" style="font-size: 24px;"></i>
+          <span>Share</span>
+        </button>
+
+        <button
+          id="nav-passwords"
+          onclick="switchMainTab('passwords')"
+          class="mobile-nav-btn"
+        >
+          <i class="ph ph-bold ph-key" style="font-size: 24px;"></i>
+          <span>Pass</span>
+        </button>
+
+        <button
+          id="header-airgap-mobile-nav"
+          class="mobile-nav-btn"
+          title="Toggle Isolation"
+        >
+          <i class="ph ph-bold ph-broadcast" style="font-size: 24px;"></i>
+          <span>Isolation</span>
+        </button>
+
+        <button
+          id="nav-identity"
+          onclick="switchMainTab('identity')"
+          class="mobile-nav-btn"
+        >
+          <i id="mobile-identity-icon" class="ph ph-bold ph-fingerprint" style="font-size: 24px;"></i>
+          <span>My ID</span>
+        </button>
+
+        <button
+          id="mobile-nav-update"
+          class="mobile-nav-btn hidden pulse-icon"
+          onclick="triggerAppUpdate()"
+          title="Security Update Ready"
+          style="color: var(--accent);"
+        >
+          <i class="ph ph-bold ph-arrows-clockwise" style="font-size: 24px;"></i>
+          <span>Update</span>
+        </button>
+      </nav>
+
+    </div>
+
+    <!-- Updating Overlay -->
+    <div id="updating-overlay" class="updating-overlay hidden">
+      <div class="updating-card">
+        <div class="updating-spinner"></div>
+        <h2>Applying Secure Update</h2>
+        <p>Verifying integrity and refreshing vaults...</p>
+        <div class="updating-progress-bar">
+          <div class="updating-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="status-toast" class="toast">MESSAGE</div>
+
+    <!-- PWA Install Modal -->
+    <div id="install-modal" class="install-modal hidden">
+      <div class="install-modal-backdrop" onclick="closeInstallModal()"></div>
+      <div class="install-modal-card">
+        <button class="install-modal-close" onclick="closeInstallModal()">
+          <i class="ph ph-bold ph-x" style="font-size: 24px;"></i>
+        </button>
+        <div class="install-modal-icon simple-glow">
+          <i class="ph ph-duotone ph-download" style="font-size: 52px; color: var(--green);"></i>
+        </div>
+        <h2 class="install-modal-title">Enable Native Shield</h2>
+        <p class="install-modal-subtitle">
+          Unlock the full potential of VaultZero. Add it to your device for a 100% offline, local-first security experience.
+        </p>
+
+        <!-- Shown on Chrome/Edge desktop & Android when native prompt is available -->
+        <div id="install-native" class="install-section hidden">
+          <button id="btn-install-native" class="install-action-btn" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3); font-family: var(--font-button); font-weight: 800; text-transform: uppercase; font-size: 14px; letter-spacing: 0.05em;">
+            <i class="ph ph-duotone ph-download" style="font-size: 20px;"></i>
+            Install on Device
+          </button>
+        </div>
+
+
+        <!-- Shown on iOS Safari -->
+        <div id="install-ios" class="install-section hidden">
+          <div class="install-steps">
+            <div class="install-step">
+              <div class="step-number">1</div>
+              <div class="step-text">
+                Tap the <strong>Share</strong> button
+                <span class="step-icon">
+                  <i class="ph ph-bold ph-export" style="font-size: 18px; margin: 0 4px; vertical-align: middle;"></i>
+                </span>
+                at the bottom of Safari
+              </div>
+            </div>
+            <div class="install-step">
+              <div class="step-number">2</div>
+              <div class="step-text">
+                Scroll down and tap <strong>"Add to Home Screen"</strong>
+              </div>
+            </div>
+            <div class="install-step">
+              <div class="step-number">3</div>
+              <div class="step-text">
+                Tap <strong>"Add"</strong> in the top right corner
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shown on Android browsers without native prompt -->
+        <div id="install-android" class="install-section hidden">
+          <div class="install-steps">
+            <div class="install-step">
+              <div class="step-number">1</div>
+              <div class="step-text">
+                Tap the <strong>Menu</strong> button
+                <span class="step-icon">&#8942;</span> in your browser
+              </div>
+            </div>
+            <div class="install-step">
+              <div class="step-number">2</div>
+              <div class="step-text">
+                Tap <strong>"Add to Home screen"</strong> or
+                <strong>"Install app"</strong>
+              </div>
+            </div>
+            <div class="install-step">
+              <div class="step-number">3</div>
+              <div class="step-text">
+                Tap <strong>"Install"</strong> to confirm
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shown on Desktop browsers without native prompt -->
+        <div id="install-desktop" class="install-section hidden">
+          <div class="install-steps">
+            <div class="install-step">
+              <div class="step-number">1</div>
+              <div class="step-text">
+                Click the <strong>install icon</strong>
+                <span class="step-icon">&#8853;</span> in your browser's address
+                bar
+              </div>
+            </div>
+            <div class="install-step">
+              <div class="step-number">2</div>
+              <div class="step-text">
+                Or open <strong>Menu &rarr; Install VaultZero</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="install-done" class="install-section hidden">
+          <div class="install-done-badge">
+            <i class="ph ph-duotone ph-sparkle" style="font-size: 32px; color: var(--green);"></i>
+            <span>VaultZero Shield is Active</span>
+          </div>
+        </div>
+
+        <div class="install-modal-footer-badge">
+          <i class="ph ph-bold ph-shield-check"></i>
+          100% Private &middot; No App Store Required
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Update Confirm Modal -->
+    <div id="update-confirm-modal" class="install-modal hidden">
+      <div
+        class="install-modal-backdrop"
+        onclick="
+          this.parentElement.classList.remove('active');
+          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
+        "
+      ></div>
+      <div class="install-modal-card">
+        <button
+          class="install-modal-close"
+          onclick="
+            this.parentElement.parentElement.classList.remove('active');
+            setTimeout(
+              () => this.parentElement.parentElement.classList.add('hidden'),
+              300,
+            );
+          "
+        >
+          <i class="ph ph-bold ph-x" style="font-size: 24px;"></i>
+        </button>
+        <div class="install-modal-icon pulse-icon">
+          <i class="ph ph-duotone ph-arrows-clockwise" style="font-size: 42px;"></i>
+        </div>
+        <h2 class="install-modal-title">Secure Update Available</h2>
+        <p class="install-modal-subtitle">
+          A new version of VaultZero is ready to install. This process will
+          encrypt your local identity and securely refresh the app.
+        </p>
+        <div style="margin-top: 24px">
+          <button id="btn-confirm-update" class="install-action-btn">
+            <i class="ph ph-bold ph-arrows-clockwise" style="font-size: 20px;"></i>
+            Reload & Apply Fixes
+          </button>
+        </div>
+        <div class="install-modal-footer-badge">
+          <i class="ph ph-bold ph-check-circle"></i>
+          Safe to apply &middot; No data will be lost
+        </div>
+      </div>
+    </div>
+    <!-- Info Modal -->
+    <div id="info-modal" class="install-modal hidden">
+      <div
+        class="install-modal-backdrop"
+        onclick="
+          this.parentElement.classList.remove('active');
+          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
+        "
+      ></div>
+      <div class="install-modal-card">
+        <button
+          class="install-modal-close"
+          onclick="
+            this.parentElement.parentElement.classList.remove('active');
+            setTimeout(
+              () => this.parentElement.parentElement.classList.add('hidden'),
+              300,
+            );
+          "
+        >
+          <i class="ph ph-bold ph-x" style="font-size: 24px;"></i>
+        </button>
+        <div class="install-modal-icon" style="background: none;">
+          <i id="info-modal-icon" class="ph ph-duotone ph-info" style="font-size: 50px; color: var(--accent);"></i>
+        </div>
+        <h2 id="info-modal-title" class="install-modal-title" style="margin-top: -10px;">Information</h2>
+        <div id="info-modal-content" style="text-align: center; color: var(--text-secondary); line-height: 1.6; margin-top: 10px; font-size: 14px;">
+          <!-- JS injected -->
+        </div>
+        <div style="margin-top: 24px">
+          <button class="action-btn primary-action" onclick="
+            this.parentElement.parentElement.parentElement.classList.remove('active');
+            setTimeout(
+              () => this.parentElement.parentElement.parentElement.classList.add('hidden'),
+              300,
+            );
+          ">
+            Got it, thanks!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="libs/localforage.min.js"></script>
+    <script src="libs/sodium.js"></script>
+    <script src="libs/argon2-bundled.min.js"></script>
+    <script src="libs/kyber.js"></script>
+    <script src="encryption.js"></script>
+    <script src="image-hide.js"></script>
+    <script src="security-logs.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

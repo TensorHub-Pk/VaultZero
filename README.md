@@ -1,18 +1,16 @@
 <p align="center">
-  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+  <img src="assets/logo.png" alt="VaultZero Logo" width="180" />
 </p>
 <h3 align="center">VAULTZERO — SYSTEM HUB</h3>
 <p align="center">
-  <img src="app/assets/pulse.svg" width="12" /> <em>Professional. Zero-Knowledge. Post-Quantum. Locally-First.</em>
+  <img src="assets/pulse.svg" width="12" /> <em>Professional. Zero-Knowledge. Post-Quantum. Locally-First.</em>
 </p>
 
 <p align="center">
-  <a href="https://vaultzero.tensorhub.pk"><img src="https://img.shields.io/badge/WEBSITE-LIVE-00e373?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website Live" /></a>
-  <a href="SECURITY.md"><img src="https://img.shields.io/badge/AUTHENTICITY-GPG_VERIFIED-ff2e55?style=for-the-badge&logo=gnupg&logoColor=white" alt="GPG Verified" /></a>
-</p>
-<p align="center">
-  <a href="https://bestpractices.coreinfrastructure.org/en/projects/9999"><img src="https://img.shields.io/badge/OPENSSF-GOLD_CERTIFIED-ffd700?style=for-the-badge&logo=linux-foundation&logoColor=black" alt="OpenSSF Gold" /></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/RELEASE-v3.0.0_REBIRTH-blue?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release" /></a>
+  <a href="https://vaultzero.tensorhub.pk"><img src="https://img.shields.io/badge/WEBSITE-LIVE-00e373?style=flat-square&logo=google-chrome&logoColor=white" alt="Website Live" /></a>
+  <a href="SECURITY.md"><img src="https://img.shields.io/badge/AUTHENTICITY-GPG_VERIFIED-ff2e55?style=flat-square&logo=gnupg&logoColor=white" alt="GPG Verified" /></a>
+  <a href="https://www.bestpractices.dev/projects/1"><img src="https://www.bestpractices.dev/projects/1/badge" alt="OpenSSF Gold" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/RELEASE-v3.0.0_REBIRTH-blue?style=flat-square&logo=github&logoColor=white" alt="Latest Release" /></a>
 </p>
 
 <br />

@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+  <img src="../assets/logo.png" alt="VaultZero Logo" width="180" />
 </p>
 <h3 align="center">VAULTZERO — TESTING POLICY</h3>
 <p align="center">
-  <img src="app/assets/pulse.svg" width="12" /> <em>Zero compromise on stability and security.</em>
+  <img src="../assets/pulse.svg" width="12" /> <em>Zero compromise on stability and security.</em>
 </p>
 
 ---

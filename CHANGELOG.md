@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+  <img src="assets/logo.png" alt="VaultZero Logo" width="180" />
 </p>
 <h3 align="center">VAULTZERO — CHANGELOG</h3>
 <p align="center">
-  <img src="app/assets/pulse.svg" width="12" /> <em>All notable changes to the VaultZero ecosystem</em>
+  <img src="assets/pulse.svg" width="12" /> <em>All notable changes to the VaultZero ecosystem</em>
 </p>
 
 ---
