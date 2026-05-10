@@ -1,31 +1,35 @@
 # VaultZero - robots.txt
 # https://vaultzero.tensorhub.pk
-#
-# Homepage is fully indexable.
-# Secure app, libraries, and build tools are excluded.
 
+# Allow all major search engines
 User-agent: *
+
+# --- Indexable Pages ---
 Allow: /
 Allow: /index.html
 Allow: /protocol.html
-Allow: /home-design.css
 Allow: /assets/
-Allow: /fevicon.jpeg
+Allow: /home-design.css
+Allow: /favicon.ico
 
-# Block secure app from indexing (cryptographic environment)
+# --- Block Secure App (Client-Side Only) ---
+# We block these because they are cryptographic environments, not content pages
 Disallow: /vault.html
 Disallow: /app.js
-Disallow: /vault-design.css
 Disallow: /encryption.js
+Disallow: /service-worker.js
+Disallow: /vault-design.css
+Disallow: /vault-pro.css
 Disallow: /image-hide.js
 Disallow: /security-logs.js
-Disallow: /service-worker.js
+Disallow: /update-info.json
+Disallow: /app-identity.json
 
-# Block internal directories
+# --- Block Folders & Parameters ---
 Disallow: /libs/
-
-# Crawl-delay for polite crawling
-Crawl-delay: 1
+Disallow: /For dev/
+Disallow: /*?*
+Disallow: /*#*
 
 # Sitemap location
 Sitemap: https://vaultzero.tensorhub.pk/sitemap.xml

@@ -8,43 +8,177 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VaultZero | Professional Zero-Knowledge & Post-Quantum Encryption</title>
-    <meta name="description" content="VaultZero: The definitive open-source, client-side zero-knowledge encryption suite. Securely encrypt files and messages locally with post-quantum resistance. No data leaves your device." />
+    <title>VaultZero — Professional Zero-Knowledge & Post-Quantum Encryption Suite</title>
+    <meta name="description" content="VaultZero: The definitive open-source, offline-first zero-knowledge encryption suite. Securely encrypt passwords, files, and messages locally with post-quantum resistance. No data leaves your device." />
     <meta name="theme-color" content="#08080d" />
     <meta name="author" content="TensorHub Inc." />
-    <meta name="keywords" content="VaultZero, client-side encryption, zero knowledge, post-quantum cryptography, secure file encryption, private messaging, browser encryption, ML-KEM-768, Argon2id, privacy tools" />
+    <meta name="keywords" content="VaultZero, client-side encryption, zero knowledge password manager, post-quantum cryptography, secure file vault, private messaging, browser encryption, ML-KEM-768, Argon2id, privacy tools, open source encryption" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
 
     <!-- Performance & Pre-connect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-
-    <!-- JSON-LD Structured Data (SEO Pro) -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">    <!-- JSON-LD: Unified Knowledge Graph -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "VaultZero",
-      "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
-      "applicationCategory": "SecurityApplication",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "description": "Professional zero-knowledge offline encryption tool with post-quantum resistance.",
-      "softwareVersion": "3.0.0",
-      "author": {
-        "@type": "Organization",
-        "name": "TensorHub Inc.",
-        "url": "https://tensorhub.pk"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://vaultzero.tensorhub.pk/#website",
+          "name": "VaultZero",
+          "url": "https://vaultzero.tensorhub.pk/",
+          "description": "Professional zero-knowledge offline encryption suite with post-quantum resistance.",
+          "publisher": { "@id": "https://vaultzero.tensorhub.pk/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://vaultzero.tensorhub.pk/?s={search_term_string}",
+            "query-input": "required name=search_term_string"
+          },
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "WebPage",
+          "@id": "https://vaultzero.tensorhub.pk/#webpage",
+          "name": "VaultZero — Professional Zero-Knowledge & Post-Quantum Encryption Suite",
+          "url": "https://vaultzero.tensorhub.pk/",
+          "isPartOf": { "@id": "https://vaultzero.tensorhub.pk/#website" },
+          "about": { "@id": "https://vaultzero.tensorhub.pk/#software" },
+          "description": "Official homepage for VaultZero, an open-source, offline-first, zero-knowledge encryption platform with post-quantum resistance.",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vaultzero.tensorhub.pk/" },
+              { "@type": "ListItem", "position": 2, "name": "How It Works", "item": "https://vaultzero.tensorhub.pk/protocol.html" }
+            ]
+          },
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://vaultzero.tensorhub.pk/#software",
+          "name": "VaultZero",
+          "alternateName": ["Vault Zero", "Vault-Zero"],
+          "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
+          "applicationCategory": "SecurityApplication",
+          "applicationSubCategory": "Zero-Knowledge Encryption & Password Manager",
+          "softwareVersion": "3.1.0",
+          "url": "https://vaultzero.tensorhub.pk/",
+          "downloadUrl": "https://vaultzero.tensorhub.pk/vault.html",
+          "screenshot": "https://vaultzero.tensorhub.pk/assets/og-image.jpeg",
+          "description": "VaultZero is an open-source, offline-first, zero-knowledge encryption platform. Supports ChaCha20-Poly1305, Argon2id, X25519 + ML-KEM-768 hybrid key exchange, browser-based Steganography, Ed25519 digital signatures, and WOTS+ Merkle post-quantum signatures.",
+          "featureList": [
+            "ChaCha20-Poly1305 AEAD Encryption",
+            "AES-256-GCM Hardware-Accelerated Fallback",
+            "Argon2id Memory-Hard Key Derivation",
+            "X25519 + ML-KEM-768 Hybrid Post-Quantum Key Exchange",
+            "Ed25519 Digital Signatures",
+            "WOTS+ Merkle Post-Quantum Signatures",
+            "LSB Image Steganography",
+            "Digital Fortress Integrity Sentinel",
+            "Total Network Isolation Mode",
+            "Offline-First Progressive Web App",
+            "Signed Cryptographic Update Verification",
+            "Zero-Knowledge Password Manager"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          "license": "https://opensource.org/licenses/MIT",
+          "isAccessibleForFree": true,
+          "permissions": "No permissions required. Runs entirely in the browser.",
+          "author": { "@id": "https://vaultzero.tensorhub.pk/#organization" }
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          "name": "VaultZero Source Code",
+          "codeRepository": "https://github.com/TensorHub-Pk/VaultZero",
+          "programmingLanguage": ["JavaScript", "HTML", "CSS"],
+          "license": "https://opensource.org/licenses/MIT",
+          "targetProduct": { "@id": "https://vaultzero.tensorhub.pk/#software" },
+          "author": { "@id": "https://vaultzero.tensorhub.pk/#organization" }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://vaultzero.tensorhub.pk/#organization",
+          "name": "TensorHub Inc.",
+          "url": "https://tensorhub.pk",
+          "logo": "https://vaultzero.tensorhub.pk/assets/logo.png",
+          "description": "TensorHub Inc. builds privacy-first, open-source security tools.",
+          "sameAs": [
+            "https://github.com/TensorHub-Pk",
+            "https://github.com/TensorHub-Pk/VaultZero",
+            "https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "info@tensorhub.pk",
+            "contactType": "Customer Support"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://vaultzero.tensorhub.pk/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is VaultZero?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "VaultZero is an open-source, client-side encryption tool that runs entirely in your browser. It uses post-quantum cryptography including ChaCha20-Poly1305, Argon2id, and ML-KEM-768 to protect your messages and files. No data ever leaves your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does VaultZero store my data on any server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. VaultZero is a zero-knowledge tool. All encryption and decryption operations happen locally in your browser. There is no server-side processing, no accounts, and no data transmission. After initial load, the app works entirely offline."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What encryption algorithms does VaultZero use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "VaultZero uses ChaCha20-Poly1305 (via Libsodium WASM) for symmetric encryption with AES-256-GCM fallback, Argon2id for key derivation, X25519 + ML-KEM-768 hybrid key exchange, Ed25519 digital signatures, and WOTS+ Merkle hash-based post-quantum signatures."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is VaultZero resistant to quantum computer attacks?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "VaultZero includes post-quantum resistance through hybrid key exchange combining classical X25519 with ML-KEM-768 (Kyber), and WOTS+ Merkle signatures built on SHA-256 hash functions. This provides defense-in-depth against both current and future quantum threats."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I use VaultZero offline?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. VaultZero is an offline-first Progressive Web App. After the initial page load, it caches all resources locally and works without any internet connection. You can also install it as a standalone app on your device."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is VaultZero free and open source?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. VaultZero is 100% free and open source under the MIT License. The full source code is publicly auditable on GitHub. There are no hidden costs, premium tiers, or data monetization."
+              }
+            }
+          ]
+        }
+      ]
     }
     </script>
 
-    <!-- Security Headers & SEO -->
+    <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org https://raw.githubusercontent.com; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
@@ -58,119 +192,30 @@
     <link rel="icon" sizes="512x512" href="./assets/fevicon.jpeg" type="image/jpeg" />
     <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
 
-    <!-- Open Graph (1200x630 optimized) -->
-    <meta property="og:title" content="VaultZero — Zero-Knowledge Encryption" />
-    <meta property="og:description" content="Open-source, offline-first encryption with post-quantum resistance. Encrypt messages and files locally. No data ever leaves your device." />
+    <!-- Open Graph -->
+    <meta property="og:title" content="VaultZero — Zero-Knowledge & Post-Quantum Encryption Suite" />
+    <meta property="og:description" content="Open-source, offline-first encryption with post-quantum resistance. Encrypt passwords, messages, and files locally. No data ever leaves your device." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://vaultzero.tensorhub.pk/" />
     <meta property="og:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="VaultZero - Secure Offline Encryption" />
+    <meta property="og:image:alt" content="VaultZero — Zero-Knowledge Encryption Suite" />
     <meta property="og:site_name" content="VaultZero" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://vaultzero.tensorhub.pk/" />
-    <meta name="twitter:title" content="VaultZero — Zero-Knowledge Encryption" />
+    <meta name="twitter:title" content="VaultZero — Zero-Knowledge & Post-Quantum Encryption" />
     <meta name="twitter:description" content="Open-source, offline-first encryption with post-quantum resistance. No data ever leaves your device." />
     <meta name="twitter:image" content="https://vaultzero.tensorhub.pk/assets/og-image.jpeg" />
     <meta name="twitter:image:alt" content="VaultZero shield logo" />
 
-    <!-- Structured Data: Organization -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Tensorhub.pk",
-        "url": "https://tensorhub.pk",
-        "logo": "https://vaultzero.tensorhub.pk/icon-512.png",
-        "sameAs": [
-            "https://github.com/TensorHub-Pk/VaultZero"
-        ],
-        "description": "Tensorhub.pk builds privacy-first, open-source security tools.",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "email": "info@tensorhub.pk",
-            "contactType": "Customer Support"
-        }
-    }
-    </script>
-
-    <!-- Structured Data: SoftwareApplication -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "VaultZero",
-        "alternateName": ["Vault Zero", "Vault-Zero"],
-        "applicationCategory": "SecurityApplication",
-        "applicationSubCategory": "Encryption Tool",
-        "operatingSystem": "Web",
-        "description": "VaultZero (also known as Vault Zero) is an open-source, offline-first, zero-knowledge encryption platform powered by Post-Quantum Encryption. Supports ChaCha20-Poly1305, Argon2id, X25519 + ML-KEM-768 hybrid key exchange, browser-based Steganography, and WOTS+ Merkle signatures. Developed by Tensor Hub.",
-        "url": "https://vaultzero.tensorhub.pk/",
-        "downloadUrl": "https://vaultzero.tensorhub.pk/vault.html",
-        "screenshot": "https://vaultzero.tensorhub.pk/icon-512.png",
-        "softwareVersion": "1.0.0",
-        "releaseNotes": "Initial open-source release with full post-quantum cryptographic suite.",
-        "author": {
-            "@type": "Organization",
-            "name": "Tensorhub.pk",
-            "url": "https://tensorhub.pk"
-        },
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/InStock"
-        },
-        "license": "https://opensource.org/licenses/MIT",
-        "isAccessibleForFree": true,
-        "featureList": [
-            "ChaCha20-Poly1305 AEAD Encryption",
-            "AES-256-GCM Hardware-Accelerated Fallback",
-            "Argon2id Memory-Hard Key Derivation",
-            "X25519 + ML-KEM-768 Hybrid Key Exchange",
-            "Ed25519 Digital Signatures",
-            "WOTS+ Merkle Post-Quantum Signatures",
-            "LSB Steganography",
-            "Offline-First Progressive Web App",
-            "Total Network Isolation After Init",
-            "Signed Update Verification"
-        ],
-        "permissions": "No permissions required. Runs entirely in the browser."
-    }
-    </script>
-
-    <!-- Structured Data: WebPage -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "VaultZero — Zero-Knowledge Encryption",
-        "description": "Official homepage for VaultZero, an open-source encryption platform.",
-        "url": "https://vaultzero.tensorhub.pk/",
-        "isPartOf": {
-            "@type": "WebSite",
-            "name": "VaultZero",
-            "url": "https://vaultzero.tensorhub.pk/"
-        },
-        "breadcrumb": {
-            "@type": "BreadcrumbList",
-            "itemListElement": [{
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://vaultzero.tensorhub.pk/"
-            }]
-        }
-    }
-    </script>
-
-    <!-- Performance: DNS Prefetch + Preconnect (consolidated) -->
+    <!-- Performance: DNS Prefetch + Preconnect -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" as="style" />
@@ -609,7 +654,7 @@
                 <div class="new-footer-left">
                     <div class="footer-brand-row">
                         <a href="https://tensorhub.pk" class="new-footer-logo">
-                            <img src="assets/logo.png" alt="VaultZero Logo" width="110" height="auto">
+                            <img src="assets/logo.png" alt="VaultZero Logo" width="110" height="42">
                         </a>
                         <div class="gpg-verification-badge">
                             <i class="ph-bold ph-seal-check"></i>
@@ -648,56 +693,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- Structured Data: FAQ -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "What is VaultZero?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "VaultZero is an open-source, client-side encryption tool that runs entirely in your browser. It uses post-quantum cryptography including ChaCha20-Poly1305, Argon2id, and ML-KEM-768 to protect your messages and files. No data ever leaves your device."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Does VaultZero store my data on any server?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "No. VaultZero is a zero-knowledge tool. All encryption and decryption operations happen locally in your browser. There is no server-side processing, no accounts, and no data transmission. After initial load, the app works entirely offline."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "What encryption algorithms does VaultZero use?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "VaultZero uses ChaCha20-Poly1305 (via Libsodium WASM) for symmetric encryption with AES-256-GCM fallback, Argon2id for key derivation, X25519 + ML-KEM-768 hybrid key exchange, Ed25519 digital signatures, and WOTS+ Merkle hash-based post-quantum signatures."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Is VaultZero resistant to quantum computer attacks?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "VaultZero includes post-quantum resistance through hybrid key exchange combining classical X25519 with ML-KEM-768 (Kyber), and WOTS+ Merkle signatures built on SHA-256 hash functions. This provides defense-in-depth against both current and future quantum threats."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Can I use VaultZero offline?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes. VaultZero is an offline-first Progressive Web App. After the initial page load, it caches all resources locally and works without any internet connection. You can also install it as a standalone app on your device."
-                }
-            }
-        ]
-    }
-    </script>
 
     <!-- Minimal inline script: menu toggle, throttled scroll, reduced-motion aware -->
     <script>
