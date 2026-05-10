@@ -13,7 +13,6 @@ const ASSETS_TO_CACHE = [
   'vault.html',
   'vault-design.css',
   'vault-pro.css',
-  'home-design.css',
   'app-identity.json',
   'app.js',
   'encryption.js',
@@ -25,6 +24,7 @@ const ASSETS_TO_CACHE = [
   'libs/argon2.wasm',
   'libs/kyber.js',
   'assets/logo.png',
+  'assets/pulse.svg',
   'assets/fevicon.jpeg',
   'assets/og-image.jpeg'
 ];
@@ -45,6 +45,23 @@ const SECURITY_CRITICAL_ASSETS = [
 // In-memory store for hashes verified by the main thread's manifest signature check
 let trustedHashes = {};
 
+/**
+ * Broadcasts security anomalies to all active clients (tabs)
+ */
+async function notifySecurityAnomaly(url, expected, actual, isCritical) {
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({
+      type: 'SECURITY_ANOMALY',
+      asset: url,
+      expected: expected,
+      actual: actual,
+      isCritical: isCritical,
+      timestamp: Date.now()
+    });
+  });
+}
+
 // Helper to cache assets and bypass Chrome's restriction on caching redirected responses.
 // Also performs cryptographic integrity verification if trustedHashes are available.
 async function cacheAsset(cache, url) {
@@ -52,9 +69,9 @@ async function cacheAsset(cache, url) {
     // Force network fetch to bypass edge CDN caching during installations/updates
     const fetchUrl = new URL(url, self.location.href);
     const response = await fetch(fetchUrl.toString(), { cache: 'no-store' });
-    
+
     if (!response.ok) throw new Error(`Status ${response.status}`);
-    
+
     // Stage 2: Integrity Verification
     // Strip query params and fragments to get the base filename for hash lookup
     const filename = url.split('/').pop().split('?')[0].split('#')[0];
@@ -76,41 +93,42 @@ async function cacheAsset(cache, url) {
       } else {
         buf = await response.clone().arrayBuffer();
       }
-      
+
       // Double Verification: SHA-256 + SHA-512
       const [h256, h512] = await Promise.all([
-          crypto.subtle.digest('SHA-256', buf),
-          crypto.subtle.digest('SHA-512', buf)
+        crypto.subtle.digest('SHA-256', buf),
+        crypto.subtle.digest('SHA-512', buf)
       ]);
 
       const actual256 = Array.from(new Uint8Array(h256)).map(b => b.toString(16).padStart(2, '0')).join('');
       const actual512 = Array.from(new Uint8Array(h512)).map(b => b.toString(16).padStart(2, '0')).join('');
-      
+
       const expected256 = typeof hashData === 'object' ? hashData.sha256 : hashData;
       const expected512 = typeof hashData === 'object' ? hashData.sha512 : null;
 
       if (actual256 === expected256 && (!expected512 || actual512 === expected512)) {
         console.log(`[SW] Double-Hash Verified: ${url}`);
       } else {
-        // SECURITY POLICY: Only fail hard if the asset is Security Critical.
-        // Non-critical assets (CSS/Images) can be cached without strict hashing to improve reliability.
-        const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a));
+        const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a)) || url.endsWith('.js');
+
+        // Notify the UI about the anomaly so it appears in the Audit Log
+        notifySecurityAnomaly(url, expected256, actual256, isSecurityCritical);
+
         if (isSecurityCritical) {
           console.error(`[SW] Integrity Check Failed for Critical Asset: ${url}.`);
-          console.error(`[SW] Expected (256): ${expected256}`);
-          console.error(`[SW] Actual (256):   ${actual256}`);
           throw new Error(`Integrity mismatch for security-critical asset: ${url}`);
         } else {
           console.warn(`[SW] Integrity Mismatch for non-critical asset: ${url}. Skipping strict verification.`);
-          console.log(`[SW] Asset cached despite mismatch (Reliability Mode).`);
         }
       }
     } else if (Object.keys(trustedHashes).length > 0) {
-      // Security Policy: Missing hash for a security-critical asset.
-      const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a));
-      if (isSecurityCritical) {
-          console.error(`[SW] Security Policy Breach: Missing trusted hash for critical asset ${url}`);
-          throw new Error(`Security Policy: Missing hash for ${url}`);
+      // SECURITY POLICY: If the manifest is loaded, but a JS file is missing its hash,
+      // it is a potential Shadow Script attack.
+      const isJS = url.endsWith('.js');
+      if (isJS) {
+        notifySecurityAnomaly(url, 'MISSING_HASH', 'UNKNOWN', true);
+        console.error(`[SW] Security Policy Breach: Missing trusted hash for script ${url}`);
+        throw new Error(`Security Policy: Missing hash for ${url}`);
       }
     }
 
@@ -189,16 +207,12 @@ self.addEventListener('fetch', event => {
   // Network-first for landing pages (Home/Protocol) to ensure they are never stale
   // Cache-first for the Vault App to ensure instant offline startup
   if (event.request.mode === 'navigate') {
-    const isLandingPage = url.pathname.endsWith('/') || 
-                          url.pathname.endsWith('index.html') || 
-                          url.pathname.endsWith('protocol.html');
+    const isLandingPage = url.pathname.endsWith('/') ||
+      url.pathname.endsWith('index.html') ||
+      url.pathname.endsWith('protocol.html');
 
     if (isLandingPage) {
-      event.respondWith(
-        fetch(event.request)
-          .catch(() => caches.match(event.request, { ignoreSearch: true }))
-          .then(response => response || caches.match('index.html', { ignoreSearch: true }))
-      );
+      event.respondWith(fetch(event.request));
       return;
     }
 
@@ -208,9 +222,7 @@ self.addEventListener('fetch', event => {
           return cached;
         }
         // Not in cache by exact URL — try multiple potential paths
-        return caches.match('vault.html', { ignoreSearch: true })
-          .then(v => v || caches.match('/app/vault.html', { ignoreSearch: true }))
-          .then(v => v || caches.match('/vault.html', { ignoreSearch: true }));
+        return caches.match('vault.html', { ignoreSearch: true });
       }).then(cached => {
         if (cached) {
           return cached;
@@ -266,19 +278,19 @@ self.addEventListener('message', event => {
       trustedHashes = event.data.hashes;
       console.log('[SW] Hashes refreshed for Force Recache:', Object.keys(trustedHashes).length);
     }
-    
+
     caches.delete(CACHE_NAME).then(() => {
       caches.open(CACHE_NAME).then(async cache => {
         const results = await Promise.allSettled(
           ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
         );
-        
+
         // Count actual failures from our cacheAsset results
-        const failed = results.filter(r => 
-          r.status === 'rejected' || 
+        const failed = results.filter(r =>
+          r.status === 'rejected' ||
           (r.value && r.value.success === false)
         ).length;
-        
+
         if (event.source) {
           event.source.postMessage({
             type: 'RECACHE_COMPLETE',

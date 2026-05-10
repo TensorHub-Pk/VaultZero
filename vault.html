@@ -93,6 +93,38 @@
       type="image/jpeg"
     />
     <link rel="apple-touch-icon" sizes="512x512" href="./assets/fevicon.jpeg" />
+    <style>
+        .modern-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-button);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-transform: uppercase;
+        }
+        .modern-home-btn i {
+            font-size: 16px;
+            color: var(--accent);
+        }
+        .modern-home-btn:hover {
+            background: rgba(255, 46, 85, 0.08);
+            border-color: rgba(255, 46, 85, 0.3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px rgba(255, 46, 85, 0.2);
+        }
+    </style>
   </head>
   <body>
     <!-- Premium Loader Overlay -->
@@ -882,7 +914,10 @@
 
       <!-- ==================== DESKTOP FOOTER ==================== -->
       <footer class="desktop-footer">
-        <span>VaultZero &middot; Zero-Knowledge Encryption</span>
+        <a href="index.html" class="modern-home-btn">
+            <i class="ph-bold ph-house-line"></i>
+            <span>RETURN TO LANDING PAGE</span>
+        </a>
         <span
           >All operations run locally &middot; No data leaves this device</span
         >
@@ -1133,6 +1168,52 @@
         </div>
       </div>
     </div>
+    <!-- Repair Modal: Premium Secure Sync UI -->
+    <div id="repair-modal" class="install-modal hidden">
+      <div class="install-modal-backdrop" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);"></div>
+      <div class="install-modal-card" style="max-width: 440px; background: linear-gradient(165deg, rgba(30,41,59,0.9), rgba(15,23,42,0.95)); border: 1px solid rgba(59,130,246,0.3); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 40px rgba(37,99,235,0.15);">
+        
+        <div class="install-modal-icon" style="background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(29,78,216,0.1)); border: 1px solid rgba(59,130,246,0.4); width: 80px; height: 80px; margin-bottom: 20px;">
+          <i class="ph ph-duotone ph-shield-check pulse-blue" style="font-size: 52px; color: #60a5fa;"></i>
+        </div>
+
+        <h2 class="install-modal-title" style="letter-spacing: -0.5px; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Secure Sync Required</h2>
+        
+        <div style="text-align: center; padding: 0 10px;">
+          <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px; margin: 15px 0 0;">
+            A new <span style="color: #60a5fa; font-weight: 600;">Verified Security Update</span> is ready for your vault. Your current session is using an older, cached version.
+          </p>
+          
+          <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.05);">
+            <p style="color: #94a3b8; font-size: 13px; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <i class="ph ph-info" style="color: #3b82f6;"></i>
+              Your local data is safe and will not be lost.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 12px; width: 100%;">
+          <button id="btn-repair-refresh" class="action-btn primary-action" style="height: 52px; background: linear-gradient(135deg, #2563eb, #1d4ed8); font-weight: 700; font-size: 15px; border: none; box-shadow: 0 4px 15px rgba(37,99,235,0.3); gap: 12px; border-radius: 14px;">
+            <i class="ph-bold ph-arrows-clockwise" style="font-size: 18px;"></i>
+            Sync & Update Now
+          </button>
+          
+          <button id="btn-repair-dismiss" style="background: transparent; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); border-radius: 14px; padding: 14px; cursor: pointer; font-size: 14px; transition: all 0.2s ease; font-weight: 500;">
+            Continue with Current Version
+          </button>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 15px; opacity: 0.5;">
+          <span style="height: 1px; flex: 1; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1));"></span>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">
+            <i class="ph ph-seal-check" style="color: #22c55e;"></i>
+            Signature Verified
+          </div>
+          <span style="height: 1px; flex: 1; background: linear-gradient(to left, transparent, rgba(255,255,255,0.1));"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Info Modal -->
     <div id="info-modal" class="install-modal hidden">
       <div

@@ -8,6 +8,29 @@
 
 ---
 
+## [3.1.0] — 2026-05-12
+
+### 🏔️ THE DIGITAL FORTRESS HARDENING
+> *"Unseen. Unreachable. Unbreakable."*
+
+This update solidifies VaultZero's position as a self-protecting fortress. We've implemented a production-grade integrity pipeline that ensures the code you run is exactly the code we signed, with absolute "Air-Gap" capabilities for the most sensitive sessions.
+
+#### ✨ Security & Integrity
+- **Deep Integrity Pipeline**: Implementation of a startup-phase "Deep Scan" that cryptographically verifies all critical assets (`app.js`, `encryption.js`, `service-worker.js`) against a signed server-side manifest.
+- **Isolation Mode (AirGap)**: A total digital blackout system. When active, it globally overrides browser networking (`fetch`, `XHR`, `WebSockets`) and halts all update/sync polling to ensure 100% offline security.
+- **Post-Repair Security Checks**: Added a "Double-Verification" step after repairs to prevent recursive update loops on compromised or misconfigured servers.
+- **TUF Security Compliance**: Hardened timestamp and expiration logic to protect against "Freeze Attacks" where an attacker serves an older, signed version of the manifest.
+
+#### 💎 UI & UX Refinements
+- **Premium "Secure Sync" UI**: Redesigned the update/repair flow with a high-end Liquid Titanium aesthetic, pulsing security indicators, and simplified, reassuring language.
+- **Sync Status Telemetry**: Integrated real-time "Heartbeat" indicators in the Audit Log and Header to visualize security verification states.
+
+#### ⚙️ Architecture & DevOps
+- **Root-Level Convergence**: Refactored the project structure to a unified root-level architecture, eliminating legacy directory dependencies and streamlining the Service Worker scope.
+- **Hardened Publish Engine**: Updated the `publish.ps1` script to automate manifest signing, file exclusion, and checksum generation in a single, secure workflow.
+
+---
+
 ## [3.0.0] — 2026-05-10
 
 ### 🛡️ THE REBIRTH & HARDENING UPDATE

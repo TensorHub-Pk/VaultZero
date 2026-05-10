@@ -24,7 +24,27 @@ If you discover a potential security vulnerability, please follow our coordinate
 
 ---
 
-## 📜 [HISTORY] INCIDENT RESPONSE (v3.0.0)
+## 🏛️ [ARCHITECTURE] DIGITAL FORTRESS
+VaultZero introduces the "Digital Fortress" architecture, a multi-layered self-protection system designed to detect and block server-side tampering.
+
+### 🛡️ Integrity Pipeline
+All critical assets are hashed and listed in a cryptographically-signed `update-info.json` manifest.
+- **Deep Scan**: On startup, the app performs a fetch-based hash verification of all JS and Lib files.
+- **TUF Compliance**: We enforce timestamp and expiration checks to prevent "Freeze Attacks" (serving old versions of the app).
+
+### 🛸 Isolation Mode (Air-Gap)
+Users can activate a total digital blackout for sensitive sessions.
+- **Network Lockdown**: Globally overrides `fetch` and `XMLHttpRequest` to prevent any data from leaving the browser.
+- **Zero Polling**: Disables all background syncs, cloud pulses, and update checks.
+
+### 📌 Public Key Pinning
+The application pins the developer's public signing key in `localforage`.
+- If the hardcoded key in `app.js` is modified, the app triggers a high-level security lockout.
+- Any update manifest must be signed by the pinned key to be considered valid.
+
+---
+
+## 📜 [HISTORY] INCIDENT RESPONSE
 > *"Resilience is born from transparency."*
 
 In early May 2026, an internal configuration file was inadvertently exposed. While minor, we treated this as a critical breach of our own standards.

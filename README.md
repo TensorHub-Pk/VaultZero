@@ -10,23 +10,23 @@
   <a href="https://vaultzero.tensorhub.pk"><img src="https://img.shields.io/badge/WEBSITE-LIVE-00e373?style=flat-square&logo=google-chrome&logoColor=white" alt="Website Live" /></a>
   <a href="SECURITY.md"><img src="https://img.shields.io/badge/AUTHENTICITY-GPG_VERIFIED-ff2e55?style=flat-square&logo=gnupg&logoColor=white" alt="GPG Verified" /></a>
   <a href="https://www.bestpractices.dev/projects/1"><img src="https://www.bestpractices.dev/projects/1/badge" alt="OpenSSF Gold" /></a>
-  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/RELEASE-v3.0.0_REBIRTH-blue?style=flat-square&logo=github&logoColor=white" alt="Latest Release" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/RELEASE-PRODUCTION_STABLE-blue?style=flat-square&logo=github&logoColor=white" alt="Latest Release" /></a>
 </p>
 
 <br />
 
 ---
 
-## 🛡️ [SECURITY] THE v3.0.0 REBIRTH
+## 🛡️ [SECURITY] THE ARCHITECTURAL REBIRTH
 > *"Safe is not enough—it must be Perfect."*
 
-VaultZero v3.0.0 is a historic architectural transformation. Following a proactive security decision to retire the legacy codebase, we have rebuilt from the ground up to establish a new gold standard in user privacy.
+VaultZero is built on an architectural foundation of absolute resilience. Following a proactive security decision to retire the legacy codebase, we have rebuilt from the ground up to establish a new gold standard in user privacy.
 
 ### ⚠️ [NOTICE] Accountability & Transparency
 During a major development cycle, an internal configuration file was briefly exposed in the public history. Although it was quickly removed, the VaultZero team chose the path of **Maximum Caution** over convenience.
 
 ### 🚀 [PROJECT] Strategic Response
-We have completely retired the legacy codebase and initiated a **Ground-Up Restoration**. v3.0.0 is the first release of this new era—an audited, hardened baseline built on the **Titanium Pulse** integrity engine.
+We have completely retired the legacy codebase and initiated a **Ground-Up Restoration**. This release represents a new era—an audited, hardened baseline built on the **Titanium Pulse** integrity engine.
 
 ---
 
@@ -46,7 +46,7 @@ We have completely retired the legacy codebase and initiated a **Ground-Up Resto
 
 1.  **Clone**: `git clone https://github.com/TensorHub-Pk/VaultZero.git`
 2.  **Verify**: Check GPG signatures on the latest release tag.
-3.  **Run**: Open `app/index.html` in any modern browser.
+3.  **Run**: Open `index.html` in any modern browser.
 
 ---
 

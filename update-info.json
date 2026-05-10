@@ -1,20 +1,28 @@
 {
-  "version": "3.0.0",
-  "released": "2026-05-09",
-  "timestamp": 1778435646747,
-  "expires": 1781027646747,
+  "version": "3.1.0",
+  "released": "2026-05-12",
+  "timestamp": 1778449922825,
+  "expires": 1781041922825,
   "hashes": {
     "app.js": {
-      "sha256": "06c9596fcd40ade36364025b831e458688c28b6c4fecba8125a1fd67df3c4ea9",
-      "sha512": "f7e904127f8c89b98444e9efc864302369c5dd5baea66c962202942aaf66e4d224c72c68a05801d916e061badc33430961db4bab66f1d54cac45d02fb9b386b4"
+      "sha256": "d419a2b9c3b51186a8ae81e0001ef0251f80b0ef4f9b7b37d7bca4dc65758a37",
+      "sha512": "1ac99244b60725bdf57443a4cb839977b7dda298e117da3da978c0fc87a654a9aba1df2a227dc0b5605634f50363bf7f03808427b73553234ba9d3d15aedfa50"
     },
     "encryption.js": {
-      "sha256": "12232b51d64112cc1edf2ac29f43b315079206d2e715c57c4732264e584009a7",
-      "sha512": "b428370bc1dc3cab7edaa5e9ed6fa8264580ed37f07fa842f73352f314a3aec71dbfb2b8a3f4b16f8e6d761737ef92d73f672d2235f7bad98ff533cbaaec2a06"
+      "sha256": "80045fef5d8eb7c8c76fef30cbaa81902733b69528948db712ed729519d99bf0",
+      "sha512": "3aece8448ce4579a3fcfba43e483b7d570233ff2e326f88b1328c7e0202826937ca85c83b89817cbb55e9e877e8dac193a516347a88ac3d9eb555208358dcce6"
+    },
+    "image-hide.js": {
+      "sha256": "e57e66abcc7416c50cfc2a8993d9961f18375d29f091023b5cdb53ed831426fe",
+      "sha512": "5f40dd9574256b267e7e8734b4d3c0eaf0bfe67063898c59c51ebe4df65b01f2f8516db6876b09e484b1c26b9941721343bab3aa1de75f16efb427966d8ac4f7"
+    },
+    "security-logs.js": {
+      "sha256": "b4e2f77de8567e263ccb2e92a1b8547c510a0c6b336375c36778dbf95ce4bbd7",
+      "sha512": "818990b7c547854439e0c5793c65b43159ffc25b3166506bf515f05052d7e42e0a9d96df7b93512fae7053c261399d0a465ee3d94e2dbb08627dbfb248c8fd8c"
     },
     "service-worker.js": {
-      "sha256": "8616813999852896aada2deb5c74b66d56f1e3a920ebae7b753a37e489991cd5",
-      "sha512": "6529b19b1b1d9923b4b0300211484ef20461cab8666c3dd93ffa7356c8e0968d9d25c0e89f476ea6d223be5d0480596590e0f65f0b9e8ff901f373913d080362"
+      "sha256": "9a49e35377458b6ff391b5d4dcbe1649fd803c44ca5104abef58d1652d7a6806",
+      "sha512": "5112a9e3b264c9322b0139c673588c15e308967ba505971995c665a042c0e0a3df4e9e6c79e8a3cd4c41e46fbd3872c872e801e674e9eb1d8a0e4dbb0791e639"
     },
     "libs/localforage.min.js": {
       "sha256": "cc168d95fb927d46b1043726cfe13998e08902ff63f24330e2bb2290109ed145",
@@ -37,6 +45,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "CN/uOdoEoCwvnsmmnjMmsKCd6M39TtrJT/Sdy0i0fF/Ex50QsUeqQ1DToG6G3lvgOjHfB/Bdnpn4dZXtQOryAA==",
+  "signature": "eH8SfqHT+GxSMq20bXGb+xopZ6UvcBwtTX5Mi4vugre1N49QjR9v9NuLayD9jCf9W64PI5ov4bHlgAaZ/nDHBw==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
