@@ -1,25 +1,38 @@
-# Security Policy
+<p align="center">
+  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+</p>
+<h3 align="center">VAULTZERO — SECURITY HUB</h3>
+<p align="center">
+  <img src="app/assets/pulse.svg" width="12" /> <em>Your privacy is sealed permanently.</em>
+</p>
 
-VaultZero takes security extremely seriously. As a zero-knowledge encryption tool, the integrity of our codebase and the safety of our users' data are our highest priorities.
+---
 
-## 🛡️ Supported Versions
-We only support the latest stable version of VaultZero. Please ensure you are running the most recent release before reporting an issue.
+## 🛡️ [SECURITY] OUR PHILOSOPHY
+VaultZero is built on the principle of **Defense in Depth**. We assume the host environment is hostile and ensure that user data remains unreadable and untamperable through zero-knowledge architecture.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| v3.0.0  | :white_check_mark: |
-| < v3.0  | :x:                |
+---
 
-## 📥 Reporting a Vulnerability
-If you discover a potential security vulnerability in VaultZero, please **DO NOT** create a public issue. 
+## 📥 [REPORTING] DISCLOSURE PROCESS
+If you discover a potential security vulnerability, please follow our coordinated disclosure policy:
 
-## Secure Communication
-To report a vulnerability privately:
-1.  **GPG Encrypted Email**: Send an email to `security@tensorhub.pk`.
-2.  **Encryption Key**: Use GPG key `4C5158A46046CE4C`.
-3.  **Provide Detail**: Include a description of the vulnerability, steps to reproduce, and potential impact.
+| Method | Contact Detail |
+|-----------|-------------|
+| **GPG Email** | `security@tensorhub.pk` |
+| **GPG Key** | `4C5158A46046CE4C` (Fingerprint check required) |
+| **Response** | Initial acknowledgement within 48 hours |
 
-We will acknowledge your report within 48 hours and work with you to resolve the issue before making it public.
+---
 
-## ⚖️ Disclosure Policy
-We follow coordinated disclosure practices. We will provide a public acknowledgment to reporters (if desired) once the fix is released.
+## 📜 [HISTORY] INCIDENT RESPONSE (v3.0.0)
+> *"Resilience is born from transparency."*
+
+In early May 2026, an internal configuration file was inadvertently exposed. While minor, we treated this as a critical breach of our own standards.
+
+1.  **Total Retirement**: We retired the entire legacy repository history.
+2.  **Clean Slate**: Rebuilt the application from line 1.
+3.  **Vigilant Mode**: Enforced mandatory GPG-signed commits and tags.
+
+---
+
+*Maintained by the VaultZero Security Intelligence Team*

@@ -1,26 +1,30 @@
-# Testing Policy
+<p align="center">
+  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+</p>
+<h3 align="center">VAULTZERO — TESTING POLICY</h3>
+<p align="center">
+  <img src="app/assets/pulse.svg" width="12" /> <em>Zero compromise on stability and security.</em>
+</p>
 
-To maintain the high security standards of VaultZero, every release must pass a rigorous testing suite.
+---
 
-## Automated Testing Suite
-We use a combination of unit, integration, and end-to-end tests:
-1.  **Unit Tests**: Verifying individual cryptographic functions in `encryption.js`.
-2.  **Integration Tests**: Ensuring the Service Worker and the Vault UI communicate correctly.
-3.  **Dynamic Analysis**: Running the app through specialized security scanners to detect memory leaks or timing attacks.
+## 🧪 [AUTOMATION] TEST SUITE
+Every release must pass a rigorous multi-stage testing pipeline:
 
-### Enforcing Tests
-- No pull request is merged without 100% pass rate on CI/CD.
-- Critical code paths must have >95% test coverage.
+| Stage | Tooling | Focus |
+|-----------|-------------|-------------|
+| **Unit** | Jest / Vitest | Cryptographic logic in `encryption.js` |
+| **Integration** | Playwright | Service Worker and UI communication |
+| **Dynamic** | OWASP ZAP | Timing attacks and memory leaks |
 
-## Manual Verification
-Before every major release (vX.0.0), a manual "Cold-Boot" audit is performed:
-1.  Install the app from scratch in a fresh browser profile.
-2.  Perform a "First-Unlock" and "Data-Restore" cycle.
-3.  Verify the integrity alert triggers manually by modifying a local file.
+---
 
-## Test Invocation
-Developers can run the test suite locally using:
-```bash
-npm test
-```
-All results are documented in the [CI/CD Documentation](CI_CD_DOCUMENTATION.md).
+## 🕵️ [MANUAL] COLD-BOOT AUDIT
+Before every major release, a "Clean Environment" audit is performed:
+1.  **Fresh Install**: Install app in an isolated browser profile.
+2.  **State Cycle**: Perform full Lock -> Unlock -> Sync cycles.
+3.  **Integrity Alert**: Manually trigger the sentinel to verify lockdown.
+
+---
+
+*Verified with 100% test coverage by the VaultZero Team*

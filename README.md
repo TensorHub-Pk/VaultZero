@@ -1,28 +1,44 @@
-# VaultZero
+<p align="center">
+  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+</p>
+<h3 align="center">VAULTZERO — SYSTEM HUB</h3>
+<p align="center">
+  <img src="app/assets/pulse.svg" width="12" /> <em>Professional. Zero-Knowledge. Post-Quantum. Locally-First.</em>
+</p>
 
-VaultZero is a professional, open-source, purely client-side **Zero-Knowledge Encryption** suite with **Post-Quantum** resistance. It allows you to encrypt files and messages locally with military-grade security. No data ever leaves your device.
+---
 
-## 🛡️ Key Security Features
-- **Zero-Knowledge Architecture**: Your password never leaves your browser.
-- **Post-Quantum Ready**: Uses ML-KEM-768 (Kyber) for asymmetric sharing.
-- **High-Speed Cryptography**: Powered by ChaCha20-Poly1305 and Argon2id.
-- **Offline-First (PWA)**: Works completely offline once installed.
-- **Verifiable Integrity**: Every release is GPG signed and SHA256 hashed.
+## 🛡️ [SECURITY] THE v3.0.0 REBIRTH
+> *"Safe is not enough—it must be Perfect."*
 
-## 🚀 Running Locally
-To run VaultZero on your local machine for development or maximum privacy:
-1.  **Clone the Repo**: `git clone https://github.com/TensorHub-Pk/VaultZero.git`
-2.  **Serve the Files**: Use any local server (e.g., `npx serve`, VS Code Live Server, or Python's `http.server`).
-3.  **Navigate to**: `http://localhost:XXXX/app/index.html`
+VaultZero v3.0.0 is a historic architectural transformation. Following a proactive security decision to retire the legacy codebase, we have rebuilt from the ground up to establish a new gold standard in user privacy.
 
-## 🏛️ Documentation
-Full technical documentation is available in the [docs/](https://github.com/TensorHub-Pk/VaultZero/tree/main/docs) directory:
-- [Security Architecture](docs/SECURITY_ARCHITECTURE.md)
-- [Testing Policy](docs/TESTING_POLICY.md)
-- [Release Process](docs/RELEASE_PROCESS.md)
+### ⚠️ [NOTICE] Accountability & Transparency
+During a major development cycle, an internal configuration file was briefly exposed in the public history. Although it was quickly removed, the VaultZero team chose the path of **Maximum Caution** over convenience.
 
-## 🤝 Contributing
-We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+### 🚀 [PROJECT] Strategic Response
+We have completely retired the legacy codebase and initiated a **Ground-Up Restoration**. v3.0.0 is the first release of this new era—an audited, hardened baseline built on the **Titanium Pulse** integrity engine.
 
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+---
+
+## ✨ [FEATURES] Technical Excellence
+
+| Pillar | Capability |
+|-----------|-------------|
+| **Zero-Knowledge** | Your master password never leaves your browser's memory |
+| **Post-Quantum** | ML-KEM-768 (Kyber) for future-proof secret sharing |
+| **High-Speed Crypto** | Powered by ChaCha20-Poly1305 and Memory-hard Argon2id |
+| **Integrity Sentinel** | Real-time cryptographic sealing and background file monitoring |
+| **Anonymous Sync** | Anonymous browser-to-browser sync via the Pulse Mesh |
+
+---
+
+## 🏁 [DEPLOYMENT] Getting Started
+
+1.  **Clone**: `git clone https://github.com/TensorHub-Pk/VaultZero.git`
+2.  **Verify**: Check GPG signatures on the latest release tag.
+3.  **Run**: Open `app/index.html` in any modern browser.
+
+---
+
+*Maintained with absolute integrity by the VaultZero Team*

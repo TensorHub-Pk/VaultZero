@@ -1,27 +1,33 @@
-# Contributing to VaultZero
+<p align="center">
+  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+</p>
+<h3 align="center">VAULTZERO — CONTRIBUTION</h3>
+<p align="center">
+  <img src="app/assets/pulse.svg" width="12" /> <em>Building the future of privacy, together.</em>
+</p>
 
-Thank you for your interest in VaultZero! We are a community-driven project focused on providing accessible, post-quantum encryption to everyone.
+---
 
-## 🤝 Code of Conduct
-We are committed to providing a friendly, safe, and welcoming environment for all. Please be respectful and professional in all interactions.
+## 🤝 [COLLABORATION] WELCOME
+Thank you for your interest in VaultZero. We are a community-driven project focused on providing accessible, post-quantum encryption to everyone.
 
-## 🛠️ Development Workflow
-1.  **Fork the Repository**: Create your own copy of the project.
-2.  **Create a Branch**: `git checkout -b feature/amazing-improvement`
-3.  **Make Changes**: Ensure your code follows our [style guidelines](docs/MAINTENANCE_GUIDE.md).
-4.  **Test**: Ensure all [Testing Policies](docs/TESTING_POLICY.md) are met.
-5.  **Commit**: Use descriptive commit messages.
-6.  **Push**: `git push origin feature/amazing-improvement`
-7.  **Open a Pull Request**: Provide a clear description of what you changed and why.
+---
 
-## 📥 Pull Requests
-All pull requests must:
-- Pass the [CI/CD Pipeline](docs/CI_CD_DOCUMENTATION.md).
-- Include [Verified Tests](docs/TESTING_POLICY.md).
-- Be cryptographically signed if you are a core contributor.
+## 🛠️ [PROCESS] PULL REQUEST REQUIREMENTS
+To maintain our high security standards, all contributions must pass these checks:
 
-## 🐛 Reporting Issues
-Please use the [Issue Tracker](https://github.com/TensorHub-Pk/VaultZero/issues) for bug reports and feature requests. Provide as much detail as possible to help us reproduce the issue.
+| Requirement | Description |
+|-----------|-------------|
+| **Signed Commits** | Every commit must be signed with a GPG key verified on GitHub. |
+| **Linting** | Zero warnings on ESLint and Prettier. |
+| **Testing** | 100% pass rate on the automated testing suite. |
+| **Audit** | Security-critical code will undergo a manual peer audit. |
 
-### Security Vulnerabilities
-If you discover a security vulnerability, please do NOT open a public issue. Follow the instructions in [SECURITY.md](SECURITY.md) to report it privately.
+---
+
+## ⚖️ [LEGAL] CODE OF CONDUCT
+We are committed to providing a welcoming and inspiring environment for all. Please review our full Code of Conduct in the `docs/` directory.
+
+---
+
+*Verified with integrity by the VaultZero Team*
