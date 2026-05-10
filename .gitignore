@@ -1,0 +1,27 @@
+# --- VaultZero Security Ignore ---
+# NEVER upload private keys to GitHub
+**/private-keys.json
+private-keys.json
+For dev/
+
+# --- Release Assets ---
+# It is better to keep large ZIP files out of git history
+*.zip
+*.tar.gz
+
+# --- Development & OS Files ---
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+*.tmp
+*.bak
+
+# --- Environment & Credentials ---
+.env
+.env.local
+*.pem
+*.key
+*.pub

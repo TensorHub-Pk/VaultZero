@@ -1,12 +1,12 @@
 {
   "version": "3.0.0 Stable",
   "released": "2026-05-09",
-  "timestamp": 1778357368678,
-  "expires": 1780949368678,
+  "timestamp": 1778375957969,
+  "expires": 1780967957969,
   "hashes": {
     "index.html": {
-      "sha256": "42358378f67975a90b0accf5a58ab7c7e9a4e31c5c20908701d7300256b20fa9",
-      "sha512": "9a292c26d57f869eb37d832b068d418c0a9aa13b96a8ecc886aeb54f254a54e81d44a4fa97546468649221145b5c5408f2c2e51242bc64df20da4c8ea72baeeb"
+      "sha256": "439cb7de868090f922bfcdb3189964b1e473b48c00d04481eb1ca0a3ded9cfec",
+      "sha512": "317ac9673820c38c03c3e9c2fcf1e4038bd87fc72efb7f77814e302181b428a9c43af20377f9fe66e02eab677e4fe79b688f63fdc9758943255dd94e80eb0ae6"
     },
     "vault.html": {
       "sha256": "c7c73831e9f1c8137eb77f84298df6465936fa18757163fdbd89a7e14f1c296d",
@@ -45,6 +45,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "j4DJn7xHAZMymoFyjPAyDBISZSH8ryJUIodtUeHXbxS6GOvCnYSdPHPGqoeOHZESVXYoga9J04m7z1qWrNDLAQ==",
+  "signature": "AIpFRhqtLQ2wu+T9T8jYDaBICphPUgV/+NPR2ULtu+22B+fULjZvsQZZWwYppP/X6nBcxovBP6GYZ9aMK5iSBQ==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
