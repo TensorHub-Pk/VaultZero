@@ -7,10 +7,10 @@
 User-agent: *
 Allow: /
 Allow: /index.html
+Allow: /protocol.html
 Allow: /home-design.css
-Allow: /logo.png
+Allow: /assets/
 Allow: /fevicon.jpeg
-Allow: /SECURITY_ARCHITECTURE.md
 
 # Block secure app from indexing (cryptographic environment)
 Disallow: /vault.html

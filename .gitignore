@@ -10,6 +10,8 @@ for-dev/
 # It is better to keep large ZIP files out of git history
 *.zip
 *.tar.gz
+CHECKSUMS.txt
+CHECKSUMS.txt.*
 
 # --- Development & OS Files ---
 node_modules/
