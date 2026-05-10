@@ -1,1 +1,0 @@
-node internal-tools/sign-updates.js
