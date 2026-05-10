@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="app/assets/logo.png" alt="VaultZero Logo" width="180" />
+  <img src="assets/logo.png" alt="VaultZero Logo" width="180" />
 </p>
 <h3 align="center">VAULTZERO — CONTRIBUTION</h3>
 <p align="center">
-  <img src="app/assets/pulse.svg" width="12" /> <em>Building the future of privacy, together.</em>
+  <img src="assets/pulse.svg" width="12" /> <em>Building the future of privacy, together.</em>
 </p>
 
 ---
