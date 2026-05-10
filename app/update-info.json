@@ -1,8 +1,8 @@
 {
   "version": "3.0.0",
   "released": "2026-05-09",
-  "timestamp": 1778428471584,
-  "expires": 1781020471584,
+  "timestamp": 1778429767080,
+  "expires": 1781021767080,
   "hashes": {
     "app.js": {
       "sha256": "06c9596fcd40ade36364025b831e458688c28b6c4fecba8125a1fd67df3c4ea9",
@@ -37,6 +37,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "lDysQ0sbrdTiIKxfbZMZecfIMXuf0ccd0/nsNfvmylaCtsgD+o4gC8/pE1YbFYToZrDflHceFzhDD6YLuRqjBg==",
+  "signature": "CLmAZKj+N4p+p0uWtfgsXKPUz7ZJ9kp5AcAH5XEdYPY5hQSaLgqYWvvwfLsuj8oV+bf9rTy2CdFrSdhBJ7hmDA==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
