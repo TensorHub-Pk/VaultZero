@@ -1,13 +1,50 @@
 {
-  "version": "2.1 Stable",
-  "released": "2026-03-24",
+  "version": "3.0.0 Stable",
+  "released": "2026-05-09",
+  "timestamp": 1778357368678,
+  "expires": 1780949368678,
   "hashes": {
-    "app.js": "c1316c0a1fee92f9f1cbcb79d849c531a338ebe5b268354c2c13995939be318c",
-    "encryption.js": "8846ecd337d82bac90b3374f604832e8ea0867c19ad4fca6d5f9eb2d2b288605",
-    "service-worker.js": "05132e15c268891e1f6e43f7602ce6e76381f1831b77f22650902ac3b31f4810",
-    "security-logs.js": "373cfbba4b9e4ab40e71dcda45150f201108b383024997ff681a4743e3b7e78f",
-    "app-identity.json": "4730b6a69bdf16d45660c22ece8cd41f0c41ec8c18c667795b89e3d27bd61fd0"
+    "index.html": {
+      "sha256": "42358378f67975a90b0accf5a58ab7c7e9a4e31c5c20908701d7300256b20fa9",
+      "sha512": "9a292c26d57f869eb37d832b068d418c0a9aa13b96a8ecc886aeb54f254a54e81d44a4fa97546468649221145b5c5408f2c2e51242bc64df20da4c8ea72baeeb"
+    },
+    "vault.html": {
+      "sha256": "c7c73831e9f1c8137eb77f84298df6465936fa18757163fdbd89a7e14f1c296d",
+      "sha512": "89488f9c1f5c56cf3bb0ac9c7ef3de962d80f54891e424ba427831ed033506832f1a57db20c4056d85638fd73bd9de642125ee494cc283335a61ae5cf8be0047"
+    },
+    "app.js": {
+      "sha256": "06c9596fcd40ade36364025b831e458688c28b6c4fecba8125a1fd67df3c4ea9",
+      "sha512": "f7e904127f8c89b98444e9efc864302369c5dd5baea66c962202942aaf66e4d224c72c68a05801d916e061badc33430961db4bab66f1d54cac45d02fb9b386b4"
+    },
+    "encryption.js": {
+      "sha256": "4e246e4fdc51a3ae95d7299b66658f808091fa152b333bcca41d396a404c1d6b",
+      "sha512": "fbf95d48e13fb172702a3a5b990a56e3577368e662e874a8f50edfa0af077da28441e097e2a02a2d8272ef890110f4cba483e33ef40d4b235aea0a0eac15130b"
+    },
+    "service-worker.js": {
+      "sha256": "def1e427e40be2d47e11bd1140783100dca5f0c90fae708597c7a55d0c2ae97a",
+      "sha512": "5ea19319b5c66c3083fc60b907e9e4dff7e82fc85b33dabd4462d0ecac5b055f5625cba3b28a70f5f871a8e2ca52506eb71e21991888a38361233f9415dc6acb"
+    },
+    "libs/localforage.min.js": {
+      "sha256": "cc168d95fb927d46b1043726cfe13998e08902ff63f24330e2bb2290109ed145",
+      "sha512": "f8131a98fd1eef09f7f4918bf27280677c80413d9d2f9a1a5d6af86589531a428e6a85ccfd88fb738a32e74360cf9ca852eb401b5edf96e783e05e90a5394f9e"
+    },
+    "libs/sodium.js": {
+      "sha256": "1c96753a1b23dd57b122ee337dcd7b323eb1f045af96c3f94c9d32e329c9a856",
+      "sha512": "c985eb55e6e22af60c8d6cfee2127b53ccf821526c031e943a03718fb10a8c8aabc2562af43ac4d1165690105d17178e040606e21c8b91216a9551008df2c6a5"
+    },
+    "libs/argon2-bundled.min.js": {
+      "sha256": "77c64b946baf1a5116dc591f4b9965d636b1b455f75edd2d4a587cb75e01687b",
+      "sha512": "025ae1f2f6e6283739c62abb23fcbc2d30f0cbd9f0d674fd4bfc91ef71cc3285aba57e12d648b334f75633cf7a73f08320620b3700226a287adbb03de2446161"
+    },
+    "libs/argon2.wasm": {
+      "sha256": "0c2149886c13e4eae4a6ca25ee71d47423c5c8740a874cf04ff816d1b2c901d7",
+      "sha512": "510c272c03b49628adbcfc56ba0bd62f6273d89e4b0dca360170ba27c73e481a7373929b2eb83720abc43c6a6b04372fb37f817b78abf5e4e7b8b25442878696"
+    },
+    "libs/kyber.js": {
+      "sha256": "514770345be630c33e5494a0dac8f82d5e41a5b63c850dae2b102be18558ecb6",
+      "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
+    }
   },
-  "signature": "z8qbplvKb8wX9RGhFZQLxdLIZjlTLNNp2FyfJPD3vLLLLsqspBXTDBteuKa6fSyQufkClYpekvaKc58c6OlBAA==",
-  "signerPublicKey": "eE59Mn40lQZC8QMb8aPk5OfkwCjs/G4BVyIDEsKWAT4="
+  "signature": "j4DJn7xHAZMymoFyjPAyDBISZSH8ryJUIodtUeHXbxS6GOvCnYSdPHPGqoeOHZESVXYoga9J04m7z1qWrNDLAQ==",
+  "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }

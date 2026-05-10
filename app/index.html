@@ -180,14 +180,14 @@
     <!-- ===== HEADER ===== -->
     <header class="site-header" id="site-header">
         <div class="container header-inner">
-            <a href="/" class="logo-link" aria-label="VaultZero Home">
+            <a href="index.html" class="logo-link" aria-label="VaultZero Home">
                 <img src="assets/logo.png" alt="VaultZero Logo" class="logo-img" width="130" height="auto">
             </a>
             <nav class="site-nav" id="site-nav">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#threat-model" class="nav-link">Threat Model</a>
-                <a href="#architecture" class="nav-link">Architecture</a>
-                <a href="#open-source" class="nav-link">Open Source</a>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="protocol.html" class="nav-link">How it Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="vault.html" class="nav-link nav-btn">Launch App</a>
             </nav>
             <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
                 <i class="ph-bold ph-list" style="font-size: 28px;"></i>
@@ -200,18 +200,18 @@
     <section class="hero">
         <div class="container hero-inner">
             <div class="hero-badges-group">
-                <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank" class="premium-gold-badge">
-                    <i class="ph-fill ph-trophy"></i>
-                    <span>OpenSSF Gold Achievement</span>
-                </a>
-                <div class="hero-feature-badge">Open Source · Offline-First · Zero Knowledge</div>
+                <span class="premium-gold-badge">
+                    <i class="ph-fill ph-shield-checkered"></i>
+                    <span>3.0.0 TITANIUM PULSE RELEASE</span>
+                </span>
+                <div class="hero-feature-badge">PQC-READY · ZERO-KNOWLEDGE · OFFLINE-FIRST</div>
             </div>
             <h1 class="hero-title">
-                Encryption That Never<br>
-                <span class="accent-text">Leaves Your Device</span>
+                The New Standard for<br>
+                <span class="accent-text">Privacy 3.0.0</span>
             </h1>
             <p class="hero-subtitle">
-                Your keys and data are protected with robust, post-quantum cryptography — entirely client-side. No servers. No tracking. No trust required.
+                Engineered for total autonomy. Your keys and data are protected with military-grade, post-quantum cryptography — entirely client-side. No servers. No trust required.
             </p>
             <div class="hero-actions">
                 <a href="vault.html" target="_blank" rel="noopener noreferrer" class="cta-btn primary-cta">
@@ -283,56 +283,187 @@
         </div>
     </section>
 
-    <!-- ===== FEATURES ===== -->
-    <section class="section" id="features">
+    <!-- ===== PROTOCOL & USAGE ===== -->
+    <section class="section" id="protocol">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">Why VaultZero</span>
-                <h2 class="section-title">Built for People Who Take Privacy Seriously</h2>
-                <p class="section-desc">Every design decision was made with one goal: your data should be mathematically impossible for anyone — including us — to access.</p>
+                <span class="section-tag">User Guide</span>
+                <h2 class="section-title">The VaultZero Protocol</h2>
+                <p class="section-desc">Understand how to leverage military-grade encryption for your daily digital life.</p>
+            </div>
+            
+            <div class="usage-grid">
+                <!-- Usage Step 1 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">01</div>
+                    <div class="usage-content">
+                        <h3>Secure Your Entry</h3>
+                        <p>Set a strong <strong>Master PIN</strong>. VaultZero uses Argon2id to derive your encryption keys locally. Your PIN is never stored and never leaves your browser.</p>
+                        <ul class="usage-list">
+                            <li><i class="ph-fill ph-check"></i> 100% Zero-Knowledge</li>
+                            <li><i class="ph-fill ph-check"></i> Memory-Hard Protection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Usage Step 2 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">02</div>
+                    <div class="usage-content">
+                        <h3>Choose Your Action</h3>
+                        <p>Access specialized modules for every privacy need:</p>
+                        <div class="usage-modules">
+                            <div class="u-module"><i class="ph-bold ph-key"></i> <span>Passwords</span></div>
+                            <div class="u-module"><i class="ph-bold ph-file-lock"></i> <span>Secrets</span></div>
+                            <div class="u-module"><i class="ph-bold ph-share-network"></i> <span>Secure Share</span></div>
+                            <div class="u-module"><i class="ph-bold ph-fingerprint"></i> <span>Identity</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Step 3 -->
+                <div class="usage-card reveal">
+                    <div class="usage-step">03</div>
+                    <div class="usage-content">
+                        <h3>Sync or Isolate</h3>
+                        <p>Use the <strong>Titanium Pulse</strong> engine to sync across devices via anonymous relays, or toggle <strong>Isolation Mode</strong> for total air-gapped security.</p>
+                        <ul class="usage-list">
+                            <li><i class="ph-fill ph-check"></i> Real-time Mesh Sync</li>
+                            <li><i class="ph-fill ph-check"></i> One-click Lockdown</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="usage-cases-box reveal">
+                <div class="cases-header">
+                    <i class="ph-bold ph-book-open"></i>
+                    <h3>Feature Reference Guide</h3>
+                    <p>A breakdown of every button and control within the VaultZero suite.</p>
+                </div>
+                <div class="reference-grid">
+                    <div class="ref-item">
+                        <span class="ref-badge">Master PIN Input</span>
+                        <p><strong>Action:</strong> Root encryption salt.</p>
+                        <p><strong>Usage:</strong> Enter 4-12 digits to generate your local security identity.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Unlock Vault</span>
+                        <p><strong>Action:</strong> Verifies PIN & opens dashboard.</p>
+                        <p><strong>Usage:</strong> Click after entering PIN. No server-side check is performed.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Add Password (+)</span>
+                        <p><strong>Action:</strong> Encrypts new credentials.</p>
+                        <p><strong>Usage:</strong> Click the plus icon, enter details, and hit "Save Securely".</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Copy / View</span>
+                        <p><strong>Action:</strong> Transient decryption.</p>
+                        <p><strong>Usage:</strong> Click eye/clipboard. Plaintext is auto-wiped after 30 seconds.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Encrypt File</span>
+                        <p><strong>Action:</strong> Packages files in AES-256.</p>
+                        <p><strong>Usage:</strong> Drag a file, set expiry, and click "Seal Secret".</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Titanium Pulse</span>
+                        <p><strong>Action:</strong> Anonymous mesh sync.</p>
+                        <p><strong>Usage:</strong> Toggle 'ON' to sync your vault across linked devices in real-time.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Isolation Mode</span>
+                        <p><strong>Action:</strong> Network lockdown.</p>
+                        <p><strong>Usage:</strong> Click to sever all browser network APIs for a private session.</p>
+                    </div>
+                    <div class="ref-item">
+                        <span class="ref-badge">Panic Wipe</span>
+                        <p><strong>Action:</strong> Irreversible data shredding.</p>
+                        <p><strong>Usage:</strong> Click to delete all local keys and data instantly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="usage-cases-box reveal" style="margin-top: 40px;">
+                <div class="cases-header">
+                    <i class="ph-bold ph-lightning"></i>
+                    <h3>When to Use VaultZero?</h3>
+                </div>
+                <div class="cases-grid">
+                    <div class="case-item">
+                        <h4>High-Security Comms</h4>
+                        <p>Sharing passwords, credentials, or sensitive documents with colleagues or family without leaving a digital trail.</p>
+                    </div>
+                    <div class="case-item">
+                        <h4>Zero-Trust Storage</h4>
+                        <p>Storing your most sensitive digital assets on public devices or cloud environments without risk of exposure.</p>
+                    </div>
+                    <div class="case-item">
+                        <h4>Air-Gapped Ops</h4>
+                        <p>Working in environments with no internet where you still need reliable, military-grade encryption tools.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHY VAULTZERO v3.0 ===== -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Titanium Pulse 3.0.0</span>
+                <h2 class="section-title">The "Titanium Pulse" Standard</h2>
+                <p class="section-desc">Version 3.0 represents a total hardening of the VaultZero ecosystem. Every component has been re-audited for zero-knowledge integrity, ensuring your data is mathematically unreachable by third parties.</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card">
+                <!-- Card 1: ZK -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <i class="ph-bold ph-lock-key" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-lock-key"></i>
                     </div>
-                    <h3>Zero-Knowledge Architecture</h3>
-                    <p>All cryptographic operations execute in your browser. No server ever sees your plaintext, keys, or metadata. We can't read your data — by design.</p>
+                    <h3>Zero-Knowledge Core</h3>
+                    <p>All cryptographic operations execute locally in your browser. No server ever sees your plaintext, keys, or metadata. v3.0 introduces Argon2id memory-hard hardening for all entry points.</p>
                 </div>
-                <div class="feature-card">
+                <!-- Card 2: Offline -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <i class="ph-bold ph-wifi-slash" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-wifi-slash"></i>
                     </div>
-                    <h3>Offline-First</h3>
-                    <p>After one initial load, VaultZero works entirely offline. No internet required to encrypt, decrypt, sign, or verify. Your vault is always available.</p>
+                    <h3>True Offline Autonomy</h3>
+                    <p>VaultZero v3.0 is built to run in air-gapped environments. Once loaded, the entire engine works without an active connection, providing a secure sanctuary for your digital life anywhere.</p>
                 </div>
-                <div class="feature-card">
+                <!-- Card 3: PQC -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <i class="ph-bold ph-atom" style="font-size: 32px;"></i>
+                        <i class="ph-bold ph-atom"></i>
                     </div>
-                    <h3>Post-Quantum Resistance</h3>
-                    <p>Hybrid key exchange combines classical X25519 with ML-KEM-768 (Kyber). WOTS+ Merkle signatures provide quantum-safe digital signatures using only hash functions.</p>
+                    <h3>Quantum-Resistant Sync</h3>
+                    <p>Titanium Pulse (v3.0) leverages a hybrid key exchange, combining classical X25519 with ML-KEM-768 (Kyber) to protect your synced data against future quantum decryption threats.</p>
                 </div>
-                <div class="feature-card">
+                <!-- Card 4: Files -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        <i class="ph-bold ph-file-lock"></i>
                     </div>
-                    <h3>File & Text Encryption</h3>
-                    <p>Encrypt text messages or entire files. Every payload is wrapped in an integrity-checked envelope with SHA-256 tamper detection and optional auto-expiration.</p>
+                    <h3>AES-256-GCM Vaults</h3>
+                    <p>v3.0 enhances file encryption with authenticated GCM mode and SHA-256 tamper detection. Secure your documents with auto-expiration and memory-wipe protection.</p>
                 </div>
-                <div class="feature-card">
+                <!-- Card 5: Share -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <i class="ph-bold ph-users-three"></i>
                     </div>
-                    <h3>Secure Share</h3>
-                    <p>Generate a cryptographic identity and share encrypted messages with anyone. Only the intended recipient's private key can decrypt the payload.</p>
+                    <h3>Secure Share Hub</h3>
+                    <p>Generate cryptographic identities and share messages using hybrid post-quantum key encapsulation. Only the verified recipient's private key can decrypt the payload.</p>
                 </div>
-                <div class="feature-card">
+                <!-- Card 6: Stealth -->
+                <div class="feature-card reveal">
                     <div class="feature-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <i class="ph-bold ph-eye-closed"></i>
                     </div>
-                    <h3>Steganography</h3>
-                    <p>Hide encrypted payloads inside ordinary images using LSB encoding. The existence of your message becomes invisible — not just unreadable.</p>
+                    <h3>Steganographic Stealth</h3>
+                    <p>Hide encrypted payloads inside ordinary images using LSB-3 encoding. In v3.0, the existence of your message is invisible — not just unreadable.</p>
                 </div>
             </div>
         </div>
@@ -468,9 +599,16 @@
                 <!-- Branding (Left) -->
                 <div class="new-footer-left">
                     <a href="https://tensorhub.pk" class="new-footer-logo">
-                        <img src="assets/logo.png" alt="VaultZero Logo" width="90" height="auto" style="object-fit: contain;">
+                        <img src="assets/logo.png" alt="VaultZero Logo" width="130" height="auto" style="object-fit: contain;">
                     </a>
                     <p class="new-footer-copy" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">&copy; <span id="copyright-year">2026</span> TensorHub Inc. Built for privacy.</p>
+                    <div class="gpg-verification-badge" style="margin-top: 16px; padding: 10px 14px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: 8px; display: inline-flex; align-items: center; gap: 10px;">
+                        <i class="ph-bold ph-seal-check" style="color: var(--red); font-size: 18px;"></i>
+                        <div style="text-align: left;">
+                            <span style="display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);">Official GPG Key</span>
+                            <code style="font-family: monospace; font-size: 11px; color: var(--text); font-weight: 600;">6CE3 0CC6 9DC3 46F5</code>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Center: Tagline & Projects -->
@@ -481,8 +619,8 @@
                     <div class="new-footer-projects">
                         <span class="projects-label">Featured Projects</span>
                         <div class="projects-list">
-                            <a href="https://muhammad-owais-1947.github.io/Smart-Raasta/" target="_blank" class="project-link">
-                                Smart Raasta<span></span>
+                            <a href="https://scamshield.tensorhub.pk/" target="_blank" class="project-link">
+                                ScamShield<span></span>
                             </a>
                             <span class="project-dot">•</span>
                             <a href="https://timespace.tensorhub.pk" target="_blank" class="project-link">
@@ -627,8 +765,9 @@
                     });
                 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-                document.querySelectorAll('.feature-card, .threat-card, .arch-card, .os-card, .openssf-section').forEach(function(el) {
-                    el.classList.add('reveal');
+                // Track both auto-revealed and manually tagged reveal elements
+                document.querySelectorAll('.feature-card, .threat-card, .arch-card, .os-card, .openssf-section, .usage-card, .usage-cases-box, .reveal').forEach(function(el) {
+                    if (!el.classList.contains('reveal')) el.classList.add('reveal');
                     observer.observe(el);
                 });
             }

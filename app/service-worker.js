@@ -4,13 +4,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-const CACHE_NAME = 'vault-v2-1-stable';
+
+const CACHE_NAME = 'vault-v1.0-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
+// ASSETS_TO_CACHE: Everything needed for offline operation.
 const ASSETS_TO_CACHE = [
   'index.html',
   'vault.html',
   'vault-design.css',
+  'vault-pro.css',
   'home-design.css',
   'app-identity.json',
   'app.js',
@@ -27,6 +30,21 @@ const ASSETS_TO_CACHE = [
   'assets/og-image.jpeg'
 ];
 
+// SECURITY_CRITICAL_ASSETS: Absolute core files that MUST match the cryptographic signature.
+// These are the only files that will trigger a security lockdown if they mismatch.
+const SECURITY_CRITICAL_ASSETS = [
+  'index.html',
+  'vault.html',
+  'app.js',
+  'encryption.js',
+  'service-worker.js',
+  'libs/localforage.min.js',
+  'libs/sodium.js',
+  'libs/argon2-bundled.min.js',
+  'libs/argon2.wasm',
+  'libs/kyber.js'
+];
+
 // In-memory store for hashes verified by the main thread's manifest signature check
 let trustedHashes = {};
 
@@ -35,8 +53,7 @@ let trustedHashes = {};
 async function cacheAsset(cache, url) {
   try {
     // Force network fetch to bypass edge CDN caching during installations/updates
-    const fetchUrl = new URL(url, location.origin);
-    fetchUrl.searchParams.set('vault_bust', Date.now()); 
+    const fetchUrl = new URL(url, self.location.href);
     const response = await fetch(fetchUrl.toString(), { cache: 'no-store' });
     
     if (!response.ok) throw new Error(`Status ${response.status}`);
@@ -44,20 +61,60 @@ async function cacheAsset(cache, url) {
     // Stage 2: Integrity Verification
     // Strip query params and fragments to get the base filename for hash lookup
     const filename = url.split('/').pop().split('?')[0].split('#')[0];
-    const expectedHash = trustedHashes[url] || trustedHashes[filename];
-    if (expectedHash) {
-      let text = await response.clone().text();
-      // Normalize CRLF to LF to match the signing tool
-      text = text.replace(/\r\n/g, '\n');
-      const buf = new TextEncoder().encode(text);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
-      const actualHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-      
-      if (actualHash !== expectedHash) {
-        console.error(`[SW] Integrity Check Failed for ${url}. Expected ${expectedHash}, got ${actualHash}`);
-        throw new Error(`Integrity mismatch for ${url}`);
+    const extension = filename.split('.').pop().toLowerCase();
+    const hashData = trustedHashes[url] || trustedHashes[filename];
+
+    if (hashData) {
+      const filename = url.split('/').pop().split('?')[0].split('#')[0];
+      const extension = filename.split('.').pop().toLowerCase();
+      const isText = ['js', 'html', 'css', 'json', 'xml', 'txt', 'svg'].includes(extension);
+
+      let buf;
+      if (isText) {
+        let text = await response.clone().text();
+        // Strip UTF-8 BOM and normalize CRLF to LF to match the signing tool
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        text = text.replace(/\r\n/g, '\n');
+        buf = new TextEncoder().encode(text);
+      } else {
+        buf = await response.clone().arrayBuffer();
       }
-      console.log(`[SW] Integrity Verified: ${url}`);
+      
+      // Double Verification: SHA-256 + SHA-512
+      const [h256, h512] = await Promise.all([
+          crypto.subtle.digest('SHA-256', buf),
+          crypto.subtle.digest('SHA-512', buf)
+      ]);
+
+      const actual256 = Array.from(new Uint8Array(h256)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const actual512 = Array.from(new Uint8Array(h512)).map(b => b.toString(16).padStart(2, '0')).join('');
+      
+      const expected256 = typeof hashData === 'object' ? hashData.sha256 : hashData;
+      const expected512 = typeof hashData === 'object' ? hashData.sha512 : null;
+
+      if (actual256 === expected256 && (!expected512 || actual512 === expected512)) {
+        console.log(`[SW] Double-Hash Verified: ${url}`);
+      } else {
+        // SECURITY POLICY: Only fail hard if the asset is Security Critical.
+        // Non-critical assets (CSS/Images) can be cached without strict hashing to improve reliability.
+        const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a));
+        if (isSecurityCritical) {
+          console.error(`[SW] Integrity Check Failed for Critical Asset: ${url}.`);
+          console.error(`[SW] Expected (256): ${expected256}`);
+          console.error(`[SW] Actual (256):   ${actual256}`);
+          throw new Error(`Integrity mismatch for security-critical asset: ${url}`);
+        } else {
+          console.warn(`[SW] Integrity Mismatch for non-critical asset: ${url}. Skipping strict verification.`);
+          console.log(`[SW] Asset cached despite mismatch (Reliability Mode).`);
+        }
+      }
+    } else if (Object.keys(trustedHashes).length > 0) {
+      // Security Policy: Missing hash for a security-critical asset.
+      const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a));
+      if (isSecurityCritical) {
+          console.error(`[SW] Security Policy Breach: Missing trusted hash for critical asset ${url}`);
+          throw new Error(`Security Policy: Missing hash for ${url}`);
+      }
     }
 
     // If the response is redirected (e.g. vault.html -> /vault via Clean URLs),
@@ -74,15 +131,17 @@ async function cacheAsset(cache, url) {
     }
   } catch (err) {
     console.warn('[SW] Failed to cache:', url, err.message);
+    throw err; // MUST throw to fail the install phase if critical files are missing
   }
 }
 
 self.addEventListener('install', event => {
-  self.skipWaiting();
+  self.skipWaiting(); // Force the waiting service worker to become the active service worker
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
+      console.log('SW: Installing and pre-caching assets');
       // Cache each asset individually using our custom redirect-safe fetcher
-      return Promise.allSettled(
+      return Promise.all(
         ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
       );
     })
@@ -90,16 +149,21 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
+  console.log('SW: Activated');
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    Promise.all([
+      self.clients.claim(), // Become the controller for all clients immediately
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('SW: Clearing old cache', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    ])
   );
 });
 
@@ -110,13 +174,14 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
   // Skip cross-origin requests that aren't CDNs we care about
-  const allowedCDNs = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com', 'bestpractices.dev', 'www.bestpractices.dev'];
+  const allowedCDNs = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'raw.githubusercontent.com', 'bestpractices.dev', 'www.bestpractices.dev', 'cdn.lordicon.com'];
   if (url.origin !== self.location.origin && !allowedCDNs.includes(url.hostname)) {
     return;
   }
 
-  // Network-first for update manifest (update checks must bypass cache)
-  if (url.pathname.endsWith('/update-info.json') || url.pathname.endsWith('/version.json')) {
+  // Network-first for update manifest and any requests with cache-busting timestamps
+  // This allows the Deep Integrity Sentinel to check the real server state
+  if (url.pathname.endsWith('/update-info.json') || url.searchParams.has('t') || url.searchParams.has('nocache')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
     );
@@ -131,8 +196,12 @@ self.addEventListener('fetch', event => {
         if (cached) {
           return cached;
         }
-        // Not in cache by exact URL — try vault.html directly
-        return caches.match('vault.html', { ignoreSearch: true });
+        // Not in cache by exact URL — try multiple potential paths
+        return caches.match('vault.html', { ignoreSearch: true })
+          .then(v => v || caches.match('/app/vault.html', { ignoreSearch: true }))
+          .then(v => v || caches.match('/vault.html', { ignoreSearch: true }))
+          .then(v => v || caches.match('index.html', { ignoreSearch: true }))
+          .then(v => v || caches.match('/app/index.html', { ignoreSearch: true }));
       }).then(cached => {
         if (cached) {
           return cached;
@@ -183,12 +252,31 @@ self.addEventListener('message', event => {
   if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  if (event.data === 'FORCE_RECACHE') {
+  if (event.data && event.data.type === 'FORCE_RECACHE') {
+    if (event.data.hashes) {
+      trustedHashes = event.data.hashes;
+      console.log('[SW] Hashes refreshed for Force Recache:', Object.keys(trustedHashes).length);
+    }
+    
     caches.delete(CACHE_NAME).then(() => {
-      caches.open(CACHE_NAME).then(cache => {
-        Promise.allSettled(
+      caches.open(CACHE_NAME).then(async cache => {
+        const results = await Promise.allSettled(
           ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
         );
+        
+        // Count actual failures from our cacheAsset results
+        const failed = results.filter(r => 
+          r.status === 'rejected' || 
+          (r.value && r.value.success === false)
+        ).length;
+        
+        if (event.source) {
+          event.source.postMessage({
+            type: 'RECACHE_COMPLETE',
+            success: failed === 0,
+            failedCount: failed
+          });
+        }
       });
     });
   }

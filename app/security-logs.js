@@ -26,9 +26,21 @@ const AuditLog = (() => {
         ANOMALY_DETECTED: 'ANOMALY_DETECTED'
     };
 
+    async function computeHash(entry, prevHash = "") {
+        const data = JSON.stringify(entry) + prevHash;
+        const msgBuffer = new TextEncoder().encode(data);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        return Array.from(new Uint8Array(hashBuffer))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    }
+
     async function log(eventType, details = {}) {
         try {
             let logs = await localforage.getItem(STORE_KEY) || [];
+            const lastEntry = logs[logs.length - 1];
+            const prevHash = lastEntry ? lastEntry.hash : "GENESIS";
+
             const entry = {
                 id: (typeof crypto.randomUUID === 'function')
                     ? crypto.randomUUID()
@@ -37,6 +49,9 @@ const AuditLog = (() => {
                 timestamp: Date.now(),
                 details
             };
+
+            entry.hash = await computeHash(entry, prevHash);
+            
             logs.push(entry);
             if (logs.length > MAX_ENTRIES) logs = logs.slice(-MAX_ENTRIES);
             await localforage.setItem(STORE_KEY, logs);
@@ -46,6 +61,7 @@ const AuditLog = (() => {
             }
             return false;
         } catch (e) {
+            console.error("AuditLog Error:", e);
             return false;
         }
     }
@@ -85,6 +101,21 @@ const AuditLog = (() => {
         await localforage.setItem(STORE_KEY, []);
     }
 
+    async function verifyChain() {
+        const logs = await getAll();
+        if (logs.length === 0) return true;
+        
+        let prevHash = "GENESIS";
+        for (const entry of logs) {
+            const entryCopy = { ...entry };
+            delete entryCopy.hash;
+            const expectedHash = await computeHash(entryCopy, prevHash);
+            if (entry.hash !== expectedHash) return false;
+            prevHash = entry.hash;
+        }
+        return true;
+    }
+
     async function getStats() {
         const logs = await getAll();
         const stats = {};
@@ -92,10 +123,11 @@ const AuditLog = (() => {
         stats.total = logs.length;
         stats.firstEntry = logs.length ? new Date(logs[0].timestamp).toISOString() : null;
         stats.lastEntry = logs.length ? new Date(logs[logs.length - 1].timestamp).toISOString() : null;
+        stats.integrityOk = await verifyChain();
         return stats;
     }
 
-    return { log, getAll, getRecent, clear, getStats, checkAnomaly: () => checkAnomaly(null), EventType };
+    return { log, getAll, getRecent, clear, getStats, verifyChain, checkAnomaly: () => checkAnomaly(null), EventType };
 })();
 
 window.AuditLog = AuditLog;

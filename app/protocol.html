@@ -1,0 +1,506 @@
+<!--
+  VaultZero — The Protocol Guide
+  Copyright (c) 2026 VaultZero Contributors
+  SPDX-License-Identifier: MIT
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How it Works | VaultZero 3.0.0 - Security Deep-Dive</title>
+    <meta name="description" content="Learn how to use VaultZero. A comprehensive guide to zero-knowledge encryption, post-quantum sync, and secure digital identities." />
+    <meta name="theme-color" content="#08080d" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://bestpractices.dev https://www.bestpractices.dev https://openssf.org; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./home-design.css" />
+    <link rel="icon" sizes="512x512" href="./assets/fevicon.jpeg" type="image/jpeg" />
+
+    <style>
+        .protocol-hero {
+            padding: 160px 0 80px;
+            background: radial-gradient(circle at top center, rgba(239, 68, 68, 0.05) 0%, transparent 70%);
+            text-align: center;
+        }
+        .guide-section {
+            padding: 80px 0;
+        }
+        .guide-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .guide-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--red-soft);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            font-size: 40px;
+        }
+        .guide-text h2 {
+            font-family: var(--font-heading);
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        .guide-text p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+        .guide-subgrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 32px;
+        }
+        .sub-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .sub-item i {
+            color: var(--red);
+            font-size: 24px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .sub-item h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .sub-item p {
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+        @media (max-width: 768px) {
+            .guide-card {
+                grid-template-columns: 1fr;
+                padding: 32px 24px;
+                gap: 20px;
+            }
+            .guide-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+        }
+        .feature-item {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .btn-name {
+            display: inline-block;
+            background: var(--red-soft);
+            color: var(--red);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: var(--font-heading);
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .feature-item strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" id="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo-link" aria-label="VaultZero Home">
+                <img src="assets/logo.png" alt="VaultZero Logo" class="logo-img" width="130" height="auto">
+            </a>
+            <nav class="site-nav" id="site-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="protocol.html" class="nav-link active">How it Works</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="vault.html" class="nav-link nav-btn">Launch App</a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
+                <i class="ph-bold ph-list" style="font-size: 28px;"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ===== HERO ===== -->
+        <section class="protocol-hero">
+            <div class="container">
+                <span class="p-tag reveal">3.0.0 MASTER GUIDE</span>
+                <h1 class="p-title reveal">Your Blueprint for <span class="gradient-text">Absolute Privacy</span></h1>
+                <p class="p-subtitle reveal">A transparent deep-dive into the Zero-Knowledge engine. Learn how to operate every button, control, and security layer with total confidence.</p>
+            </div>
+        </section>
+
+        <!-- ===== GUIDE CONTENT ===== -->
+        <section class="guide-section">
+            <div class="container">
+                <!-- Functionality -->
+                <div class="guide-card">
+                    <div class="guide-icon"><i class="ph-bold ph-atom"></i></div>
+                    <div class="guide-text">
+                        <h2>What it Does</h2>
+                        <p>VaultZero is a zero-knowledge encryption engine. It transforms your sensitive data into cryptographically secure noise using your own Master PIN as the root of trust. Unlike cloud services, VaultZero never sees your data, never stores your keys, and cannot recover your password.</p>
+                        <div class="guide-subgrid">
+                            <div class="sub-item">
+                                <i class="ph-bold ph-shield-check"></i>
+                                <h4>Post-Quantum Ready</h4>
+                                <p>Hybrid key exchange (X25519 + ML-KEM) ensures security against future quantum threats.</p>
+                            </div>
+                            <div class="sub-item">
+                                <i class="ph-bold ph-wifi-slash"></i>
+                                <h4>Offline Autonomy</h4>
+                                <p>The entire application works without an internet connection once loaded.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Use -->
+                <div class="guide-card">
+                    <div class="guide-icon"><i class="ph-bold ph-rocket-launch"></i></div>
+                    <div class="guide-text">
+                        <h2>How to Use</h2>
+                        <p>Operating VaultZero follows a strict "Lock & Release" cycle to ensure maximum memory safety.</p>
+                        <div class="guide-subgrid">
+                            <div class="sub-item">
+                                <i class="ph-bold ph-lock-key"></i>
+                                <h4>1. Initialize</h4>
+                                <p>Set your Master PIN. This generates your local identity keys and unlocks the dashboard.</p>
+                            </div>
+                            <div class="sub-item">
+                                <i class="ph-bold ph-lightning"></i>
+                                <h4>2. Execute</h4>
+                                <p>Perform your encryption or decryption. Use the 'Pulse' toggle to sync data if needed.</p>
+                            </div>
+                            <div class="sub-item">
+                                <i class="ph-bold ph-fire"></i>
+                                <h4>3. Wipe/Lock</h4>
+                                <p>Once done, lock the vault. Use 'Panic Wipe' in emergencies to shred all session keys.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- When to Use -->
+                <div class="guide-card">
+                    <div class="guide-icon"><i class="ph-bold ph-calendar-check"></i></div>
+                    <div class="guide-text">
+                        <h2>When to Use</h2>
+                        <p>VaultZero is designed for scenarios where absolute privacy is the only acceptable standard.</p>
+                        <div class="guide-subgrid">
+                            <div class="sub-item">
+                                <i class="ph-bold ph-briefcase"></i>
+                                <h4>Professional Ops</h4>
+                                <p>Handling corporate secrets, API keys, or legal documents on untrusted networks.</p>
+                            </div>
+                            <div class="sub-item">
+                                <i class="ph-bold ph-user-shared"></i>
+                                <h4>Secure Comms</h4>
+                                <p>Sending sensitive payloads to others via public channels like email or messaging apps.</p>
+                            </div>
+                            <div class="sub-item">
+                                <i class="ph-bold ph-hard-drives"></i>
+                                <h4>Digital Archivism</h4>
+                                <p>Storing long-term encrypted backups that must remain secure for decades.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FEATURE DEEP-DIVE ===== -->
+        <section class="guide-section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Deep-Dive</span>
+                    <h2 class="section-title">Interface & Operations</h2>
+                    <p class="section-desc">A complete breakdown of every button and control within the VaultZero ecosystem.</p>
+                </div>
+
+                <!-- 1. The Gateway -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-key"></i></div>
+                    <div class="guide-text">
+                        <h2>The Security Gateway</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Master PIN Input</span>
+                            <p><strong>What it does:</strong> The root of your encryption. It is used as the salt for the Argon2id key derivation function.</p>
+                            <p><strong>How to use:</strong> Enter a 4-12 digit PIN. <em>Warning:</em> There is no "Forgot PIN" option. If you lose this, your data is gone forever.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Unlock Vault</span>
+                            <p><strong>What it does:</strong> Verifies the PIN against your local identity hash and initializes the dashboard.</p>
+                            <p><strong>How to use:</strong> Click after entering your PIN. The screen will transition to your active vault.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Password Manager -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-password"></i></div>
+                    <div class="guide-text">
+                        <h2>Password Manager</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Add New Credential (+)</span>
+                            <p><strong>What it does:</strong> Opens the encryption overlay for a new site, username, and password entry.</p>
+                            <p><strong>How to use:</strong> Click the "+" icon, fill in the details, and hit "Save Securely". The data is instantly AES-256 encrypted.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Copy / View</span>
+                            <p><strong>What it does:</strong> Decrypts the specific entry into your clipboard or on-screen view.</p>
+                            <p><strong>How to use:</strong> Click the eye or clipboard icon. The plaintext is purged from memory after a 30-second timeout.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Secret Vault -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-file-lock"></i></div>
+                    <div class="guide-text">
+                        <h2>Secret Vault (Files & Notes)</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Encrypt File/Note</span>
+                            <p><strong>What it does:</strong> Packages your data into a SHA-256 checked encryption envelope.</p>
+                            <p><strong>How to use:</strong> Drag a file or type a note. Set an optional expiration time. Click "Seal Secret".</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Self-Destruct Timer</span>
+                            <p><strong>What it does:</strong> Adds an expiration metadata tag to the encrypted payload.</p>
+                            <p><strong>How to use:</strong> Select a duration (1h, 24h, etc.). After this time, the vault will refuse to decrypt the file.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Secure Share & Identity -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-share-network"></i></div>
+                    <div class="guide-text">
+                        <h2>Secure Share & PQC Identity</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Generate Identity</span>
+                            <p><strong>What it does:</strong> Creates your Ed25519 signing keys and ML-KEM (Kyber) encapsulation keys.</p>
+                            <p><strong>How to use:</strong> One-click setup. Your "Public Identity" can now be shared with others to receive encrypted messages.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Hybrid-PQC Encrypt</span>
+                            <p><strong>What it does:</strong> Encrypts a message using a blend of classical and quantum-resistant algorithms.</p>
+                            <p><strong>How to use:</strong> Paste the recipient's Public ID, type your message, and hit "Generate Secure Link".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Steganography -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-image"></i></div>
+                    <div class="guide-text">
+                        <h2>Steganographic Shield</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Hide in Image</span>
+                            <p><strong>What it does:</strong> Uses 3-bit threshold encoding to conceal encrypted bits inside a PNG's pixels.</p>
+                            <p><strong>How to use:</strong> Upload a "Carrier" image and your secret data. Click "Embed & Download". The result looks like a normal image.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Extract from Image</span>
+                            <p><strong>What it does:</strong> Scans an image for the "VZSG" magic header and reconstructs the encrypted payload.</p>
+                            <p><strong>How to use:</strong> Upload the modified PNG. If a secret is found, you will be prompted for the decryption PIN.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. System Controls -->
+                <div class="guide-card reveal">
+                    <div class="guide-icon"><i class="ph-bold ph-shield-warning"></i></div>
+                    <div class="guide-text">
+                        <h2>Advanced System Controls</h2>
+                        <div class="feature-item">
+                            <span class="btn-name">Titanium Pulse (Toggle)</span>
+                            <p><strong>What it does:</strong> Enables real-time synchronization across your linked devices via anonymous relays.</p>
+                            <p><strong>How to use:</strong> Switch to 'ON'. Your vault will now automatically sync changes to other tabs and devices.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Isolation Mode</span>
+                            <p><strong>What it does:</strong> Instantly severs all network APIs (fetch, WebSocket, etc.) for a totally air-gapped session.</p>
+                            <p><strong>How to use:</strong> Click to "Seal Environment". Note: This will disable Pulse Sync until you reload the app.</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="btn-name">Panic Wipe</span>
+                            <p><strong>What it does:</strong> The ultimate safety switch. It shreds all local keys, clears IndexedDB, and terminates the session.</p>
+                            <p><strong>How to use:</strong> Click in emergencies. <strong>WARNING:</strong> This action is irreversible and deletes all local data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== INTEGRITY & VERIFICATION ===== -->
+        <section class="guide-section reveal">
+            <div class="container">
+                <div class="usage-cases-box">
+                    <div class="cases-header">
+                        <i class="ph-bold ph-seal-check"></i>
+                        <h3>Release Integrity & GPG</h3>
+                        <p>Every official release of VaultZero is cryptographically signed to ensure that the code you are running has not been tampered with. This is the gold standard for security transparency.</p>
+                    </div>
+                    <div class="gpg-card" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; display: inline-block; text-align: left; margin: 0 auto;">
+                        <span style="font-size: 11px; font-weight: 800; color: var(--red); letter-spacing: 0.2em; display: block; margin-bottom: 8px;">OFFICIAL SIGNING KEY</span>
+                        <code style="font-family: monospace; font-size: 18px; color: var(--text); font-weight: 700; word-break: break-all;">6CE3 0CC6 9DC3 46F5</code>
+                        <div style="margin-top: 20px; font-size: 13px; color: var(--text-secondary);">
+                            <p style="margin-bottom: 12px;">To verify a release, download the <code>.asc</code> signature and run:</p>
+                            <code style="background: #000; padding: 8px 12px; border-radius: 6px; display: block; border: 1px solid rgba(255,255,255,0.1);">gpg --verify CHECKSUMS.txt.asc</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer new-footer">
+        <div class="container">
+            <!-- Top Row: TensorHub layout -->
+            <div class="new-footer-layout">
+                <!-- Branding (Left) -->
+                <div class="new-footer-left">
+                    <a href="https://tensorhub.pk" class="new-footer-logo">
+                        <img src="assets/logo.png" alt="VaultZero Logo" width="130" height="auto" style="object-fit: contain;">
+                    </a>
+                    <p class="new-footer-copy" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">&copy; <span id="copyright-year">2026</span> TensorHub Inc. Built for privacy.</p>
+                </div>
+
+                <!-- Center: Tagline & Projects -->
+                <div class="new-footer-center">
+                    <p class="new-footer-tagline">
+                        Innovating at the Edge with <a href="https://tensorhub.pk" class="tensorhub-link">TensorHub</a>
+                    </p>
+                    <div class="new-footer-projects">
+                        <span class="projects-label">Featured Projects</span>
+                        <div class="projects-list">
+                            <a href="https://scamshield.tensorhub.pk/" target="_blank" class="project-link">
+                                ScamShield<span></span>
+                            </a>
+                            <span class="project-dot">•</span>
+                            <a href="https://timespace.tensorhub.pk" target="_blank" class="project-link">
+                                Time Space<span></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social & Compliance (Right) -->
+                <div class="new-footer-right">
+                    <div class="new-footer-socials">
+                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" rel="noopener noreferrer" aria-label="Founder GitHub" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="https://github.com/TensorHub-Pk" target="_blank" rel="noopener noreferrer" aria-label="TensorHub GitHub Organization" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
+                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="mailto:info@tensorhub.pk" aria-label="Contact via Email" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
+                    </div>
+                    <div class="footer-badge">
+                        <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 24px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        (function() {
+            'use strict';
+            var header = document.getElementById('site-header');
+            var nav = document.getElementById('site-nav');
+            var menuBtn = document.getElementById('mobile-menu-btn');
+            var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+            // Mobile menu toggle
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', function() {
+                    nav.classList.toggle('open');
+                    menuBtn.classList.toggle('active');
+                });
+            }
+
+            // Header Scroll Effects (Hide on scroll down, show on scroll up)
+            var scrollTicking = false;
+            var lastScrollY = window.scrollY;
+            window.addEventListener('scroll', function() {
+                if (!scrollTicking) {
+                    scrollTicking = true;
+                    requestAnimationFrame(function() {
+                        var currentScrollY = window.scrollY;
+                        if (currentScrollY > 40) {
+                            header.classList.add('scrolled');
+                        } else {
+                            header.classList.remove('scrolled');
+                        }
+                        
+                        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                            header.classList.add('header-hidden');
+                        } else if (currentScrollY < lastScrollY) {
+                            header.classList.remove('header-hidden');
+                        }
+                        lastScrollY = currentScrollY;
+                        
+                        scrollTicking = false;
+                    });
+                }
+            }, { passive: true });
+
+            // Intersection Observer for section fade-in
+            if ('IntersectionObserver' in window && !prefersReducedMotion) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+                document.querySelectorAll('.reveal, .guide-card').forEach(function(el) {
+                    if (!el.classList.contains('reveal')) el.classList.add('reveal');
+                    observer.observe(el);
+                });
+            } else {
+                document.querySelectorAll('.reveal, .guide-card').forEach(function(el) {
+                    el.classList.add('visible');
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -63,19 +63,52 @@ async function computeIntegrityHash(data) {
 
 
 
-async function deriveKeyArgon2(password, salt) {
+async function getDeviceKey() {
+    if (typeof localforage === 'undefined') return null;
+    let dk = await localforage.getItem('_sv_dk');
+    if (!dk) {
+        dk = crypto.getRandomValues(new Uint8Array(32));
+        await localforage.setItem('_sv_dk', dk);
+    }
+    return dk;
+}
+
+async function getDerivedKeyRaw(password, salt, devicePepper = null) {
+    let keyRaw = await deriveKeyArgon2(password, salt, devicePepper);
+    if (!keyRaw) {
+        keyRaw = await deriveKeyPBKDF2(password, salt, devicePepper);
+    }
+    return keyRaw;
+}
+
+async function deriveKeyArgon2(password, salt, devicePepper = null) {
     if (typeof argon2 !== 'undefined') {
         try {
+            // Hardened parameters for high-security mode
+            const mem = devicePepper ? 131072 : 65536; // 128MB if device-bound, else 64MB
+            const time = devicePepper ? 5 : 3;
+
+            let passBytes = new TextEncoder().encode(password);
+            if (devicePepper) {
+                // Combine password with device-specific pepper
+                const combined = new Uint8Array(passBytes.length + devicePepper.length);
+                combined.set(passBytes, 0);
+                combined.set(devicePepper, passBytes.length);
+                passBytes = combined;
+            }
+
             const result = await argon2.hash({
-                pass: password,
+                pass: passBytes,
                 salt: salt,
-                time: 3, 
-                mem: 65536,
+                time: time,
+                mem: mem,
                 hashLen: 32, // 256 bits
                 parallelism: 1,
                 type: argon2.argon2id,
-                distPath: 'libs' // Important for locating argon2.wasm
+                distPath: 'libs'
             });
+            
+            if (devicePepper) secureZero(passBytes);
             return result.hash;
         } catch (e) {
             /* Argon2 failed, falling back to PBKDF2 */
@@ -84,11 +117,20 @@ async function deriveKeyArgon2(password, salt) {
     return null;
 }
 
-async function deriveKeyPBKDF2(password, salt) {
+async function deriveKeyPBKDF2(password, salt, devicePepper = null) {
     const enc = new TextEncoder();
+    let passBytes = enc.encode(password);
+    
+    if (devicePepper) {
+        const combined = new Uint8Array(passBytes.length + devicePepper.length);
+        combined.set(passBytes, 0);
+        combined.set(devicePepper, passBytes.length);
+        passBytes = combined;
+    }
+
     const keyMaterial = await crypto.subtle.importKey(
         "raw",
-        enc.encode(password),
+        passBytes,
         { name: "PBKDF2" },
         false,
         ["deriveBits"]
@@ -104,15 +146,9 @@ async function deriveKeyPBKDF2(password, salt) {
         keyMaterial,
         256
     );
+    
+    if (devicePepper) secureZero(passBytes);
     return new Uint8Array(bits);
-}
-
-async function getDerivedKeyRaw(password, salt) {
-    let keyRaw = await deriveKeyArgon2(password, salt);
-    if (!keyRaw) {
-        keyRaw = await deriveKeyPBKDF2(password, salt);
-    }
-    return keyRaw;
 }
 
 // MIME type <-> extension maps
@@ -176,7 +212,7 @@ function buildFallbackName(name, mimeType) {
     return `${baseName}.${ext}`;
 }
 
-async function encrypt(input, password, expiresAt = null, fileName = null, fileType = null) {
+async function encrypt(input, password, expiresAt = null, fileName = null, fileType = null, senderIdentity = null) {
     if (!isSodiumReady && typeof sodium !== 'undefined') {
         await initCrypto();
     }
@@ -185,12 +221,17 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
     const enc = new TextEncoder();
     let plaintextBytes;
 
+    const deviceBound = !!(expiresAt && expiresAt._sv_bound);
+    const realExpiresAt = (typeof expiresAt === 'number') ? expiresAt : 
+                         (expiresAt && typeof expiresAt.val === 'number') ? expiresAt.val : null;
+
     // ALWAYS wrap payloads with metadata + integrity hash for full protection
     const payloadObj = {
         _sv_msg: isText ? input : bufferToBase64(input),
         _sv_bin: !isText
     };
-    if (expiresAt) payloadObj._sv_exp = expiresAt;
+    if (realExpiresAt) payloadObj._sv_exp = realExpiresAt;
+    if (deviceBound) payloadObj._sv_bound = true;
     if (fileName) payloadObj._sv_name = sanitizeFilename(fileName);
     if (fileName) payloadObj._sv_type = fileType || guessMime(fileName);
     const rawBytes = isText ? enc.encode(input) : input;
@@ -199,19 +240,44 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
     
     plaintextBytes = enc.encode(JSON.stringify(payloadObj));
     
+    // Digital Signature: Bind the vault to the sender's identity
+    if (senderIdentity && senderIdentity.signingPrivateKeyBase64) {
+        // Create a copy for signing to avoid circular reference in JSON
+        const signPayload = JSON.stringify(payloadObj);
+        const signBytes = enc.encode(signPayload);
+        
+        payloadObj._sv_sender = senderIdentity.publicKeyBase64;
+        payloadObj._sv_sender_spk = senderIdentity.signingPublicKey;
+        payloadObj._sv_sig = signData(signBytes, senderIdentity.signingPrivateKeyBase64);
+        
+        if (senderIdentity.pqSigningPrivateKey) {
+            payloadObj._sv_pq_spk = senderIdentity.pqSigningPublicKey;
+            payloadObj._sv_pq_sig = pqSign(
+                signBytes, 
+                senderIdentity.pqSigningPrivateKey, 
+                senderIdentity.pqLeafIndex || 0,
+                senderIdentity.pqTreeHeight || PQ_TREE_HEIGHT
+            );
+        }
+        // Final signed payload
+        plaintextBytes = enc.encode(JSON.stringify(payloadObj));
+    }
+    
     const salt = crypto.getRandomValues(new Uint8Array(16));
     let keyRaw = null;
     
     try {
-        keyRaw = await getDerivedKeyRaw(password, salt);
+        const deviceKey = deviceBound ? await getDeviceKey() : null;
+        keyRaw = await getDerivedKeyRaw(password, salt, deviceKey);
         
         let ciphertext, iv;
         const algoId = isSodiumReady ? 1 : 2;
         
-        // Flags: bit 0 = isText, bit 1 = hasExpiration, bit 2 = isWrapped (always set)
+        // Flags: bit 0 = isText, bit 1 = hasExpiration, bit 2 = isWrapped (always set), bit 3 = deviceBound
         let flags = 4; // Always wrapped
         if (isText) flags |= 1;
-        if (expiresAt) flags |= 2;
+        if (realExpiresAt) flags |= 2;
+        if (deviceBound) flags |= 8;
         
         const header = new Uint8Array([algoId, flags]);
 
@@ -249,10 +315,21 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
 }
 
 async function decrypt(payloadBase64, password) {
+    // Brute-force protection: check if we are in a lockout period
+    if (typeof localforage !== 'undefined') {
+        const lockoutEnd = await localforage.getItem('_sv_lockout_end');
+        if (lockoutEnd && Date.now() < lockoutEnd) {
+            const waitSec = Math.ceil((lockoutEnd - Date.now()) / 1000);
+            throw new Error(`Security Lockout: Try again in ${waitSec} seconds.`);
+        }
+    }
+
     if (!isSodiumReady && typeof sodium !== 'undefined') {
         await initCrypto();
     }
-
+    
+    // Minimum 500ms delay to thwart automated brute-force scripts
+    const startAt = Date.now();
     const payload = base64ToBuffer(payloadBase64);
     if (payload.length < 30) throw new Error("Invalid payload length");
     
@@ -263,13 +340,19 @@ async function decrypt(payloadBase64, password) {
     const ciphertext = payload.slice(30);
     
     const isText = (flags & 1) === 1;
+    const deviceBound = (flags & 8) === 8;
 
     const header = new Uint8Array([algoId, flags]);
     let keyRaw = null;
     let decryptedBytes;
     
     try {
-        keyRaw = await getDerivedKeyRaw(password, salt);
+        const deviceKey = deviceBound ? await getDeviceKey() : null;
+        if (deviceBound && !deviceKey) {
+            throw new Error("This message is bound to another device and cannot be opened here.");
+        }
+        
+        keyRaw = await getDerivedKeyRaw(password, salt, deviceKey);
         
         if (algoId === 1) {
             if (!isSodiumReady) throw new Error("ChaCha20 not supported");
@@ -278,6 +361,13 @@ async function decrypt(payloadBase64, password) {
                     null, ciphertext, header, iv, keyRaw
                 );
             } catch(e) {
+                if (window.AuditLog) {
+                    const isAnomaly = await AuditLog.log(AuditLog.EventType.DECRYPT_FAILED, { mode: 'symmetric', error: e.message });
+                    if (isAnomaly && typeof localforage !== 'undefined') {
+                        // Set a 30-second lockout on anomaly
+                        await localforage.setItem('_sv_lockout_end', Date.now() + 30000);
+                    }
+                }
                 throw new Error("Decryption failed (wrong password or payload tampered)");
             }
         } else if (algoId === 2) {
@@ -292,6 +382,13 @@ async function decrypt(payloadBase64, password) {
                 );
                 decryptedBytes = new Uint8Array(decryptedBuffer);
             } catch (e) {
+                if (window.AuditLog) {
+                    const isAnomaly = await AuditLog.log(AuditLog.EventType.DECRYPT_FAILED, { mode: 'symmetric', error: e.message });
+                    if (isAnomaly && typeof localforage !== 'undefined') {
+                        // Set a 30-second lockout on anomaly
+                        await localforage.setItem('_sv_lockout_end', Date.now() + 30000);
+                    }
+                }
                 throw new Error("Decryption failed (wrong password or payload tampered)");
             }
         } else {
@@ -300,6 +397,12 @@ async function decrypt(payloadBase64, password) {
     } finally {
         // Memory hardening: zero key material on all paths
         if (keyRaw) secureZero(keyRaw);
+        
+        // Ensure the minimum processing delay
+        const elapsed = Date.now() - startAt;
+        if (elapsed < 500) {
+            await new Promise(r => setTimeout(r, 500 - elapsed));
+        }
     }
     
     const isWrapped = (flags & 4) === 4;
@@ -309,9 +412,33 @@ async function decrypt(payloadBase64, password) {
         const decodedStr = dec.decode(decryptedBytes);
         try {
             const data = JSON.parse(decodedStr);
-            if (data._sv_exp && Date.now() > data._sv_exp) {
-                throw new Error("This message has expired and is no longer accessible.");
+            if (data._sv_sender && data._sv_sig) {
+                // To verify, we need the payload WITHOUT the signatures
+                const verifyData = {...data};
+                delete verifyData._sv_sig;
+                delete verifyData._sv_pq_sig;
+                delete verifyData._sv_sender;
+                delete verifyData._sv_sender_spk;
+                delete verifyData._sv_pq_spk;
+                
+                const textEncoder = new TextEncoder();
+                const verifyBytes = textEncoder.encode(JSON.stringify(verifyData));
+                
+                const verified = verifySignature(verifyBytes, data._sv_sig, data._sv_sender_spk);
+                data._sv_verified = verified;
+                
+                if (data._sv_pq_sig && data._sv_pq_spk) {
+                    const pqVerified = pqVerify(verifyBytes, data._sv_pq_sig, data._sv_pq_spk);
+                    data._sv_pq_verified = pqVerified;
+                }
             }
+
+            const result = {
+                verified: data._sv_verified || false,
+                pq_verified: data._sv_pq_verified || false,
+                sender: data._sv_sender || null
+            };
+
             if (data._sv_bin) {
                 const fileType = data._sv_type || 'application/octet-stream';
                 const fileName = buildFallbackName(sanitizeFilename(data._sv_name), fileType);
@@ -323,14 +450,15 @@ async function decrypt(payloadBase64, password) {
                         throw new Error("Integrity check failed: file data has been tampered with.");
                     }
                 }
-                return {
-                    data: fileData,
-                    name: fileName,
-                    type: fileType,
-                    is_file: true
-                };
+                result.data = fileData;
+                result.name = fileName;
+                result.type = fileType;
+                result.is_file = true;
+            } else {
+                result.data = data._sv_msg;
+                result.is_text = true;
             }
-            return data._sv_msg;
+            return result;
         } catch(e) {
              if (e.message.indexOf("expired") > -1) throw e;
              throw new Error("Payload marked as wrapped but format is invalid.");
@@ -426,7 +554,7 @@ async function generateKeyPair() {
     };
 }
 
-async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, fileName = null, fileType = null) {
+async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, fileName = null, fileType = null, senderIdentity = null) {
     if (!isSodiumReady) await initCrypto();
     await initKyber();
 
@@ -489,6 +617,29 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
     payloadObj._sv_hash = bufferToBase64(await computeIntegrityHash(rawBytes));
     
     plaintextBytes = enc.encode(JSON.stringify(payloadObj));
+    
+    // Digital Signature: Bind the message to the sender's identity
+    if (senderIdentity && senderIdentity.signingPrivateKeyBase64) {
+        // Create a copy for signing to avoid circular reference in JSON
+        const signPayload = JSON.stringify(payloadObj);
+        const signBytes = enc.encode(signPayload);
+        
+        payloadObj._sv_sender = senderIdentity.publicKeyBase64;
+        payloadObj._sv_sender_spk = senderIdentity.signingPublicKey;
+        payloadObj._sv_sig = signData(signBytes, senderIdentity.signingPrivateKeyBase64);
+        
+        if (senderIdentity.pqSigningPrivateKey) {
+            payloadObj._sv_pq_spk = senderIdentity.pqSigningPublicKey;
+            payloadObj._sv_pq_sig = pqSign(
+                signBytes, 
+                senderIdentity.pqSigningPrivateKey, 
+                senderIdentity.pqLeafIndex || 0,
+                senderIdentity.pqTreeHeight || PQ_TREE_HEIGHT
+            );
+        }
+        // Final signed payload
+        plaintextBytes = enc.encode(JSON.stringify(payloadObj));
+    }
     
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const header = new Uint8Array([isHybrid ? 1 : 0, 0]); // Temporary header
@@ -608,11 +759,39 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
             if (data._sv_exp && Date.now() > data._sv_exp) {
                 throw new Error("This message has expired and is no longer accessible.");
             }
+
+            // Verify Digital Signatures (Sender Identity)
+            if (data._sv_sender && data._sv_sig) {
+                // To verify, we need the payload WITHOUT the signatures
+                const verifyData = {...data};
+                delete verifyData._sv_sig;
+                delete verifyData._sv_pq_sig;
+                delete verifyData._sv_sender;
+                delete verifyData._sv_sender_spk;
+                delete verifyData._sv_pq_spk;
+                
+                const textEncoder = new TextEncoder();
+                const verifyBytes = textEncoder.encode(JSON.stringify(verifyData));
+                
+                const verified = verifySignature(verifyBytes, data._sv_sig, data._sv_sender_spk);
+                data._sv_verified = verified;
+                
+                if (data._sv_pq_sig && data._sv_pq_spk) {
+                    const pqVerified = pqVerify(verifyBytes, data._sv_pq_sig, data._sv_pq_spk);
+                    data._sv_pq_verified = pqVerified;
+                }
+            }
+
+            const result = {
+                verified: data._sv_verified || false,
+                pq_verified: data._sv_pq_verified || false,
+                sender: data._sv_sender || null
+            };
+
             if (data._sv_bin) {
                 const fileType = data._sv_type || 'application/octet-stream';
                 const fileName = buildFallbackName(sanitizeFilename(data._sv_name), fileType);
                 const fileData = base64ToBuffer(data._sv_msg);
-                // Verify integrity hash if present
                 if (data._sv_hash) {
                     const computed = await computeIntegrityHash(fileData);
                     const expected = base64ToBuffer(data._sv_hash);
@@ -620,14 +799,15 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
                         throw new Error("Integrity check failed: file data has been tampered with.");
                     }
                 }
-                return {
-                    data: fileData,
-                    name: fileName,
-                    type: fileType,
-                    is_file: true
-                };
+                result.data = fileData;
+                result.name = fileName;
+                result.type = fileType;
+                result.is_file = true;
+            } else {
+                result.data = data._sv_msg;
+                result.is_text = true;
             }
-            return data._sv_msg;
+            return result;
         } catch(e) {
              if (e.message.indexOf("expired") > -1) throw e;
              throw new Error("Payload marked as wrapped but format is invalid.");

@@ -1,51 +1,43 @@
-# ![Logo](../app/assets/logo.png) Release Process
+<p align="center">
+  <img src="../app/assets/logo.png" alt="VaultZero Logo" width="100">
+  <h1 align="center">Release Lifecycle Management</h1>
+  <p align="center">
+    <strong>Traceable. Secure. Reproducible.</strong><br>
+    <a href="https://www.bestpractices.dev/projects/12040"><img src="https://www.bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices"></a>
+  </p>
+</p>
 
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
+---
 
-This document outlines the standard operating procedure for releasing a new version of VaultZero. Adhering to this process ensures consistency, traceability, and compliance with OpenSSF Best Practices.
+## 🏛️ Standard Operating Procedure
+This document outlines the mandatory protocol for releasing new versions of VaultZero. Adherence ensures cryptographic traceability and compliance with **OpenSSF Gold** standards.
 
-## 1. Pre-Release Checklist
+## 📋 1. Pre-Release Verification
+Before a release can be authorized, the following conditions must be met:
+- **CI Status**: All automated tests must pass on the target branch.
+- **Coverage Audit**: Statement coverage > 90%, Branch coverage > 80%.
+- **Vulnerability Check**: Zero known high/critical CVEs in the dependency tree.
+- **Manifest Preparation**: `update-info.json` must be prepared and signed.
 
-Before cutting a new release, the releasing maintainer must verify the following:
+## ✍️ 2. Technical Documentation (Changelog)
+Release notes must clearly categorize changes into:
+- **💎 New Features**
+- **🛡️ Security Updates** (Must reference CVE/GHSA IDs if applicable)
+- **🐛 Bug Fixes**
+- **⚠️ Breaking Changes**
 
-- [ ] All automated tests (CI) are passing on the `main` branch.
-- [ ] Code coverage metrics are maintained (Statement > 90%, Branch > 80%).
-- [ ] The `update-info.json` (if applicable) is prepared to reflect the new version.
-- [ ] Any known high-severity or critical security vulnerabilities have been addressed.
+## 🏗️ 3. Execution & Signing
+1. **Version Bump**: Update `app_version` in `app.js` and `update-info.json`.
+2. **Tagging**: Create an annotated SemVer tag (e.g., `git tag -a v3.0.0`).
+3. **Artifact Signing**: Run `node "For dev/internal-tools/sign-updates.js"` to generate the cryptographic manifest signature.
+4. **Publication**: Push the tag and create the formal release artifact on the distribution platform.
 
-## 2. Drafting the Release Notes (Changelog)
+## 🏁 4. Post-Release Validation
+- **Deployment Audit**: Verify the static app is correctly served over TLS 1.2+.
+- **Update Propagation**: Confirm the Service Worker correctly detects and notifies users of the new version.
+- **Community Announcement**: Notify the user base via official channels.
 
-Release notes provide a comprehensive summary of what has changed. The release notes must distinguish between:
-
-- **New Features**
-- **Bug Fixes**
-- **Security Updates**
-- **Breaking Changes**
-
-### Addressing Vulnerabilities in Release Notes
-
-To comply with OpenSSF Gold practices, **we MUST mention in the release notes if the release fixes any security vulnerabilities.**
-If a release includes security fixes, the notes should include a "Security Updates" section referencing the disclosed vulnerability (e.g., CVE ID or GitHub Security Advisory ID), providing enough detail for users to understand the risk of not upgrading, without providing exploit material.
-
-_Example:_
-
-> **Security Updates**
->
-> - Fixed a cryptographic timing issue in key generation (GHSA-xxxx-xxxx-xxxx). All users are strongly advised to upgrade.
-
-## 3. Creating the Release
-
-Releases are triggered by pushing a SemVer tag to the repository.
-
-1. Update version numbers in relevant application files (e.g., `package.json` if used, or `update-info.json`). Commit this change.
-2. Create an annotated Git tag matching the version (e.g., `git tag -a v1.2.3 -m "Release v1.2.3"`).
-3. Push the tag: `git push origin v1.2.3`.
-4. Navigate to the GitHub Releases page and draft a new release from the pushed tag.
-5. Copy the drafted release notes into the description field.
-6. Publish the release.
-
-## 4. Post-Release
-
-- Ensure the deployment pipelines (e.g., GitHub Pages) have successfully deployed the new version.
-- Verify that users receiving the Next-PWA Service Worker updates are prompted with the "Install Update" notification correctly.
-- Announce the release in relevant community channels.
+---
+<p align="center">
+  <b>VaultZero: Every release is a new milestone in privacy.</b>
+</p>

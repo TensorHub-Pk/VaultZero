@@ -1,39 +1,47 @@
-# ![Logo](../app/assets/logo.png) Testing Policy
+<p align="center">
+  <img src="../app/assets/logo.png" alt="VaultZero Logo" width="100">
+  <h1 align="center">Automated Testing Policy</h1>
+  <p align="center">
+    <strong>Verifying Security through Continuous Validation</strong><br>
+    <a href="https://www.bestpractices.dev/projects/12040"><img src="https://www.bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices"></a>
+  </p>
+</p>
 
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12040/badge)](https://www.bestpractices.dev/projects/12040)
+---
 
-A rigorous testing regimen is mandatory to achieve and maintain our OpenSSF Gold Badge and ensure the functional security of VaultZero.
+## 🏛️ Strategic Regimen
+A rigorous testing Regimen is mandatory to ensure the functional security of the VaultZero engine and to maintain our **OpenSSF Best Practices Gold Badge** status.
 
-## Automated Testing Suite
+## 📊 Coverage Requirements
+The project enforces strict mathematical thresholds for all code modifications:
+- **Statement Coverage**: At least **90%** of all application statements.
+- **Branch Coverage**: At least **80%** of all logical branches.
 
-All modifications to VaultZero's logic, particularly in `/app/encryption.js` and `/app/app.js`, must be accompanied by corresponding automated tests.
+Pull Requests that lower these thresholds will be automatically rejected by the CI pipeline.
 
-### Coverage Requirements
+## 🧪 Testing Methodology
 
-To comply with OpenSSF Gold practices, the project enforces strict coverage minimums:
+### 1. Unit Testing
+Validation of individual cryptographic functions and UI components in isolation.
+- **Target**: `encryption.js`, `security-logs.js`.
+- **Focus**: Algorithmic correctness and error boundary handling.
 
-- **Statement Coverage:** At least **90%** of all statements in the application must be covered by automated tests.
-- **Branch Coverage:** At least **80%** of all logical branches must be covered by automated tests.
+### 2. Integration Testing
+Verification of component interactions within the browser environment.
+- **Target**: `app.js`.
+- **Focus**: State transitions and asynchronous flow coordination.
 
-### Testing Framework
+### 3. End-to-End (E2E) Testing
+Full simulation of the user journey in a headless browser environment.
+- **Target**: Full Application Shell.
+- **Focus**: Offline installation, Service Worker lifecycle, and cross-tab synchronization.
 
-_(Placeholder for Framework: e.g., Jest, Mocha/Chai, or Playwright for E2E)._
+## 🛡️ Enforcement & CI Integration
+- **Zero-Bypass Policy**: No security or cryptographic logic can be merged without corresponding tests.
+- **Regression Guard**: All legacy tests are executed on every commit to prevent functional regressions.
+- **Automated Rejection**: The CI pipeline is the primary gatekeeper for code quality.
 
-Tests are organized into directories mapping to the code they verify.
-
-1. **Unit Tests:** Verify individual functions (like crypto wrappers or UI formatters).
-2. **Integration Tests:** Verify how components interact (e.g., clicking the Encrypt button and validating the output).
-3. **End-to-End (E2E) Tests:** Verify the complete offline installation flow and UI integration, typically executed in a headless browser via CI.
-
-## Enforcing Tests
-
-Our CI pipeline (see [CI CD Documentation](CI_CD_DOCUMENTATION.md)) is configured to reject any Pull Request that:
-
-1. Lowers the overall code coverage below the required thresholds.
-2. Contains failing tests.
-
-There are **NO exceptions** for bypassing tests, especially for security or cryptographic logic.
-
-## Manual Testing
-
-While automated testing is robust, changes impacting the User Experience, Progressive Web App installability on physical devices, and Service Worker caching must also be manually tested across major browsers (Chrome, Safari, Firefox) on desktop and mobile prior to release.
+---
+<p align="center">
+  <b>VaultZero: Security is a verified property, not an assumption.</b>
+</p>

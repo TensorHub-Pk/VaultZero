@@ -21,7 +21,7 @@ Every time you change a file, you must regenerate the security signature. If you
 **Run this command:**
 
 ```powershell
-node internal-tools/sign-updates.js
+node "For dev/internal-tools/sign-updates.js"
 ```
 
 ### 4. Verify the Output
@@ -38,7 +38,7 @@ Upload your files to GitHub. Make sure you include the updated `update-info.json
 ## 🔐 Security Reminders
 
 - **Private Keys**: Never share or upload `internal-tools/private-keys.json`. If you lose this file, you can never update your app again. If a hacker gets it, they can hijack your app.
-- **Version Numbers**: If you want to force all users to download a fresh update, change the `"version": "1.0.0"` number inside `update-info.json` to something higher (like `1.0.1`) **before** running the sign command.
+- **Version Numbers**: If you want to force all users to download a fresh update, change the `"version": "3.0.0"` number inside `update-info.json` to something higher (like `3.0.1`) **before** running the sign command.
 
 ## 🔄 Maintenance and Upgrade Path
 
@@ -51,5 +51,5 @@ To ensure long-term usability and security, VaultZero prioritizes a seamless upg
 
 ## 📋 Common Commands
 
-- **Sign Updates:** `node internal-tools/sign-updates.js`
+- **Sign Updates:** `node "For dev/internal-tools/sign-updates.js"`
 - **Start Local Test:** Use an extension like "Live Server" in VS Code to see your changes before uploading.
