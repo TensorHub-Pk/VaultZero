@@ -7,11 +7,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Website-Live%20%26%20Authentic-00e373?style=flat-square&logo=google-chrome&logoColor=white" alt="Website Live" />
-  <img src="https://img.shields.io/badge/Authenticity-Verified%20GPG-ff2e55?style=flat-square&logo=gnupg&logoColor=white" alt="GPG Verified" />
-  <img src="https://img.shields.io/badge/OpenSSF-Gold%20Best%20Practices-ffd700?style=flat-square&logo=linux-foundation&logoColor=black" alt="OpenSSF Gold" />
-  <img src="https://img.shields.io/badge/Release-v3.0.0--Rebirth-blue?style=flat-square&logo=github&logoColor=white" alt="Latest Release" />
+  <a href="https://vaultzero.tensorhub.pk"><img src="https://img.shields.io/badge/WEBSITE-LIVE-00e373?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website Live" /></a>
+  <a href="SECURITY.md"><img src="https://img.shields.io/badge/AUTHENTICITY-GPG_VERIFIED-ff2e55?style=for-the-badge&logo=gnupg&logoColor=white" alt="GPG Verified" /></a>
 </p>
+<p align="center">
+  <a href="https://bestpractices.coreinfrastructure.org/en/projects/9999"><img src="https://img.shields.io/badge/OPENSSF-GOLD_CERTIFIED-ffd700?style=for-the-badge&logo=linux-foundation&logoColor=black" alt="OpenSSF Gold" /></a>
+  <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/RELEASE-v3.0.0_REBIRTH-blue?style=for-the-badge&logo=github&logoColor=white" alt="Latest Release" /></a>
+</p>
+
+<br />
 
 ---
 
