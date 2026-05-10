@@ -1,8 +1,8 @@
 {
   "version": "3.1.0",
   "released": "2026-05-12",
-  "timestamp": 1778449922825,
-  "expires": 1781041922825,
+  "timestamp": 1778453587446,
+  "expires": 1781045587446,
   "hashes": {
     "app.js": {
       "sha256": "d419a2b9c3b51186a8ae81e0001ef0251f80b0ef4f9b7b37d7bca4dc65758a37",
@@ -21,8 +21,8 @@
       "sha512": "818990b7c547854439e0c5793c65b43159ffc25b3166506bf515f05052d7e42e0a9d96df7b93512fae7053c261399d0a465ee3d94e2dbb08627dbfb248c8fd8c"
     },
     "service-worker.js": {
-      "sha256": "9a49e35377458b6ff391b5d4dcbe1649fd803c44ca5104abef58d1652d7a6806",
-      "sha512": "5112a9e3b264c9322b0139c673588c15e308967ba505971995c665a042c0e0a3df4e9e6c79e8a3cd4c41e46fbd3872c872e801e674e9eb1d8a0e4dbb0791e639"
+      "sha256": "606166f9cc09d364403ddf69e8a0e67ed14a7430b9e0a545d67a61704e7ba7d4",
+      "sha512": "02f7496fb40b8f9096f85a465e9bff7315d7bdfc081b0ab7ac03ec4abb61b683f7cb742af1383de3fa56db78ea512dd93ca499fb6c907803091da0599a4150cf"
     },
     "libs/localforage.min.js": {
       "sha256": "cc168d95fb927d46b1043726cfe13998e08902ff63f24330e2bb2290109ed145",
@@ -45,6 +45,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "eH8SfqHT+GxSMq20bXGb+xopZ6UvcBwtTX5Mi4vugre1N49QjR9v9NuLayD9jCf9W64PI5ov4bHlgAaZ/nDHBw==",
+  "signature": "6lsqScvd5XwP1SDXcgdq2AInS+R+H6gM0UpZlYlGCsjAAYY+LVa3mI3qcbobwheeCVe5dIBUxirbmXdbjbd0DQ==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }

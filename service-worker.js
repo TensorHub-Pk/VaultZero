@@ -195,8 +195,12 @@ self.addEventListener('fetch', event => {
   }
 
   // Network-first for update manifest and any requests with cache-busting timestamps
-  // This allows the Deep Integrity Sentinel to check the real server state
-  if (url.pathname.endsWith('/update-info.json') || url.searchParams.has('t') || url.searchParams.has('nocache')) {
+  // Also BYPASS for robots.txt and sitemap.xml to prevent them from being redirected to vault.html
+  if (url.pathname.endsWith('/update-info.json') || 
+      url.pathname.endsWith('/robots.txt') || 
+      url.pathname.endsWith('/sitemap.xml') || 
+      url.searchParams.has('t') || 
+      url.searchParams.has('nocache')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
     );
