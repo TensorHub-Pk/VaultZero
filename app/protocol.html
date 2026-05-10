@@ -43,6 +43,18 @@
             gap: 32px;
             align-items: flex-start;
         }
+        @media (max-width: 640px) {
+            .guide-card {
+                grid-template-columns: 1fr;
+                padding: 24px 20px;
+            }
+            .protocol-hero {
+                padding: 120px 0 60px;
+            }
+            .p-title {
+                font-size: clamp(28px, 8vw, 48px) !important;
+            }
+        }
         .guide-icon {
             width: 80px;
             height: 80px;
@@ -136,6 +148,23 @@
     </style>
 </head>
 <body>
+    <!-- Premium Loader Overlay -->
+    <div id="app-loader" class="app-loader-overlay">
+      <div class="loader-card">
+        <img src="assets/logo.png" alt="VaultZero" class="loader-logo" />
+        <div class="loader-spinner-box">
+          <div class="loader-spinner"></div>
+        </div>
+        <div class="loader-text-group">
+          <h2 class="loader-title">Authenticating Protocol</h2>
+          <p class="loader-status">Verifying cryptographic integrity...</p>
+        </div>
+        <div class="loader-progress">
+          <div class="loader-progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== HEADER ===== -->
     <header class="site-header" id="site-header">
         <div class="container header-inner">
@@ -376,7 +405,7 @@
                     </div>
                     <div class="gpg-card" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; display: inline-block; text-align: left; margin: 0 auto;">
                         <span style="font-size: 11px; font-weight: 800; color: var(--red); letter-spacing: 0.2em; display: block; margin-bottom: 8px;">OFFICIAL SIGNING KEY</span>
-                        <code style="font-family: monospace; font-size: 18px; color: var(--text); font-weight: 700; word-break: break-all;">6CE3 0CC6 9DC3 46F5</code>
+                        <code style="font-family: monospace; font-size: 18px; color: var(--text); font-weight: 700; word-break: break-all;">4C51 58A4 6046 CE4C</code>
                         <div style="margin-top: 20px; font-size: 13px; color: var(--text-secondary);">
                             <p style="margin-bottom: 12px;">To verify a release, download the <code>.asc</code> signature and run:</p>
                             <code style="background: #000; padding: 8px 12px; border-radius: 6px; display: block; border: 1px solid rgba(255,255,255,0.1);">gpg --verify CHECKSUMS.txt.asc</code>
@@ -500,6 +529,45 @@
                     el.classList.add('visible');
                 });
             }
+        })();
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('mobile-menu-btn');
+                var nav = document.getElementById('site-nav');
+                if (!btn || !nav) return;
+
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    var isOpen = nav.classList.toggle('mobile-open');
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = isOpen ? 'ph-bold ph-x' : 'ph-bold ph-list';
+                    }
+                    document.body.style.overflow = isOpen ? 'hidden' : '';
+                };
+
+                // Close menu when a nav link is clicked
+                nav.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.onclick = function() {
+                        nav.classList.remove('mobile-open');
+                        var icon = btn.querySelector('i');
+                        if (icon) icon.className = 'ph-bold ph-list';
+                        document.body.style.overflow = '';
+                    };
+                });
+            });
+
+            // Hide loader after a brief "security check" animation
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    var loader = document.getElementById('app-loader');
+                    if (loader) loader.classList.add('hidden');
+                }, 600);
+            });
         })();
     </script>
 </body>

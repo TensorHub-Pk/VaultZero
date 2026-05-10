@@ -2,7 +2,9 @@
 # NEVER upload private keys to GitHub
 **/private-keys.json
 private-keys.json
-For dev/
+[Ff]or [Dd]ev/
+[Ff]or-dev/
+for-dev/
 
 # --- Release Assets ---
 # It is better to keep large ZIP files out of git history
@@ -25,3 +27,12 @@ Thumbs.db
 *.pem
 *.key
 *.pub
+
+# --- System & Meta ---
+.git/
+.github/
+.svn/
+.hg/
+.npm/
+.pnpm-store/
+.yarn/

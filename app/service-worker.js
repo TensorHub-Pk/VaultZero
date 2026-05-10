@@ -5,12 +5,11 @@
  */
 
 
-const CACHE_NAME = 'vault-v1.0-stable';
+const CACHE_NAME = 'vault-v3.0-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 // ASSETS_TO_CACHE: Everything needed for offline operation.
 const ASSETS_TO_CACHE = [
-  'index.html',
   'vault.html',
   'vault-design.css',
   'vault-pro.css',
@@ -33,8 +32,6 @@ const ASSETS_TO_CACHE = [
 // SECURITY_CRITICAL_ASSETS: Absolute core files that MUST match the cryptographic signature.
 // These are the only files that will trigger a security lockdown if they mismatch.
 const SECURITY_CRITICAL_ASSETS = [
-  'index.html',
-  'vault.html',
   'app.js',
   'encryption.js',
   'service-worker.js',
@@ -189,8 +186,22 @@ self.addEventListener('fetch', event => {
   }
 
   // For navigation requests (page loads from shortcut/address bar)
-  // Cache-first with network fallback for offline support
+  // Network-first for landing pages (Home/Protocol) to ensure they are never stale
+  // Cache-first for the Vault App to ensure instant offline startup
   if (event.request.mode === 'navigate') {
+    const isLandingPage = url.pathname.endsWith('/') || 
+                          url.pathname.endsWith('index.html') || 
+                          url.pathname.endsWith('protocol.html');
+
+    if (isLandingPage) {
+      event.respondWith(
+        fetch(event.request)
+          .catch(() => caches.match(event.request, { ignoreSearch: true }))
+          .then(response => response || caches.match('index.html', { ignoreSearch: true }))
+      );
+      return;
+    }
+
     event.respondWith(
       caches.match(event.request, { ignoreSearch: true }).then(cached => {
         if (cached) {
@@ -199,9 +210,7 @@ self.addEventListener('fetch', event => {
         // Not in cache by exact URL — try multiple potential paths
         return caches.match('vault.html', { ignoreSearch: true })
           .then(v => v || caches.match('/app/vault.html', { ignoreSearch: true }))
-          .then(v => v || caches.match('/vault.html', { ignoreSearch: true }))
-          .then(v => v || caches.match('index.html', { ignoreSearch: true }))
-          .then(v => v || caches.match('/app/index.html', { ignoreSearch: true }));
+          .then(v => v || caches.match('/vault.html', { ignoreSearch: true }));
       }).then(cached => {
         if (cached) {
           return cached;

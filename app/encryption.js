@@ -42,10 +42,10 @@ function sanitizeFilename(name) {
     if (!name || typeof name !== 'string') return 'file';
     // Remove path separators and dangerous characters
     let clean = name.replace(/[\/\\]/g, '_')       // path separators
-                    .replace(/\.\.+/g, '_')          // directory traversal
-                    .replace(/[\x00-\x1f\x7f]/g, '') // control characters
-                    .replace(/[<>:"|?*]/g, '_')      // reserved chars
-                    .trim();
+        .replace(/\.\.+/g, '_')          // directory traversal
+        .replace(/[\x00-\x1f\x7f]/g, '') // control characters
+        .replace(/[<>:"|?*]/g, '_')      // reserved chars
+        .trim();
     // Ensure it doesn't start with a dot (hidden files)
     if (clean.startsWith('.')) clean = '_' + clean;
     // Limit length
@@ -107,7 +107,7 @@ async function deriveKeyArgon2(password, salt, devicePepper = null) {
                 type: argon2.argon2id,
                 distPath: 'libs'
             });
-            
+
             if (devicePepper) secureZero(passBytes);
             return result.hash;
         } catch (e) {
@@ -120,7 +120,7 @@ async function deriveKeyArgon2(password, salt, devicePepper = null) {
 async function deriveKeyPBKDF2(password, salt, devicePepper = null) {
     const enc = new TextEncoder();
     let passBytes = enc.encode(password);
-    
+
     if (devicePepper) {
         const combined = new Uint8Array(passBytes.length + devicePepper.length);
         combined.set(passBytes, 0);
@@ -146,7 +146,7 @@ async function deriveKeyPBKDF2(password, salt, devicePepper = null) {
         keyMaterial,
         256
     );
-    
+
     if (devicePepper) secureZero(passBytes);
     return new Uint8Array(bits);
 }
@@ -216,14 +216,14 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
     if (!isSodiumReady && typeof sodium !== 'undefined') {
         await initCrypto();
     }
-    
+
     const isText = typeof input === 'string';
     const enc = new TextEncoder();
     let plaintextBytes;
 
     const deviceBound = !!(expiresAt && expiresAt._sv_bound);
-    const realExpiresAt = (typeof expiresAt === 'number') ? expiresAt : 
-                         (expiresAt && typeof expiresAt.val === 'number') ? expiresAt.val : null;
+    const realExpiresAt = (typeof expiresAt === 'number') ? expiresAt :
+        (expiresAt && typeof expiresAt.val === 'number') ? expiresAt.val : null;
 
     // ALWAYS wrap payloads with metadata + integrity hash for full protection
     const payloadObj = {
@@ -237,24 +237,24 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
     const rawBytes = isText ? enc.encode(input) : input;
     payloadObj._sv_size = rawBytes.byteLength;
     payloadObj._sv_hash = bufferToBase64(await computeIntegrityHash(rawBytes));
-    
+
     plaintextBytes = enc.encode(JSON.stringify(payloadObj));
-    
+
     // Digital Signature: Bind the vault to the sender's identity
     if (senderIdentity && senderIdentity.signingPrivateKeyBase64) {
         // Create a copy for signing to avoid circular reference in JSON
         const signPayload = JSON.stringify(payloadObj);
         const signBytes = enc.encode(signPayload);
-        
+
         payloadObj._sv_sender = senderIdentity.publicKeyBase64;
         payloadObj._sv_sender_spk = senderIdentity.signingPublicKey;
         payloadObj._sv_sig = signData(signBytes, senderIdentity.signingPrivateKeyBase64);
-        
+
         if (senderIdentity.pqSigningPrivateKey) {
             payloadObj._sv_pq_spk = senderIdentity.pqSigningPublicKey;
             payloadObj._sv_pq_sig = pqSign(
-                signBytes, 
-                senderIdentity.pqSigningPrivateKey, 
+                signBytes,
+                senderIdentity.pqSigningPrivateKey,
                 senderIdentity.pqLeafIndex || 0,
                 senderIdentity.pqTreeHeight || PQ_TREE_HEIGHT
             );
@@ -262,23 +262,23 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
         // Final signed payload
         plaintextBytes = enc.encode(JSON.stringify(payloadObj));
     }
-    
+
     const salt = crypto.getRandomValues(new Uint8Array(16));
     let keyRaw = null;
-    
+
     try {
         const deviceKey = deviceBound ? await getDeviceKey() : null;
         keyRaw = await getDerivedKeyRaw(password, salt, deviceKey);
-        
+
         let ciphertext, iv;
         const algoId = isSodiumReady ? 1 : 2;
-        
+
         // Flags: bit 0 = isText, bit 1 = hasExpiration, bit 2 = isWrapped (always set), bit 3 = deviceBound
         let flags = 4; // Always wrapped
         if (isText) flags |= 1;
         if (realExpiresAt) flags |= 2;
         if (deviceBound) flags |= 8;
-        
+
         const header = new Uint8Array([algoId, flags]);
 
         if (isSodiumReady) {
@@ -298,14 +298,14 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
             );
             ciphertext = new Uint8Array(ciphertextBuffer);
         }
-        
+
         const payload = new Uint8Array(2 + salt.length + iv.length + ciphertext.length);
         payload[0] = algoId;
         payload[1] = flags;
         payload.set(salt, 2);
         payload.set(iv, 2 + salt.length);
         payload.set(ciphertext, 2 + salt.length + iv.length);
-        
+
         return bufferToBase64(payload);
     } finally {
         // Memory hardening: zero sensitive buffers
@@ -327,40 +327,40 @@ async function decrypt(payloadBase64, password) {
     if (!isSodiumReady && typeof sodium !== 'undefined') {
         await initCrypto();
     }
-    
+
     // Minimum 500ms delay to thwart automated brute-force scripts
     const startAt = Date.now();
     const payload = base64ToBuffer(payloadBase64);
     if (payload.length < 30) throw new Error("Invalid payload length");
-    
+
     const algoId = payload[0];
     const flags = payload[1];
     const salt = payload.slice(2, 18);
     const iv = payload.slice(18, 30);
     const ciphertext = payload.slice(30);
-    
+
     const isText = (flags & 1) === 1;
     const deviceBound = (flags & 8) === 8;
 
     const header = new Uint8Array([algoId, flags]);
     let keyRaw = null;
     let decryptedBytes;
-    
+
     try {
         const deviceKey = deviceBound ? await getDeviceKey() : null;
         if (deviceBound && !deviceKey) {
             throw new Error("This message is bound to another device and cannot be opened here.");
         }
-        
+
         keyRaw = await getDerivedKeyRaw(password, salt, deviceKey);
-        
+
         if (algoId === 1) {
             if (!isSodiumReady) throw new Error("ChaCha20 not supported");
             try {
                 decryptedBytes = sodium.crypto_aead_chacha20poly1305_ietf_decrypt(
                     null, ciphertext, header, iv, keyRaw
                 );
-            } catch(e) {
+            } catch (e) {
                 if (window.AuditLog) {
                     const isAnomaly = await AuditLog.log(AuditLog.EventType.DECRYPT_FAILED, { mode: 'symmetric', error: e.message });
                     if (isAnomaly && typeof localforage !== 'undefined') {
@@ -397,14 +397,14 @@ async function decrypt(payloadBase64, password) {
     } finally {
         // Memory hardening: zero key material on all paths
         if (keyRaw) secureZero(keyRaw);
-        
+
         // Ensure the minimum processing delay
         const elapsed = Date.now() - startAt;
         if (elapsed < 500) {
             await new Promise(r => setTimeout(r, 500 - elapsed));
         }
     }
-    
+
     const isWrapped = (flags & 4) === 4;
     const dec = new TextDecoder();
 
@@ -414,19 +414,19 @@ async function decrypt(payloadBase64, password) {
             const data = JSON.parse(decodedStr);
             if (data._sv_sender && data._sv_sig) {
                 // To verify, we need the payload WITHOUT the signatures
-                const verifyData = {...data};
+                const verifyData = { ...data };
                 delete verifyData._sv_sig;
                 delete verifyData._sv_pq_sig;
                 delete verifyData._sv_sender;
                 delete verifyData._sv_sender_spk;
                 delete verifyData._sv_pq_spk;
-                
+
                 const textEncoder = new TextEncoder();
                 const verifyBytes = textEncoder.encode(JSON.stringify(verifyData));
-                
+
                 const verified = verifySignature(verifyBytes, data._sv_sig, data._sv_sender_spk);
                 data._sv_verified = verified;
-                
+
                 if (data._sv_pq_sig && data._sv_pq_spk) {
                     const pqVerified = pqVerify(verifyBytes, data._sv_pq_sig, data._sv_pq_spk);
                     data._sv_pq_verified = pqVerified;
@@ -459,9 +459,9 @@ async function decrypt(payloadBase64, password) {
                 result.is_text = true;
             }
             return result;
-        } catch(e) {
-             if (e.message.indexOf("expired") > -1) throw e;
-             throw new Error("Payload marked as wrapped but format is invalid.");
+        } catch (e) {
+            if (e.message.indexOf("expired") > -1) throw e;
+            throw new Error("Payload marked as wrapped but format is invalid.");
         }
     }
 
@@ -563,7 +563,7 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
 
     const isHybrid = pkBuf[0] === 1;
     const pkX25519 = pkBuf.slice(1, 33);
-    
+
     // Generate Ephemeral X25519 Key
     const ephX25519 = sodium.crypto_box_keypair();
     // Compute Shared Secret 1 using X25519 Diffie-Hellman
@@ -580,13 +580,13 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
         const pkPtr = kyberModule._malloc(1184);
         const ctPtr = kyberModule._malloc(1088);
         const ssPtr = kyberModule._malloc(32);
-        
+
         kyberModule.HEAPU8.set(pkKyber, pkPtr);
         kyberModule._OQS_KEM_encaps(kyberKemPtr, ctPtr, ssPtr, pkPtr);
-        
+
         kyberCiphertext = kyberModule.HEAPU8.slice(ctPtr, ctPtr + 1088);
         shared2 = kyberModule.HEAPU8.slice(ssPtr, ssPtr + 32);
-        
+
         kyberModule._free(pkPtr);
         kyberModule._free(ctPtr);
         kyberModule._free(ssPtr);
@@ -615,24 +615,24 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
     const rawBytes = isText ? enc.encode(plaintext) : plaintext;
     payloadObj._sv_size = rawBytes.byteLength;
     payloadObj._sv_hash = bufferToBase64(await computeIntegrityHash(rawBytes));
-    
+
     plaintextBytes = enc.encode(JSON.stringify(payloadObj));
-    
+
     // Digital Signature: Bind the message to the sender's identity
     if (senderIdentity && senderIdentity.signingPrivateKeyBase64) {
         // Create a copy for signing to avoid circular reference in JSON
         const signPayload = JSON.stringify(payloadObj);
         const signBytes = enc.encode(signPayload);
-        
+
         payloadObj._sv_sender = senderIdentity.publicKeyBase64;
         payloadObj._sv_sender_spk = senderIdentity.signingPublicKey;
         payloadObj._sv_sig = signData(signBytes, senderIdentity.signingPrivateKeyBase64);
-        
+
         if (senderIdentity.pqSigningPrivateKey) {
             payloadObj._sv_pq_spk = senderIdentity.pqSigningPublicKey;
             payloadObj._sv_pq_sig = pqSign(
-                signBytes, 
-                senderIdentity.pqSigningPrivateKey, 
+                signBytes,
+                senderIdentity.pqSigningPrivateKey,
                 senderIdentity.pqLeafIndex || 0,
                 senderIdentity.pqTreeHeight || PQ_TREE_HEIGHT
             );
@@ -640,15 +640,15 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
         // Final signed payload
         plaintextBytes = enc.encode(JSON.stringify(payloadObj));
     }
-    
+
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const header = new Uint8Array([isHybrid ? 1 : 0, 0]); // Temporary header
-    
+
     let flags = 4; // Always wrapped
     if (isText) flags |= 1;
     if (expiresAt) flags |= 2;
     header[1] = flags;
-    
+
     // ChaCha20-Poly1305 with AAD
     const ciphertext = sodium.crypto_aead_chacha20poly1305_ietf_encrypt(
         plaintextBytes, header, null, iv, symKey
@@ -659,17 +659,17 @@ async function encryptAsymmetric(plaintext, publicKeyBase64, expiresAt = null, f
     payloadBuffer[0] = isHybrid ? 1 : 0;
     payloadBuffer[1] = flags;
     payloadBuffer.set(ephX25519.publicKey, 2);
-    
+
     let offset = 34;
     if (isHybrid) {
         payloadBuffer.set(kyberCiphertext, offset);
         offset += 1088;
     }
-    
+
     payloadBuffer.set(iv, offset);
     offset += 12;
     payloadBuffer.set(ciphertext, offset);
-    
+
     // Clean up sensitive keys
     sodium.memzero(symKey);
     sodium.memzero(combinedSecrets);
@@ -686,7 +686,7 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
     const payload = base64ToBuffer(payloadBase64);
     if (payload.length < 35) throw new Error("Invalid payload length");
     const skBuf = base64ToBuffer(privateKeyBase64);
-    
+
     const isHybrid = payload[0] === 1;
     const flags = payload[1];
     const isText = (flags & 1) === 1;
@@ -697,9 +697,9 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
 
     const skX25519 = skBuf.slice(1, 33);
     const ephPkX25519 = payload.slice(2, 34);
-    
+
     const shared1 = sodium.crypto_scalarmult(skX25519, ephPkX25519);
-    
+
     let shared2 = new Uint8Array(0);
     let offset = 34;
 
@@ -714,14 +714,14 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
         const ctPtr = kyberModule._malloc(1088);
         const skPtr = kyberModule._malloc(2400);
         const ssPtr = kyberModule._malloc(32);
-        
+
         kyberModule.HEAPU8.set(kyberCiphertext, ctPtr);
         kyberModule.HEAPU8.set(skKyber, skPtr);
-        
+
         kyberModule._OQS_KEM_decaps(kyberKemPtr, ssPtr, ctPtr, skPtr);
-        
+
         shared2 = kyberModule.HEAPU8.slice(ssPtr, ssPtr + 32);
-        
+
         kyberModule._free(ctPtr);
         kyberModule._free(skPtr);
         kyberModule._free(ssPtr);
@@ -741,7 +741,7 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
         decryptedBytes = sodium.crypto_aead_chacha20poly1305_ietf_decrypt(
             null, ciphertext, header, iv, symKey
         );
-    } catch(e) {
+    } catch (e) {
         throw new Error("Asymmetric decryption failed (key mismatch or payload tampered)");
     } finally {
         sodium.memzero(symKey);
@@ -763,19 +763,19 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
             // Verify Digital Signatures (Sender Identity)
             if (data._sv_sender && data._sv_sig) {
                 // To verify, we need the payload WITHOUT the signatures
-                const verifyData = {...data};
+                const verifyData = { ...data };
                 delete verifyData._sv_sig;
                 delete verifyData._sv_pq_sig;
                 delete verifyData._sv_sender;
                 delete verifyData._sv_sender_spk;
                 delete verifyData._sv_pq_spk;
-                
+
                 const textEncoder = new TextEncoder();
                 const verifyBytes = textEncoder.encode(JSON.stringify(verifyData));
-                
+
                 const verified = verifySignature(verifyBytes, data._sv_sig, data._sv_sender_spk);
                 data._sv_verified = verified;
-                
+
                 if (data._sv_pq_sig && data._sv_pq_spk) {
                     const pqVerified = pqVerify(verifyBytes, data._sv_pq_sig, data._sv_pq_spk);
                     data._sv_pq_verified = pqVerified;
@@ -808,9 +808,9 @@ async function decryptAsymmetric(payloadBase64, privateKeyBase64) {
                 result.is_text = true;
             }
             return result;
-        } catch(e) {
-             if (e.message.indexOf("expired") > -1) throw e;
-             throw new Error("Payload marked as wrapped but format is invalid.");
+        } catch (e) {
+            if (e.message.indexOf("expired") > -1) throw e;
+            throw new Error("Payload marked as wrapped but format is invalid.");
         }
     }
 
@@ -841,7 +841,7 @@ function verifySignature(dataBytes, signatureBase64, signingPublicKeyBase64) {
         const sig = base64ToBuffer(signatureBase64);
         const pk = base64ToBuffer(signingPublicKeyBase64);
         return sodium.crypto_sign_verify_detached(sig, dataBytes, pk);
-    } catch(e) {
+    } catch (e) {
         return false;
     }
 }
@@ -861,7 +861,7 @@ function secureZero(buf) {
             if (buf.fill) buf.fill(0);
             else for (let i = 0; i < buf.length; i++) buf[i] = 0;
         }
-    } catch(e) {
+    } catch (e) {
         // Last resort
         if (buf.fill) buf.fill(0);
     }
@@ -895,7 +895,7 @@ function wotsChain(x, start, steps) {
     for (let j = start; j < start + steps; j++) {
         const buf = new Uint8Array(4 + WOTS_N);
         buf[0] = (j >>> 24) & 0xff; buf[1] = (j >>> 16) & 0xff;
-        buf[2] = (j >>> 8) & 0xff;  buf[3] = j & 0xff;
+        buf[2] = (j >>> 8) & 0xff; buf[3] = j & 0xff;
         buf.set(cur, 4);
         cur = pqHash(buf);
     }
@@ -923,7 +923,7 @@ function wotsMsg(messageBytes) {
     for (let i = 0; i < WOTS_LEN1; i++) csum += (WOTS_W - 1) - msg[i];
     const csumBuf = new Uint8Array(4);
     csumBuf[0] = (csum >>> 24); csumBuf[1] = (csum >>> 16);
-    csumBuf[2] = (csum >>> 8);  csumBuf[3] = csum & 0xff;
+    csumBuf[2] = (csum >>> 8); csumBuf[3] = csum & 0xff;
     const csumW = baseW(csumBuf, WOTS_LEN2);
     const all = new Array(WOTS_LEN);
     for (let i = 0; i < WOTS_LEN1; i++) all[i] = msg[i];
@@ -934,8 +934,8 @@ function wotsMsg(messageBytes) {
 function deriveLeafSeed(masterSeed, idx) {
     const buf = new Uint8Array(WOTS_N + 4);
     buf.set(masterSeed, 0);
-    buf[WOTS_N] = (idx >>> 24); buf[WOTS_N+1] = (idx >>> 16);
-    buf[WOTS_N+2] = (idx >>> 8); buf[WOTS_N+3] = idx & 0xff;
+    buf[WOTS_N] = (idx >>> 24); buf[WOTS_N + 1] = (idx >>> 16);
+    buf[WOTS_N + 2] = (idx >>> 8); buf[WOTS_N + 3] = idx & 0xff;
     return pqHash(buf);
 }
 
@@ -945,8 +945,8 @@ function wotsKeyGen(seed) {
     for (let i = 0; i < WOTS_LEN; i++) {
         const buf = new Uint8Array(WOTS_N + 4);
         buf.set(seed, 0);
-        buf[WOTS_N] = (i >>> 24); buf[WOTS_N+1] = (i >>> 16);
-        buf[WOTS_N+2] = (i >>> 8); buf[WOTS_N+3] = i & 0xff;
+        buf[WOTS_N] = (i >>> 24); buf[WOTS_N + 1] = (i >>> 16);
+        buf[WOTS_N + 2] = (i >>> 8); buf[WOTS_N + 3] = i & 0xff;
         sk[i] = pqHash(buf);
         pkParts.set(wotsChain(sk[i], 0, WOTS_W - 1), i * WOTS_N);
     }
@@ -961,7 +961,7 @@ function merkleTreeBuild(seed, height) {
         tree[n + i] = wotsKeyGen(ls).pkHash;
     }
     for (let i = n - 1; i >= 1; i--) {
-        tree[i] = pqHash(pqConcat(tree[2*i], tree[2*i+1]));
+        tree[i] = pqHash(pqConcat(tree[2 * i], tree[2 * i + 1]));
     }
     return { root: tree[1], tree };
 }
@@ -1038,7 +1038,7 @@ function pqSign(messageBytes, pqPrivateKeyBase64, leafIndex, treeHeight) {
     const sig = new Uint8Array(1 + 4 + WOTS_SIG_BYTES + apBytes);
     sig[0] = treeHeight;
     sig[1] = (leafIndex >>> 24); sig[2] = (leafIndex >>> 16);
-    sig[3] = (leafIndex >>> 8);  sig[4] = leafIndex & 0xff;
+    sig[3] = (leafIndex >>> 8); sig[4] = leafIndex & 0xff;
     sig.set(wotsSig, 5);
     for (let i = 0; i < treeHeight; i++) sig.set(authPath[i], 5 + WOTS_SIG_BYTES + i * WOTS_N);
 
@@ -1057,20 +1057,20 @@ function pqVerify(messageBytes, signatureBase64, pqPublicKeyBase64) {
         const li = (sigBuf[1] << 24) | (sigBuf[2] << 16) | (sigBuf[3] << 8) | sigBuf[4];
         const wotsSig = sigBuf.slice(5, 5 + WOTS_SIG_BYTES);
         const ap = [];
-        for (let i = 0; i < h; i++) ap.push(sigBuf.slice(5 + WOTS_SIG_BYTES + i * WOTS_N, 5 + WOTS_SIG_BYTES + (i+1) * WOTS_N));
+        for (let i = 0; i < h; i++) ap.push(sigBuf.slice(5 + WOTS_SIG_BYTES + i * WOTS_N, 5 + WOTS_SIG_BYTES + (i + 1) * WOTS_N));
 
         // Recover leaf pk hash from signature
         const allMsg = wotsMsg(messageBytes);
         const cpk = new Uint8Array(WOTS_LEN * WOTS_N);
         for (let i = 0; i < WOTS_LEN; i++) {
-            cpk.set(wotsChain(wotsSig.slice(i * WOTS_N, (i+1) * WOTS_N), allMsg[i], (WOTS_W - 1) - allMsg[i]), i * WOTS_N);
+            cpk.set(wotsChain(wotsSig.slice(i * WOTS_N, (i + 1) * WOTS_N), allMsg[i], (WOTS_W - 1) - allMsg[i]), i * WOTS_N);
         }
         const leafPkHash = pqHash(cpk);
 
         // Verify Merkle path
         const computedRoot = merkleVerifyPath(leafPkHash, ap, li, h);
         return constantTimeEqual(computedRoot, root);
-    } catch(e) {
+    } catch (e) {
         return false;
     }
 }

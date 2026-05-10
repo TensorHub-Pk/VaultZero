@@ -186,7 +186,7 @@
             <nav class="site-nav" id="site-nav">
                 <a href="index.html" class="nav-link">Home</a>
                 <a href="protocol.html" class="nav-link">How it Works</a>
-                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="#features" class="nav-link">Features</a>
                 <a href="vault.html" class="nav-link nav-btn">Launch App</a>
             </nav>
             <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
@@ -218,7 +218,7 @@
                     <i class="ph-bold ph-shield-check" style="font-size: 24px; margin-right: 8px;"></i>
                     Launch VaultZero
                 </a>
-                <a href="#architecture" class="cta-btn secondary-cta">Learn How It Works</a>
+                <a href="protocol.html" class="cta-btn secondary-cta">Learn How It Works</a>
             </div>
             <div class="hero-stats">
                 <div class="stat">
@@ -594,53 +594,44 @@
     <!-- ===== FOOTER ===== -->
     <footer class="site-footer new-footer">
         <div class="container">
-            <!-- Top Row: TensorHub layout -->
             <div class="new-footer-layout">
-                <!-- Branding (Left) -->
+                <!-- Left: Branding & GPG -->
                 <div class="new-footer-left">
-                    <a href="https://tensorhub.pk" class="new-footer-logo">
-                        <img src="assets/logo.png" alt="VaultZero Logo" width="130" height="auto" style="object-fit: contain;">
-                    </a>
-                    <p class="new-footer-copy" style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">&copy; <span id="copyright-year">2026</span> TensorHub Inc. Built for privacy.</p>
-                    <div class="gpg-verification-badge" style="margin-top: 16px; padding: 10px 14px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: 8px; display: inline-flex; align-items: center; gap: 10px;">
-                        <i class="ph-bold ph-seal-check" style="color: var(--red); font-size: 18px;"></i>
-                        <div style="text-align: left;">
-                            <span style="display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);">Official GPG Key</span>
-                            <code style="font-family: monospace; font-size: 11px; color: var(--text); font-weight: 600;">6CE3 0CC6 9DC3 46F5</code>
+                    <div class="footer-brand-row">
+                        <a href="https://tensorhub.pk" class="new-footer-logo">
+                            <img src="assets/logo.png" alt="VaultZero Logo" width="110" height="auto">
+                        </a>
+                        <div class="gpg-verification-badge">
+                            <i class="ph-bold ph-seal-check"></i>
+                            <code>4C51 58A4 6046 CE4C</code>
                         </div>
                     </div>
+                    <p class="new-footer-copy">&copy; 2026 TensorHub Inc. Built for privacy.</p>
                 </div>
 
-                <!-- Center: Tagline & Projects -->
+                <!-- Center: Tagline & Projects (Side-by-Side) -->
                 <div class="new-footer-center">
-                    <p class="new-footer-tagline">
-                        Innovating at the Edge with <a href="https://tensorhub.pk" class="tensorhub-link">TensorHub</a>
-                    </p>
+                    <p class="new-footer-tagline">Innovating at the Edge with <a href="https://tensorhub.pk" class="tensorhub-link">TensorHub</a></p>
                     <div class="new-footer-projects">
-                        <span class="projects-label">Featured Projects</span>
                         <div class="projects-list">
-                            <a href="https://scamshield.tensorhub.pk/" target="_blank" class="project-link">
-                                ScamShield<span></span>
-                            </a>
+                            <a href="https://scamshield.tensorhub.pk/" target="_blank" class="project-link">ScamShield</a>
                             <span class="project-dot">•</span>
-                            <a href="https://timespace.tensorhub.pk" target="_blank" class="project-link">
-                                Time Space<span></span>
-                            </a>
+                            <a href="https://timespace.tensorhub.pk" target="_blank" class="project-link">Time Space</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Social & Compliance (Right) -->
+                <!-- Right: Socials & OpenSSF -->
                 <div class="new-footer-right">
                     <div class="new-footer-socials">
-                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" rel="noopener noreferrer" aria-label="Founder GitHub" title="Owner Github"><i class="ph-fill ph-github-logo"></i></a>
-                        <a href="https://github.com/TensorHub-Pk" target="_blank" rel="noopener noreferrer" aria-label="TensorHub GitHub Organization" title="Company Github"><i class="ph-bold ph-buildings"></i></a>
-                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
-                        <a href="mailto:info@tensorhub.pk" aria-label="Contact via Email" title="Email Us"><i class="ph-fill ph-envelope"></i></a>
+                        <a href="https://github.com/Muhammad-Owais-1947" target="_blank" title="Founder GitHub"><i class="ph-fill ph-github-logo"></i></a>
+                        <a href="https://github.com/TensorHub-Pk" target="_blank" title="Organization GitHub"><i class="ph-bold ph-buildings"></i></a>
+                        <a href="https://www.linkedin.com/in/MuhammadOwaisCEOTensorhub" target="_blank" title="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="mailto:info@tensorhub.pk" title="Email"><i class="ph-fill ph-envelope"></i></a>
                     </div>
                     <div class="footer-badge">
                         <a href="https://bestpractices.dev/projects/12040" rel="noopener noreferrer" target="_blank">
-                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF Best Practices Badge" style="height: 24px;">
+                            <img src="https://bestpractices.dev/projects/12040/badge" alt="OpenSSF" style="height: 20px;">
                         </a>
                     </div>
                 </div>
@@ -776,6 +767,37 @@
                 var loader = document.getElementById('app-loader');
                 if (loader) loader.classList.add('hidden');
             }, 300);
+        })();
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('mobile-menu-btn');
+                var nav = document.getElementById('site-nav');
+                if (!btn || !nav) return;
+
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    var isOpen = nav.classList.toggle('mobile-open');
+                    var icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = isOpen ? 'ph-bold ph-x' : 'ph-bold ph-list';
+                    }
+                    document.body.style.overflow = isOpen ? 'hidden' : '';
+                };
+
+                // Close menu when a nav link is clicked
+                nav.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.onclick = function() {
+                        nav.classList.remove('mobile-open');
+                        var icon = btn.querySelector('i');
+                        if (icon) icon.className = 'ph-bold ph-list';
+                        document.body.style.overflow = '';
+                    };
+                });
+            });
         })();
     </script>
 </body>
