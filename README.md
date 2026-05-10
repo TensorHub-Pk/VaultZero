@@ -35,4 +35,4 @@ gpg --verify CHECKSUMS.txt.asc
 - [Changelog](docs/CHANGELOG.md) — Version history and release notes.
 
 ---
-*Built with ❤️ for Privacy by TensorHub Inc.*
+<!-- GPG Signature Test: v3.0.0 -->
