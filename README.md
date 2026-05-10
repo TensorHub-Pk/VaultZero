@@ -42,6 +42,18 @@ We have completely retired the legacy codebase and initiated a **Ground-Up Resto
 
 ---
 
+## 📜 [AUTHENTICITY] Release Verification
+To ensure the integrity of your download, every official VaultZero release is signed with GPG.
+
+1.  **Import Key**: `gpg --keyserver hkps://keys.openpgp.org --recv-keys 4C5158A46046CE4C`
+2.  **Verify**: Download the `VaultZero.zip` and `CHECKSUMS.txt.asc` from the [Releases](https://github.com/TensorHub-Pk/VaultZero/releases) page, then run:
+    ```bash
+    gpg --verify CHECKSUMS.txt.asc
+    ```
+3.  **Check Hash**: Ensure the SHA256 of your ZIP matches the one inside the verified checksum file.
+
+---
+
 ## 🏁 [DEPLOYMENT] Getting Started
 
 1.  **Clone**: `git clone https://github.com/TensorHub-Pk/VaultZero.git`
