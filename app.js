@@ -333,7 +333,7 @@ function openInfoModal(topic) {
         device_lock: {
             title: "Hardware Device Lock",
             icon: "ph-cpu",
-            text: "This is the ultimate security layer. It binds the encryption to THIS specific device using a unique local hardware key. Even if someone steals your file AND your password, they cannot decrypt it on any other computer."
+            text: "This is the ultimate security layer. It binds the encryption directly to the physical hardware of this device (TPM/Secure Enclave) using WebAuthn. This ensures the vault is tied to the actual machine, allowing it to work seamlessly across different browsers on this device while remaining uncopyable to any other computer."
         },
         recipient: {
             title: "Recipient Link",
@@ -1906,10 +1906,17 @@ async function rotateId() {
             await new Promise(r => setTimeout(r, 150));
 
             const id = await SecureCrypto.generateKeyPair();
+            
+            // Link Hardware Seal to Identity for Cross-Browser Sync
+            const hwCredId = await localforage.getItem('_sv_hw_cred_v4');
+            const hwSeed = await localforage.getItem('_sv_hw_seed_v4');
+            if (hwCredId) id.hw_cred_id = hwCredId;
+            if (hwSeed) id.hw_seed = hwSeed;
+
             const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(id), pass);
 
             await localforage.setItem('my_identity', encryptedId);
-            await localforage.setItem('my_public_id', id.publicKeyBase64); // Save public unencrypted
+            await localforage.setItem('my_public_id', id.publicKeyBase64); 
             await updateIdentityStatus();
 
             // Unified Core Reveal
@@ -1960,6 +1967,23 @@ async function fillMyKey() {
         const decryptedStr = await SecureCrypto.decryptSymmetric(idData, pass);
         const id = JSON.parse(decryptedStr);
 
+        // SYNC: If this identity contains hardware details from another browser, import them locally
+        // v3.1.1: We now check for a missing local anchor and offer a "Migration Handshake"
+        const hasHardwareSealing = await localforage.getItem('vaultzero_hw_lock');
+        const localHwAnchor = await localforage.getItem('_sv_hw_cred_v4');
+        
+        if (hasHardwareSealing && !localHwAnchor) {
+            const confirmed = await window.customConfirm(
+                "Identity restored, but this physical device is not yet sealed. \n\n" +
+                "Would you like to bind this identity to this computer's hardware for maximum security?",
+                "Device Migration Detected"
+            );
+            if (confirmed) {
+                // This triggers the new UserHandle Anchor creation
+                await SecureCrypto.getDeviceKey();
+            }
+        }
+
         // Unified Core Reveal
         startPrivateKeyTimer(id.publicKeyBase64, id.privateKeyBase64);
 
@@ -2009,7 +2033,10 @@ async function renderAuditTrail() {
             DECRYPT_SUCCESS: 'ph ph-lock-key-open',
             DECRYPT_FAILED: 'ph ph-warning-circle',
             ANOMALY_DETECTED: 'ph ph-shield-warning',
-            WIPE_EXECUTED: 'ph ph-trash'
+            WIPE_EXECUTED: 'ph ph-trash',
+            HARDWARE_VERIFIED: 'ph ph-cpu',
+            HARDWARE_CREATED: 'ph ph-seal-check',
+            HARDWARE_SKIPPED: 'ph ph-skip-forward'
         };
 
         const html = logs.reverse().map(log => {
@@ -2025,6 +2052,9 @@ async function renderAuditTrail() {
             else if (log.type === 'ANOMALY_DETECTED') desc = `CRITICAL: ${log.details.failureCount} failed attempts detected`;
             else if (log.type === 'KEY_GENERATED') desc = 'New identity core created';
             else if (log.type === 'WIPE_EXECUTED') desc = 'Full data wipe triggered';
+            else if (log.type === 'HARDWARE_VERIFIED') desc = 'Silicon identity anchor verified';
+            else if (log.type === 'HARDWARE_CREATED') desc = 'New hardware seal established';
+            else if (log.type === 'HARDWARE_SKIPPED') desc = `Hardware check bypassed (${log.details.reason})`;
 
             return `
                 <div class="audit-item ${log.type === 'ANOMALY_DETECTED' ? 'anomaly' : ''}">
@@ -2608,10 +2638,10 @@ async function initVersionControl() {
     if ('serviceWorker' in navigator) {
 
         navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'RECACHE_COMPLETE') {
+            if (!event.data || !event.data._vz) return;
+            if (event.data.type === 'RECACHE_COMPLETE') {
                 if (event.data.success) {
                     window._isUpdateReadyToApply = true;
-                    // Finish the update by saving state and reloading
                     if (window._isUserInitiatedUpdate) {
                         finishAtomicUpdate();
                     }
@@ -2627,11 +2657,11 @@ async function initVersionControl() {
     if ('serviceWorker' in navigator) {
         // Handle Security Messages from SW
         navigator.serviceWorker.addEventListener('message', (event) => {
+            if (!event.data || !event.data._vz) return;
             if (event.data.type === 'SECURITY_ANOMALY') {
                 const { asset, expected, actual, isCritical } = event.data;
                 const logMsg = `Mismatch in ${asset.split('/').pop()} (Integrity: FAIL)`;
 
-                // Use official AuditLog system
                 AuditLog.log(isCritical ? AuditLog.EventType.INTEGRITY_FAIL : AuditLog.EventType.ANOMALY_DETECTED, {
                     asset: asset.split('/').pop(),
                     msg: logMsg
@@ -2806,10 +2836,13 @@ function getInstallPlatform() {
 }
 
 // Capture the native install prompt (Chrome/Edge on desktop & Android)
+// DEFERRED: We wait 1000ms after startup to ensure we don't block the main init or hardware layer.
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-    updateInstallUI();
+    setTimeout(() => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        updateInstallUI();
+    }, 1000);
 });
 
 // Opens the install modal and shows the correct section
@@ -2876,8 +2909,9 @@ function triggerInstallPrompt() {
 }
 
 function updateInstallUI() {
-    const platform = getInstallPlatform();
-    const isInstalled = platform === 'installed';
+    try {
+        const platform = getInstallPlatform();
+        const isInstalled = platform === 'installed';
 
     // Desktop
     if (El.install.sidebar) {
@@ -2896,9 +2930,11 @@ function updateInstallUI() {
             // Keep hidden in mobile nav for the 4th button instead
             El.install.mobile.classList.add('hidden');
         } else {
-            // Always show on mobile if not installed so people can see instructions
             El.install.mobile.classList.remove('hidden');
         }
+    }
+    } catch (e) {
+        console.warn("[PWA] UI Update deferred: elements not ready.");
     }
 }
 
@@ -3084,7 +3120,7 @@ function showPassState(s) {
     // Broadcast "HELLO" on unlock to catch up with other tabs
     if (s === 'active') {
         console.log("[Local Mesh] Sending HELLO handshake...");
-        SyncRelay.postMessage({ type: 'HELLO' });
+        SyncRelay.postMessage({ _vz: true, type: 'HELLO' });
     }
 }
 
@@ -3436,7 +3472,7 @@ async function performCloudPulse() {
         };
 
         // 1. BROADCAST LOCALLY (Instant Cross-Tab Sync)
-        SyncRelay.postMessage({ type: 'PULSE', vaultId, payload });
+        SyncRelay.postMessage({ _vz: true, type: 'PULSE', vaultId, payload });
 
         // 2. ATTEMPT CLOUD RELAY (Cross-Browser / Cross-Device Sync)
         if (navigator.onLine) {

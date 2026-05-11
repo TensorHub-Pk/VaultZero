@@ -52,6 +52,7 @@ async function notifySecurityAnomaly(url, expected, actual, isCritical) {
   const clients = await self.clients.matchAll();
   clients.forEach(client => {
     client.postMessage({
+      _vz: true,
       type: 'SECURITY_ANOMALY',
       asset: url,
       expected: expected,
@@ -271,7 +272,7 @@ self.addEventListener('message', event => {
     trustedHashes = event.data.hashes || {};
     console.log('[SW] Trusted hashes updated:', Object.keys(trustedHashes).length, 'files');
     if (event.ports && event.ports[0]) {
-      event.ports[0].postMessage({ status: 'ok' });
+      event.ports[0].postMessage({ _vz: true, status: 'ok' });
     }
   }
   if (event.data === 'SKIP_WAITING') {
@@ -297,6 +298,7 @@ self.addEventListener('message', event => {
 
         if (event.source) {
           event.source.postMessage({
+            _vz: true,
             type: 'RECACHE_COMPLETE',
             success: failed === 0,
             failedCount: failed

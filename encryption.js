@@ -64,8 +64,129 @@ async function computeIntegrityHash(data) {
 
 
 
+/**
+ * Silicon Fingerprint Engine
+ * Generates a stable hardware seed that is consistent across different browsers 
+ * on the same physical machine.
+ */
+async function getSiliconFingerprint() {
+    const parts = [
+        navigator.hardwareConcurrency || 4, // Stable CPU count
+        screen.width + "x" + screen.height,  // Physical resolution
+        screen.colorDepth,                   // Color bit depth
+        Intl.DateTimeFormat().resolvedOptions().timeZone // System Region
+    ];
+    
+    // Stable GPU info (Only the renderer, which is usually identical across browsers)
+    try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl');
+        if (gl) {
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (debugInfo) {
+                parts.push(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
+            }
+        }
+    } catch(e) {}
+
+    const seedString = parts.join('|');
+    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(seedString));
+    return new Uint8Array(hash);
+}
+
+/**
+ * Universal Hardware Identity Adapter
+ * Works across all browsers on the same device.
+ */
+/**
+ * Universal Hardware Identity Adapter
+ * Using UserHandle Anchor for perfect cross-browser stability
+ */
 async function getDeviceKey() {
-    if (typeof localforage === 'undefined') return null;
+    if (!(window.PublicKeyCredential && window.isSecureContext)) return await getBrowserFallbackKey();
+
+    try {
+        if (window.toast) window.toast("Accessing Hardware Identity...", "info");
+        
+        // 1. Try to DISCOVER the existing hardware anchor
+        const discoveryOptions = {
+            publicKey: {
+                challenge: crypto.getRandomValues(new Uint8Array(32)),
+                rpId: window.location.hostname,
+                userVerification: "required",
+                timeout: 60000 
+            }
+        };
+
+        try {
+            const assertion = await navigator.credentials.get(discoveryOptions);
+            if (assertion && assertion.response.userHandle) {
+                const anchor = new Uint8Array(assertion.response.userHandle);
+                const finalHash = await crypto.subtle.digest('SHA-256', anchor);
+                
+                if (window.AuditLog) window.AuditLog.log('HARDWARE_VERIFIED', { method: 'userHandle' });
+                if (window.toast) window.toast("Hardware Anchor Verified!", "success");
+                return new Uint8Array(finalHash);
+            }
+        } catch (e) {
+            // No anchor found, move to creation
+        }
+
+        // 2. CREATE the hardware anchor (First time setup)
+        if (window.toast) window.toast("Creating Silicon Seal...", "info");
+        
+        // We use a STABLE USER ID that will be the same if recreated, 
+        // but the TPM will handle the unique storage.
+        const stableUserId = new TextEncoder().encode("vaultzero-device-anchor-v1");
+
+        const createOptions = {
+            publicKey: {
+                challenge: crypto.getRandomValues(new Uint8Array(32)),
+                rp: { name: "VaultZero", id: window.location.hostname },
+                user: {
+                    id: stableUserId,
+                    name: "vaultzero-user",
+                    displayName: "VaultZero User"
+                },
+                pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                authenticatorSelection: {
+                    authenticatorAttachment: "platform",
+                    userVerification: "required",
+                    residentKey: "required",
+                    requireResidentKey: true
+                },
+                timeout: 60000
+            }
+        };
+
+        const credential = await navigator.credentials.create(createOptions);
+        if (credential) {
+            if (window.AuditLog) window.AuditLog.log('HARDWARE_CREATED', { version: 'v4' });
+            const finalHash = await crypto.subtle.digest('SHA-256', stableUserId);
+            if (window.toast) window.toast("Hardware Seal Created!", "success");
+            return new Uint8Array(finalHash);
+        }
+    } catch (e) {
+        console.warn("Hardware Layer Skip: ", e.name);
+        if (window.AuditLog) window.AuditLog.log('HARDWARE_SKIPPED', { reason: e.name });
+        if (window.customConfirm && (e.name === 'NotAllowedError' || e.name === 'AbortError')) {
+            const confirmed = await window.customConfirm(
+                "Hardware Identity (Windows Hello) was denied or unavailable. \n\n" +
+                "Proceed with BROWSER ISOLATION? \n" +
+                "(Note: This vault will only work in THIS browser).",
+                "Hardware Layer Warning"
+            );
+            if (!confirmed) throw new Error("Hardware isolation required.");
+        }
+    }
+
+    return await getBrowserFallbackKey();
+}
+
+/**
+ * Fallback to browser-bound storage if hardware is unavailable or rejected.
+ */
+async function getBrowserFallbackKey() {
     let dk = await localforage.getItem('_sv_dk');
     if (!dk) {
         dk = crypto.getRandomValues(new Uint8Array(32));

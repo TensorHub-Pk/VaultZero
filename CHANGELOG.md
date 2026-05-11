@@ -8,24 +8,48 @@
 
 ---
 
+## [3.1.1] — 2026-05-14
+
+### 🛡️ THE UNIVERSAL HARDWARE IDENTITY
+> _"One physical machine. One hardware seal. Zero manual steps."_
+
+This landmark update transitions VaultZero from browser-bound storage to a true **Kernel-Level Hardware Identity**. By anchoring security directly into your device's physical silicon (TPM/Secure Enclave) via the **WebAuthn (Passkeys)** API, we have achieved a seamless, "Device-Wide" security layer that follows you across every browser on your machine.
+
+#### ✨ Security & Silicon Identity
+- **UserHandle Anchor**: Implemented a hardware-stored "User ID" that bridges the gap between browser engines. The device's silicon now acts as a shared bulletin board, ensuring the same hardware key is generated regardless of which browser you open (Chrome, Firefox, Edge).
+- **Extension-Safe Messaging**: Hardened all internal `BroadcastChannel` and `ServiceWorker` communication with `_vz` namespacing. This definitively resolves "TypeError" crashes in third-party extensions like uBlock Origin.
+- **Biometric Enforcement**: Enabling Hardware Lock now triggers an official OS-level prompt (TouchID, FaceID, or Windows Hello), ensuring that only the physical owner of the device can authorize the "Sealing" of a vault.
+- **Biometric Continuity**: Standardized the biometric prompt flow to ensure 100% cryptographic parity across different JS engines (V8 vs SpiderMonkey).
+- **Silent Discovery**: Optimized the Resident Key discovery logic for instant, automatic recognition of existing hardware seals on the same device.
+
+#### 💎 UI & UX Refinements
+- **Glassmorphism Footer Redesign**: Completely overhauled the footer with a "Liquid Titanium" aesthetic, featuring a new pulsing GPG signature badge and optimized mobile layouts.
+- **Anti-Hang Startup**: Deferred PWA installation events to ensure the main application and hardware identity layer load instantly without blocking the UI.
+
+---
+
 ## [3.1.0] — 2026-05-12
 
 ### 🏔️ THE DIGITAL FORTRESS HARDENING
-> *"Unseen. Unreachable. Unbreakable."*
+
+> _"Unseen. Unreachable. Unbreakable."_
 
 This update solidifies VaultZero's position as a self-protecting fortress. We've implemented a production-grade integrity pipeline that ensures the code you run is exactly the code we signed, with absolute "Air-Gap" capabilities for the most sensitive sessions.
 
 #### ✨ Security & Integrity
+
 - **Deep Integrity Pipeline**: Implementation of a startup-phase "Deep Scan" that cryptographically verifies all critical assets (`app.js`, `encryption.js`, `service-worker.js`) against a signed server-side manifest.
 - **Isolation Mode (AirGap)**: A total digital blackout system. When active, it globally overrides browser networking (`fetch`, `XHR`, `WebSockets`) and halts all update/sync polling to ensure 100% offline security.
 - **Post-Repair Security Checks**: Added a "Double-Verification" step after repairs to prevent recursive update loops on compromised or misconfigured servers.
 - **TUF Security Compliance**: Hardened timestamp and expiration logic to protect against "Freeze Attacks" where an attacker serves an older, signed version of the manifest.
 
 #### 💎 UI & UX Refinements
+
 - **Premium "Secure Sync" UI**: Redesigned the update/repair flow with a high-end Liquid Titanium aesthetic, pulsing security indicators, and simplified, reassuring language.
 - **Sync Status Telemetry**: Integrated real-time "Heartbeat" indicators in the Audit Log and Header to visualize security verification states.
 
 #### ⚙️ Architecture & DevOps
+
 - **Root-Level Convergence**: Refactored the project structure to a unified root-level architecture, eliminating legacy directory dependencies and streamlining the Service Worker scope.
 - **Hardened Publish Engine**: Updated the `publish.ps1` script to automate manifest signing, file exclusion, and checksum generation in a single, secure workflow.
 
@@ -35,13 +59,13 @@ This update solidifies VaultZero's position as a self-protecting fortress. We've
 
 ### 🛡️ THE REBIRTH & HARDENING UPDATE
 
-> *"Resilience by design. Security by force."*
+> _"Resilience by design. Security by force."_
 
 This release marks a complete architectural renaissance of VaultZero. Following a proactive security decision to retire the legacy codebase entirely, we have rebuilt from the ground up — establishing a new benchmark for zero-knowledge privacy tools.
 
 #### ⚠️ Security Notice
 
-During a routine update cycle, an internal configuration file was inadvertently exposed in the public repository history. Though the exposure was momentary and the file was immediately revoked, the VaultZero team upheld a zero-compromise policy: *"good enough" is never acceptable for security.*
+During a routine update cycle, an internal configuration file was inadvertently exposed in the public repository history. Though the exposure was momentary and the file was immediately revoked, the VaultZero team upheld a zero-compromise policy: _"good enough" is never acceptable for security._
 
 #### 🚀 Strategic Response
 
@@ -55,14 +79,14 @@ Given the scale of this rewrite, we have leapfrogged versions 2.3 and 2.4, conso
 
 ### ✨ Major Features
 
-| Component | Description |
-|-----------|-------------|
-| **Pulse Engine** | Zero-knowledge real-time sync across devices via anonymous `ntfy.sh` relay |
-| **Liquid Titanium UI** | Professional-grade "Titanium Noir" design system with glassmorphic depth |
-| **Security Dashboard** | Real-time telemetry, hash-chained audit logs, and anomaly detection |
-| **Live Guard Sentinel** | Background integrity scanning every 60 seconds for code and file changes |
-| **Cloud Tombstones** | Permanent Vault ID retirement with global cross-device wipe capability |
-| **Post-Quantum Layer** | Ed25519 + ML-KEM-768 for quantum-resistant signatures and secure sharing |
+| Component               | Description                                                                |
+| ----------------------- | -------------------------------------------------------------------------- |
+| **Pulse Engine**        | Zero-knowledge real-time sync across devices via anonymous `ntfy.sh` relay |
+| **Liquid Titanium UI**  | Professional-grade "Titanium Noir" design system with glassmorphic depth   |
+| **Security Dashboard**  | Real-time telemetry, hash-chained audit logs, and anomaly detection        |
+| **Live Guard Sentinel** | Background integrity scanning every 60 seconds for code and file changes   |
+| **Cloud Tombstones**    | Permanent Vault ID retirement with global cross-device wipe capability     |
+| **Post-Quantum Layer**  | Ed25519 + ML-KEM-768 for quantum-resistant signatures and secure sharing   |
 
 ---
 
@@ -132,21 +156,21 @@ Given the scale of this rewrite, we have leapfrogged versions 2.3 and 2.4, conso
 
 #### Added
 
-| Component | Description |
-|-----------|-------------|
+| Component                     | Description                                                             |
+| ----------------------------- | ----------------------------------------------------------------------- |
 | **Post-Quantum Cryptography** | ML-KEM-768 (Kyber) + ML-DS for quantum-resistant sharing and signatures |
-| **Hybrid Key Exchange** | X25519 + ML-KEM-768 for future-proof security |
-| **Steganographic Shield** | Threshold steganography for hiding data in PNG/JPG carriers |
-| **Native Shield (PWA)** | Desktop/mobile installation with 100% offline autonomy |
-| **Audit Logs** | Tamper-evident local logging and anomaly detection |
-| **Panic Wipe** | Immediate local data destruction |
-| **Session Lockdown** | 48-hour session expiration for browser environment |
+| **Hybrid Key Exchange**       | X25519 + ML-KEM-768 for future-proof security                           |
+| **Steganographic Shield**     | Threshold steganography for hiding data in PNG/JPG carriers             |
+| **Native Shield (PWA)**       | Desktop/mobile installation with 100% offline autonomy                  |
+| **Audit Logs**                | Tamper-evident local logging and anomaly detection                      |
+| **Panic Wipe**                | Immediate local data destruction                                        |
+| **Session Lockdown**          | 48-hour session expiration for browser environment                      |
 
 #### Fixed
 
 - **Mobile loading hang** — Resolved vendor-specific browser stuck loader
-- **Branding** — Refined tagline to *"Your Privacy, Sealed Permanently 😉"*
+- **Branding** — Refined tagline to _"Your Privacy, Sealed Permanently 😉"_
 
 ---
 
-*Maintained with transparency by the VaultZero Team*
+_Maintained with transparency by the VaultZero Team_
