@@ -30,7 +30,7 @@ SyncRelay.onmessage = async (event) => {
 
     // 1. Handle HELLO (A new tab just opened/unlocked and needs current data)
     if (event.data.type === 'HELLO') {
-        console.log("[Local Mesh] New tab detected. Broadcasting current state.");
+
         performCloudPulse(); // Send our current state to the new tab
         return;
     }
@@ -41,7 +41,7 @@ SyncRelay.onmessage = async (event) => {
         if (!State.pass.vaultId) await ensureVaultId();
 
         if (event.data.vaultId === State.pass.vaultId) {
-            console.log("[Local Mesh] Pulse Received:", event.data.vaultId);
+
             handleRemotePulse(event.data.payload);
         } else {
             console.warn("[Local Mesh] Pulse Rejected (ID Mismatch):", event.data.vaultId, "vs", State.pass.vaultId);
@@ -107,7 +107,7 @@ async function initElements() {
         timerBox: document.getElementById('timer-options-sym'),
         timerSelect: document.getElementById('timer-select-sym'),
         deviceLock: document.getElementById('device-lock-sym'),
-        passStrength: document.getElementById('pass-strength-sym')?.querySelector('.pass-strength-fill'),
+        passStrength: document.getElementById('pass-strength-fill-sym'),
         passHint: document.getElementById('pass-hint-sym'),
         resBadge: document.getElementById('res-badge-sym'),
         action: document.getElementById('btn-action-sym'),
@@ -636,7 +636,7 @@ async function start() {
             if (airGapSaved) {
                 // NEW: Auto-Disable Air-Gap after 24 hours to allow fresh sync attempt
                 if (Date.now() - airGapTs > AIRGAP_EXPIRY) {
-                    console.log("Security Notice: Air-Gap cooldown expired. Attempting fresh security check.");
+
                     await localforage.removeItem('vaultzero_airgap');
                     await localforage.removeItem('vaultzero_airgap_timestamp');
                     State.airGap = false;
@@ -686,6 +686,7 @@ async function start() {
                 // REMOVED: Auto-isolation mode disabled by user request
                 // if (!State.airGap) goOffline();
                 hideLoader();
+                window._appInited = true;
             });
         }, 600);
     } catch (fatalErr) {
@@ -965,14 +966,12 @@ function listeners() {
 
     // PIN strength indicator
     El.pass.setupPin?.addEventListener('input', (e) => {
-        const pin = e.target.value;
-        let pct = 0, label = 'Enter a Password', color = 'var(--text-muted)';
-        if (pin.length >= 1) { pct = 20; label = 'Too short'; color = 'var(--red)'; }
-        if (pin.length >= 6) { pct = 40; label = 'Weak'; color = 'var(--red)'; }
-        if (pin.length >= 10) { pct = 70; label = 'Acceptable'; color = '#f0a030'; }
-        if (pin.length >= 14) { pct = 100; label = 'Excellent'; color = 'var(--green)'; }
-        if (El.pass.strengthBar) { El.pass.strengthBar.style.width = pct + '%'; El.pass.strengthBar.style.background = color; }
-        if (El.pass.strengthLabel) { El.pass.strengthLabel.textContent = label; El.pass.strengthLabel.style.color = color; }
+        updateUIStrength(e.target.value, El.pass.strengthBar, El.pass.strengthLabel);
+    });
+
+    // Symmetric strength
+    El.sym.pass?.addEventListener('input', (e) => {
+        updateUIStrength(e.target.value, El.sym.passStrength, El.sym.passHint);
     });
 
 
@@ -1157,6 +1156,12 @@ window.setOpMode = (m) => {
     El.sym.msg.placeholder = isEnc ? 'Type your secrets here...' : 'Paste ciphertext or share link...';
     El.sym.fileLabel.textContent = isEnc ? "Click to attach file" : "Drop encrypted file or photo";
 
+    // Hide/Show Password Strength for Decrypt
+    const passBar = document.getElementById('pass-strength-sym');
+    const passHint = document.getElementById('pass-hint-sym');
+    if (passBar) passBar.classList.toggle('hidden', !isEnc);
+    if (passHint) passHint.classList.toggle('hidden', !isEnc);
+
     theme();
     checkSym();
 };
@@ -1336,68 +1341,30 @@ function checkSym() {
     El.sym.action.disabled = !ok;
 }
 
-function updatePassStrength(pass) {
-    if (!El.sym.passStrength || !El.sym.passHint) return 0;
-
-    if (!pass) {
-        El.sym.passStrength.style.width = '0%';
-        El.sym.passHint.innerHTML = '<i class="ph ph-duotone ph-key"></i> Enter Password';
-        El.sym.passHint.style.color = '';
-        return 0;
+function updateUIStrength(val, barEl, hintEl) {
+    if (!barEl && !hintEl) return 0;
+    const pin = val || '';
+    let pct = 0, label = 'Enter a Password', color = 'var(--text-muted)';
+    
+    if (pin.length >= 1) { pct = 20; label = 'Too short'; color = 'var(--red)'; }
+    if (pin.length >= 6) { pct = 40; label = 'Weak'; color = 'var(--red)'; }
+    if (pin.length >= 10) { pct = 70; label = 'Acceptable'; color = '#f0a030'; }
+    if (pin.length >= 14) { pct = 100; label = 'Excellent'; color = 'var(--green)'; }
+    
+    if (barEl) {
+        barEl.style.width = pct + '%';
+        barEl.style.background = color;
     }
-
-    let score = 0;
-    let feedback = "";
-
-    // 1. Length checks
-    if (pass.length < 8) {
-        score += pass.length * 2;
-        feedback = "Make it longer (min 8)";
-    } else {
-        score += 30;
-        if (pass.length >= 12) score += 10;
-        if (pass.length >= 16) score += 10;
+    if (hintEl) {
+        hintEl.textContent = label;
+        hintEl.style.color = color;
+        if (pct >= 100) hintEl.innerHTML = '<i class="ph ph-duotone ph-shield-check"></i> ' + label;
     }
+    return pct;
+}
 
-    // 2. Complexity checks
-    const hasUpper = /[A-Z]/.test(pass);
-    const hasLower = /[a-z]/.test(pass);
-    const hasNum = /[0-9]/.test(pass);
-    const hasSpecial = /[^A-Za-z0-9]/.test(pass);
-
-    if (hasUpper) score += 10;
-    if (hasLower) score += 5;
-    if (hasNum) score += 10;
-    if (hasSpecial) score += 15;
-
-    // 3. Pattern detection (Negative points)
-    const sequences = ['123', 'abc', 'qwerty', 'password', 'admin', 'vault'];
-    sequences.forEach(seq => {
-        if (pass.toLowerCase().includes(seq)) score -= 20;
-    });
-
-    // 4. Calculate Final Rating
-    const percent = Math.max(0, Math.min(score, 100));
-    El.sym.passStrength.style.width = percent + '%';
-
-    if (percent < 40) {
-        El.sym.passStrength.style.background = 'var(--red)';
-        El.sym.passHint.innerHTML = `<i class="ph ph-duotone ph-warning-circle"></i> ${feedback || 'Too Simple'}`;
-        El.sym.passHint.style.color = 'var(--red)';
-    } else if (percent < 75) {
-        El.sym.passStrength.style.background = '#facc15'; // yellow
-        let decentHint = "Decent Strength";
-        if (!hasSpecial) decentHint = "Add a symbol (@#$)";
-        else if (!hasUpper) decentHint = "Add uppercase";
-        El.sym.passHint.innerHTML = `<i class="ph ph-duotone ph-shield-warning"></i> ${decentHint}`;
-        El.sym.passHint.style.color = '#facc15';
-    } else {
-        El.sym.passStrength.style.background = 'var(--green)';
-        El.sym.passHint.innerHTML = '<i class="ph ph-duotone ph-shield-check"></i> Strong & Secure';
-        El.sym.passHint.style.color = 'var(--green)';
-    }
-
-    return percent;
+function updatePassStrength(val) {
+    return updateUIStrength(val, El.sym.passStrength, El.sym.passHint);
 }
 
 function checkAsym() {
@@ -1828,23 +1795,31 @@ async function runAsym() {
     }
 }
 
-function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm", cancelText = "Cancel", inputType = "password") {
+function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm", cancelText = "Cancel", inputType = "password", showStrength = false) {
     return new Promise((resolve) => {
         const modalId = 'custom-modal-' + Date.now();
         const html = `
         <div id="${modalId}" class="install-modal hidden">
             <div class="install-modal-backdrop"></div>
-            <div class="install-modal-card" style="text-align: center;">
-                <h2 class="install-modal-title" style="margin-top:0;">${title}</h2>
-                <p class="install-modal-subtitle">${message}</p>
-                ${isPrompt ? `<div class="form-group" style="margin-top: 15px; text-align: left;">
-                    <input type="${inputType}" id="${modalId}-input" class="form-input" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 100%; padding: 12px; border-radius: 8px;" placeholder="Type here..."/>
+            <div class="install-modal-card" style="text-align: center; max-width: 400px;">
+                <h2 class="install-modal-title" style="margin-top:0; font-size: 20px;">${title}</h2>
+                <p class="install-modal-subtitle" style="font-size: 14px; opacity: 0.7;">${message}</p>
+                ${isPrompt ? `
+                <div class="form-group" style="margin-top: 20px; text-align: left;">
+                    <div class="password-input-wrapper" style="border-radius: 8px; overflow: hidden; position: relative; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                        <input type="${inputType}" id="${modalId}-input" class="form-input" style="background: transparent; border: none; color: #fff; width: 100%; padding: 14px; font-size: 16px;" placeholder="Type here..."/>
+                        ${showStrength ? `
+                        <div class="pass-strength-bar" style="height: 3px; background: rgba(255,255,255,0.05);">
+                            <div id="${modalId}-strength-fill" class="pass-strength-fill"></div>
+                        </div>` : ''}
+                    </div>
+                    ${showStrength ? `<div id="${modalId}-strength-hint" class="pass-strength-hint" style="margin-top: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Enter Password</div>` : ''}
                 </div>` : ''}
-                <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: center;">
-                    <button id="${modalId}-cancel" class="action-btn" style="background: var(--bg-hover); color: var(--text-secondary); flex: 1; border: 1px solid var(--border); ${!cancelText ? 'display: none;' : ''}">
+                <div style="margin-top: 28px; display: flex; gap: 12px; justify-content: center;">
+                    <button id="${modalId}-cancel" class="action-btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); flex: 1; border: 1px solid rgba(255,255,255,0.1); height: 48px; border-radius: 10px; ${!cancelText ? 'display: none;' : ''}">
                         ${cancelText}
                     </button>
-                    <button id="${modalId}-confirm" class="action-btn primary-action" style="background: var(--accent); flex: 1; min-width: 0 !important; width: auto !important; margin: 0 !important;">
+                    <button id="${modalId}-confirm" class="action-btn primary-action" style="background: var(--accent); flex: 1.2; height: 48px; border-radius: 10px; font-weight: 700; margin: 0 !important;">
                         ${confirmText}
                     </button>
                 </div>
@@ -1854,6 +1829,12 @@ function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm
         document.body.insertAdjacentHTML('beforeend', html);
         const modal = document.getElementById(modalId);
         const input = isPrompt ? document.getElementById(`${modalId}-input`) : null;
+        
+        if (isPrompt && showStrength) {
+            const bar = document.getElementById(`${modalId}-strength-fill`);
+            const hint = document.getElementById(`${modalId}-strength-hint`);
+            input.addEventListener('input', (e) => updateUIStrength(e.target.value, bar, hint));
+        }
         const btnCancel = document.getElementById(`${modalId}-cancel`);
         const btnConfirm = document.getElementById(`${modalId}-confirm`);
 
@@ -1890,11 +1871,11 @@ function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm
 
 const customConfirm = (message, title = "Confirm Action", confirmText = "Proceed", cancelText = "Cancel") => runCustomModal(title, message, false, confirmText, cancelText);
 const customAlert = (message, title = "Security Notice", btnText = "OK") => runCustomModal(title, message, false, btnText, "");
-const customPrompt = (message, title = "Vault Input", type = "password", confirmText = "Submit", cancelText = "Cancel") => runCustomModal(title, message, true, confirmText, cancelText, type);
+const customPrompt = (message, title = "Vault Input", type = "password", confirmText = "Submit", cancelText = "Cancel", showStrength = false) => runCustomModal(title, message, true, confirmText, cancelText, type, showStrength);
 
 async function rotateId() {
     if (await customConfirm("Replace your current ID? This cannot be undone.", "Rotate Identity")) {
-        const pass = await customPrompt("Create a Vault PIN or Password to encrypt your local ID at rest:", "Set Vault PIN");
+        const pass = await customPrompt("Create a Vault PIN or Password to encrypt your local ID at rest:", "Set Vault PIN", "password", "Submit", "Cancel", true);
         if (!pass) return toast("Identity generation cancelled.", "info");
 
         let sim;
@@ -1941,7 +1922,7 @@ async function fillMyKey() {
 
     if (typeof idData === 'object' && idData.privateKeyBase64) {
         // Legacy Plaintext Upgrade
-        const pass = await customPrompt("Your ID is currently insecure. Enter a new Vault PIN to encrypt it now:", "Secure Your Identity");
+        const pass = await customPrompt("Your ID is currently insecure. Enter a new Vault PIN to encrypt it now:", "Secure Your Identity", "password", "Submit", "Cancel", true);
         if (!pass) return toast("Identity setup cancelled.", "info");
         const encryptedId = await SecureCrypto.encryptSymmetric(JSON.stringify(idData), pass);
         await localforage.setItem('my_identity', encryptedId);
@@ -2128,7 +2109,7 @@ function copyText(t, msg = "Copied to clipboard", btn = null) {
             _clipboardClearTimer = setTimeout(() => {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(" ").then(() => {
-                        console.log("[Security] Clipboard cleared automatically.");
+
                     }).catch(() => { });
                 }
             }, 60000);
@@ -2191,7 +2172,7 @@ window.onPanicWipe = async () => {
 
 async function broadcastWipe(vaultId) {
     if (!vaultId) return;
-    console.log("[Security] Broadcasting WIPE_SIGNAL for ID:", vaultId);
+
 
     // 1. Local Broadcast (Same browser, other tabs)
     SyncRelay.postMessage({ type: 'WIPE_SIGNAL', vaultId });
@@ -2214,7 +2195,7 @@ async function broadcastWipe(vaultId) {
                 method: 'POST',
                 body: JSON.stringify(tombstone)
             });
-            console.log("[Security] Cloud Tombstone broadcasted for ID:", vaultId);
+
         } catch (e) {
             console.error("Cloud wipe broadcast failed:", e);
         }
@@ -2370,7 +2351,13 @@ async function syncHashesToWorker(hashes) {
 }
 
 async function initVersionControl() {
-    if (State.airGap) return;
+    if (State.airGap || window._isCheckingUpdate) return;
+    window._isCheckingUpdate = true;
+
+    const isBackgroundCheck = window._appInited;
+    if (isBackgroundCheck) {
+        toast("Checking for security updates...", "info");
+    }
 
     // ---------------------------------------------------------------
     // CHECK: Was the last session a repair attempt?
@@ -2381,7 +2368,7 @@ async function initVersionControl() {
     const pendingRepairCheck = sessionStorage.getItem('vz_repair_pending');
     if (pendingRepairCheck) {
         sessionStorage.removeItem('vz_repair_pending');
-        console.log("[Repair] Post-repair verification started...");
+
         window._isPostRepairVerification = true;
     }
 
@@ -2426,6 +2413,8 @@ async function initVersionControl() {
         }
     } catch (e) {
         /* offline or timeout — skip update check */
+    } finally {
+        window._isCheckingUpdate = false;
     }
 
     // Re-lock fetch if offline lockdown was active
@@ -2439,6 +2428,7 @@ async function initVersionControl() {
 
     if (!manifest) {
         if (El.id.audit.heartbeat) setTimeout(() => El.id.audit.heartbeat.classList.remove('syncing'), 1000);
+        window._isCheckingUpdate = false;
         return;
     }
 
@@ -2530,10 +2520,10 @@ async function initVersionControl() {
         const currentManifestToken = await getManifestIntegrityToken(manifest);
         const hashesChanged = currentManifestToken !== lastManifestToken;
 
-        console.log("Update Check: Hashes Changed?", hashesChanged, "Tokens:", currentManifestToken.slice(0, 8), "vs", lastManifestToken.slice(0, 8));
+
 
         if (hashesChanged || !deepIntegrityOk) {
-            console.log("Update Check: Trigger condition met. Verifying signature...");
+
 
             if (!integrityOk || !deepIntegrityOk) {
                 // === PATH A: SECURITY ALERT ===
@@ -2560,7 +2550,7 @@ async function initVersionControl() {
                 // === POST-REPAIR SUCCESS ===
                 // The user clicked Repair, reloaded, and files now verify correctly.
                 // Silently update the token so we don't show the repair prompt again.
-                console.log("[Repair] Post-repair verification PASSED. Update applied successfully.");
+
                 const currentManifestToken = await getManifestIntegrityToken(manifest);
                 await localforage.setItem('last_manifest_token', currentManifestToken);
                 await localforage.setItem('app_version', manifest.version);
@@ -2570,7 +2560,7 @@ async function initVersionControl() {
                 // === PATH B: REPAIR AVAILABLE ===
                 // Hashes changed AND the manifest signature IS valid.
                 // This is a legitimate server update — show the Repair button.
-                console.log("Update Check: Valid signed update detected. Showing Repair prompt.");
+
                 showRepairPrompt();
             }
         }
@@ -2690,7 +2680,7 @@ async function initVersionControl() {
                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                         // SILENT UPDATE: We don't show the popup anymore.
                         // The Idle Watcher will refresh the page automatically when the user is inactive.
-                        console.log("[SW] New version installed and ready. Waiting for idle to apply.");
+
                         window._isUpdateReadyToApply = true;
                     }
                 });
@@ -2750,7 +2740,7 @@ function checkAndApplyUpdate() {
     const hasUnsavedAsym = (El.asym.msg.value.length > 0) || (El.asym.msgReceive.value.length > 0);
 
     if (!hasUnsavedSym && !hasUnsavedAsym) {
-        console.log("Idle Watcher: Applying verified update seamlessly.");
+
         finishAtomicUpdate();
     }
 }
@@ -2768,7 +2758,7 @@ async function finishAtomicUpdate() {
             const token = await getManifestIntegrityToken(manifest);
             await localforage.setItem('app_version', manifest.version);
             await localforage.setItem('last_manifest_token', token);
-            console.log("[Update] Version state finalized:", manifest.version);
+
         }
     } catch (e) {
         console.warn("Failed to save update state", e);
@@ -3040,7 +3030,14 @@ function initNetworkStatus() {
         });
     };
 
-    window.addEventListener('online', update);
+    window.addEventListener('online', () => {
+        update();
+        // Automatically check for updates when returning online (unless in Isolation/AirGap)
+        if (!State.airGap && typeof initVersionControl === 'function') {
+
+            initVersionControl();
+        }
+    });
     window.addEventListener('offline', update);
     update();
 }
@@ -3120,7 +3117,7 @@ function showPassState(s) {
 
     // Broadcast "HELLO" on unlock to catch up with other tabs
     if (s === 'active') {
-        console.log("[Local Mesh] Sending HELLO handshake...");
+
         SyncRelay.postMessage({ _vz: true, type: 'HELLO' });
     }
 }
@@ -3339,7 +3336,13 @@ function showPassEntryModal(existing = null) {
                         </div>
                         <div class="form-group">
                             <label class="form-label" style="color: rgba(255,255,255,0.5); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Password</label>
-                            <input type="text" id="${modalId}-pass" class="vp-input" style="text-align: left; padding: 0 16px; font-size: 14px; height: 48px;" value="${existing ? existing.password : ''}" placeholder="secret string">
+                            <div class="password-input-wrapper" style="border-radius: 12px; overflow: hidden; position: relative;">
+                                <input type="text" id="${modalId}-pass" class="vp-input" style="text-align: left; padding: 0 20px; font-size: 14px; height: 48px;" value="${existing ? existing.password : ''}" placeholder="secret string">
+                                <div class="pass-strength-bar" style="height: 3px; background: rgba(255,255,255,0.05);">
+                                    <div id="${modalId}-strength-fill" class="pass-strength-fill"></div>
+                                </div>
+                            </div>
+                            <div id="${modalId}-strength-hint" class="pass-strength-hint" style="margin-top: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Enter Password</div>
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 16px;">
@@ -3365,6 +3368,14 @@ function showPassEntryModal(existing = null) {
         };
 
         document.getElementById(`${modalId}-cancel`).onclick = () => close();
+        
+        const passInput = document.getElementById(`${modalId}-pass`);
+        const bar = document.getElementById(`${modalId}-strength-fill`);
+        const hint = document.getElementById(`${modalId}-strength-hint`);
+        passInput.addEventListener('input', (e) => updateUIStrength(e.target.value, bar, hint));
+        // Initialize if existing
+        if (existing) updateUIStrength(existing.password, bar, hint);
+
         document.getElementById(`${modalId}-save`).onclick = () => {
             const title = document.getElementById(`${modalId}-title`).value;
             const username = document.getElementById(`${modalId}-user`).value;
@@ -3447,7 +3458,7 @@ async function generateNewVaultId() {
 
     const display = document.getElementById('pass-vault-id-display');
     if (display) display.textContent = newId;
-    console.log("[Security] New Vault ID Generated:", newId);
+
     return newId;
 }
 
@@ -3559,7 +3570,7 @@ async function handleRemotePulse(remote) {
     if (remote.timestamp <= State.pass.lastSync) return;
 
     try {
-        console.log("[Local Mesh] Decrypting incoming pulse...");
+
         const remoteEncrypted = remote.data;
         const res = await SecureCrypto.decryptSymmetric(remoteEncrypted, State.pass.masterKey);
         const decryptedStr = typeof res === 'string' ? res : res.data;
@@ -3579,7 +3590,7 @@ async function handleRemotePulse(remote) {
         });
 
         if (hasChanges) {
-            console.log("[Local Mesh] Changes detected. Merging and re-sealing vault...");
+
             State.pass.entries = Array.from(localMap.values());
 
             // SECURITY: We must RE-ENCRYPT the merged state because our local state might have
@@ -3594,7 +3605,7 @@ async function handleRemotePulse(remote) {
             toast("Mesh Sync: Vault updated from cloud.", "success");
         } else {
             State.pass.lastSync = remote.timestamp;
-            console.log("[Local Mesh] Pulse received but no new changes detected.");
+
         }
     } catch (e) {
         console.warn("[Local Mesh] Pulse merge failed. Master Password mismatch or corrupt payload.");

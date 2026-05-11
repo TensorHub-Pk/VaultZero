@@ -102,8 +102,21 @@ async function getSiliconFingerprint() {
  * Universal Hardware Identity Adapter
  * Using UserHandle Anchor for perfect cross-browser stability
  */
-async function getDeviceKey() {
-    if (!(window.PublicKeyCredential && window.isSecureContext)) return await getBrowserFallbackKey();
+async function getDeviceKey(showNotice = false) {
+    const fallbackNotice = async () => {
+        if (showNotice && window.customAlert) {
+            await window.customAlert(
+                "Hardware Identity (TPM) is unavailable or was denied. \n\n" +
+                "The vault will be locked to this BROWSER instead of the physical hardware. It will not work if you clear your browser data or use a different browser.",
+                "Security Notice: Browser Bound"
+            );
+        }
+    };
+
+    if (!(window.PublicKeyCredential && window.isSecureContext)) {
+        await fallbackNotice();
+        return await getBrowserFallbackKey();
+    }
 
     try {
         if (window.toast) window.toast("Accessing Hardware Identity...", "info");
@@ -169,17 +182,12 @@ async function getDeviceKey() {
     } catch (e) {
         console.warn("Hardware Layer Skip: ", e.name);
         if (window.AuditLog) window.AuditLog.log('HARDWARE_SKIPPED', { reason: e.name });
-        if (window.customConfirm && (e.name === 'NotAllowedError' || e.name === 'AbortError')) {
-            const confirmed = await window.customConfirm(
-                "Hardware Identity (Windows Hello) was denied or unavailable. \n\n" +
-                "Proceed with BROWSER ISOLATION? \n" +
-                "(Note: This vault will only work in THIS browser).",
-                "Hardware Layer Warning"
-            );
-            if (!confirmed) throw new Error("Hardware isolation required.");
-        }
+        
+        // If we are in setup mode and it was a direct denial, we already handled it with fallbackNotice
+        // but let's be thorough.
     }
 
+    await fallbackNotice();
     return await getBrowserFallbackKey();
 }
 
@@ -389,7 +397,7 @@ async function encrypt(input, password, expiresAt = null, fileName = null, fileT
     let keyRaw = null;
 
     try {
-        const deviceKey = deviceBound ? await getDeviceKey() : null;
+        const deviceKey = deviceBound ? await getDeviceKey(true) : null;
         keyRaw = await getDerivedKeyRaw(password, salt, deviceKey);
 
         let ciphertext, iv;
@@ -469,7 +477,7 @@ async function decrypt(payloadBase64, password) {
     let decryptedBytes;
 
     try {
-        const deviceKey = deviceBound ? await getDeviceKey() : null;
+        const deviceKey = deviceBound ? await getDeviceKey(false) : null;
         if (deviceBound && !deviceKey) {
             throw new Error("This message is bound to another device and cannot be opened here.");
         }

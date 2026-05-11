@@ -37,10 +37,22 @@ This log documents the resolution of critical cross-browser synchronization issu
 
 ---
 
-### 🖊️ FINAL SYNTAX AUDIT
+### 4. 🖊️ FINAL SYNTAX AUDIT
 - **Issue**: `Uncaught SyntaxError: Unexpected token '}'` on line 2927.
 - **Fix**: Removed orphaned closing brace during code consolidation.
 - **Status**: ✅ **FIXED**
+
+---
+
+### 5. 🔗 BUG: "How it Works" Navigation Redirect
+- **Issue**: Clicking "How it Works" on the landing page opened the Vault dashboard instead of the Protocol guide.
+- **Root Cause**: 
+    - **Service Worker Routing**: The `isLandingPage` check in `service-worker.js` only looked for `.html` extensions or root `/`.
+    - **Clean URL Fallback**: Browsers or servers using "Clean URLs" (stripping `.html`) caused the SW to miss the landing page check and fall back to the `vault.html` shell.
+- **Resolution**:
+    - **Robust Detection**: Expanded the SW routing logic to recognize `/index`, `/protocol`, and trailing slash variations. This ensures they are correctly identified as landing pages rather than falling back to the vault.
+    - **Network Enforcement**: Confirmed landing pages are network-only (not cached) to ensure content is always fresh.
+- **Status**: ✅ **FIXED** (Deep-Link Integrity Restored)
 
 ---
 > _"In security, the smallest detail is the difference between a fortress and a sieve."_

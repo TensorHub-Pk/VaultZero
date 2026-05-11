@@ -5,7 +5,7 @@
  */
 
 
-const CACHE_NAME = 'vault-v3.0-stable';
+const CACHE_NAME = 'vault-v3.1.2-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 // ASSETS_TO_CACHE: Everything needed for offline operation.
@@ -108,7 +108,7 @@ async function cacheAsset(cache, url) {
       const expected512 = typeof hashData === 'object' ? hashData.sha512 : null;
 
       if (actual256 === expected256 && (!expected512 || actual512 === expected512)) {
-        console.log(`[SW] Double-Hash Verified: ${url}`);
+
       } else {
         const isSecurityCritical = SECURITY_CRITICAL_ASSETS.some(a => url.includes(a)) || url.endsWith('.js');
 
@@ -155,7 +155,7 @@ self.addEventListener('install', event => {
   self.skipWaiting(); // Force the waiting service worker to become the active service worker
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('SW: Installing and pre-caching assets');
+
       // Cache each asset individually using our custom redirect-safe fetcher
       return Promise.all(
         ASSETS_TO_CACHE.map(url => cacheAsset(cache, url))
@@ -165,7 +165,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  console.log('SW: Activated');
+
   event.waitUntil(
     Promise.all([
       self.clients.claim(), // Become the controller for all clients immediately
@@ -173,7 +173,7 @@ self.addEventListener('activate', event => {
         return Promise.all(
           cacheNames.map(cacheName => {
             if (cacheName !== CACHE_NAME) {
-              console.log('SW: Clearing old cache', cacheName);
+
               return caches.delete(cacheName);
             }
           })
@@ -212,11 +212,17 @@ self.addEventListener('fetch', event => {
   // Network-first for landing pages (Home/Protocol) to ensure they are never stale
   // Cache-first for the Vault App to ensure instant offline startup
   if (event.request.mode === 'navigate') {
-    const isLandingPage = url.pathname.endsWith('/') ||
-      url.pathname.endsWith('index.html') ||
-      url.pathname.endsWith('protocol.html');
+    // Robust landing page check: handle clean URLs, trailing slashes, and .html extension
+    const cleanPath = url.pathname.replace(/\/$/, ''); // Remove trailing slash for comparison
+    const isLandingPage = 
+      url.pathname === '/' ||
+      cleanPath.endsWith('/index.html') ||
+      cleanPath.endsWith('/index') ||
+      cleanPath.endsWith('/protocol.html') ||
+      cleanPath.endsWith('/protocol');
 
     if (isLandingPage) {
+      // Network-only for landing pages (Home/Protocol) as requested
       event.respondWith(fetch(event.request));
       return;
     }
@@ -270,7 +276,7 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SET_TRUSTED_HASHES') {
     trustedHashes = event.data.hashes || {};
-    console.log('[SW] Trusted hashes updated:', Object.keys(trustedHashes).length, 'files');
+
     if (event.ports && event.ports[0]) {
       event.ports[0].postMessage({ _vz: true, status: 'ok' });
     }
@@ -281,7 +287,7 @@ self.addEventListener('message', event => {
   if (event.data && event.data.type === 'FORCE_RECACHE') {
     if (event.data.hashes) {
       trustedHashes = event.data.hashes;
-      console.log('[SW] Hashes refreshed for Force Recache:', Object.keys(trustedHashes).length);
+
     }
 
     caches.delete(CACHE_NAME).then(() => {

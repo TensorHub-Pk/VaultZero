@@ -315,7 +315,7 @@
                   class="form-input"
                 />
                 <div id="pass-strength-sym" class="pass-strength-bar">
-                  <div class="pass-strength-fill"></div>
+                  <div id="pass-strength-fill-sym" class="pass-strength-fill"></div>
                 </div>
               </div>
               <div id="pass-hint-sym" class="pass-strength-hint"><i class="ph ph-bold ph-key"></i> Enter Password</div>
@@ -373,7 +373,7 @@
                 </label>
               </div>
 
-              <div id="stego-file-container-sym" class="hidden form-group">
+              <div id="stego-file-container-sym" class="hidden reveal-options-card form-group">
                 <label class="form-label">Upload Cover Image</label>
                 <div
                   class="file-drop-zone"
@@ -390,7 +390,7 @@
                   />
                 </div>
               </div>
-              <div id="timer-options-sym" class="hidden form-group">
+              <div id="timer-options-sym" class="hidden reveal-options-card form-group">
                 <label class="form-label">Link Expiration</label>
                 <select id="timer-select-sym" class="form-input">
                   <option value="60000">1 Minute</option>
@@ -550,7 +550,7 @@
                       </label>
                     </div>
 
-                    <div id="stego-file-container-asym" class="hidden form-group">
+                    <div id="stego-file-container-asym" class="hidden reveal-options-card form-group">
                       <label class="form-label">Upload Cover Image</label>
                       <div
                         class="file-drop-zone"
@@ -571,7 +571,7 @@
                         />
                       </div>
                     </div>
-                    <div id="timer-options-asym" class="hidden form-group">
+                    <div id="timer-options-asym" class="hidden reveal-options-card form-group">
                       <label class="form-label">Link Expiration</label>
                       <select id="timer-select-asym" class="form-input">
                         <option value="60000">1 Minute</option>
@@ -853,9 +853,13 @@
                 <div class="vp-auth-icon" style="color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);"><i class="ph-duotone ph-shield-check"></i></div>
                 <p class="vp-auth-desc">Set a Master Password (min 10 chars) to encrypt your data locally. <strong style="color:var(--red);">It cannot be recovered.</strong></p>
                 
-                <div class="vp-input-wrapper">
+                <div class="vp-input-wrapper" style="position:relative; overflow:hidden; border-radius:16px;">
                   <input type="password" id="pass-setup-pin" class="vp-input" placeholder="Enter Password (min 10 chars)" autocomplete="new-password">
+                  <div class="pass-strength-bar">
+                    <div id="pass-strength-fill" class="pass-strength-fill"></div>
+                  </div>
                 </div>
+                <div id="pass-strength-label" class="pass-strength-hint" style="margin-top: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">Enter Password</div>
                 
                 <button id="btn-setup-passwords" class="vp-btn-primary green">
                   <i class="ph-bold ph-check"></i> Initialize
@@ -1014,7 +1018,7 @@
 
     <!-- PWA Install Modal -->
     <div id="install-modal" class="install-modal hidden">
-      <div class="install-modal-backdrop" onclick="closeInstallModal()"></div>
+      <div class="install-modal-backdrop"></div>
       <div class="install-modal-card">
         <button class="install-modal-close" onclick="closeInstallModal()">
           <i class="ph ph-bold ph-x" style="font-size: 24px;"></i>
@@ -1128,13 +1132,7 @@
 
     <!-- Update Confirm Modal -->
     <div id="update-confirm-modal" class="install-modal hidden">
-      <div
-        class="install-modal-backdrop"
-        onclick="
-          this.parentElement.classList.remove('active');
-          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
-        "
-      ></div>
+      <div class="install-modal-backdrop"></div>
       <div class="install-modal-card">
         <button
           class="install-modal-close"
@@ -1216,13 +1214,7 @@
 
     <!-- Info Modal -->
     <div id="info-modal" class="install-modal hidden">
-      <div
-        class="install-modal-backdrop"
-        onclick="
-          this.parentElement.classList.remove('active');
-          setTimeout(() => this.parentElement.classList.add('hidden'), 300);
-        "
-      ></div>
+      <div class="install-modal-backdrop"></div>
       <div class="install-modal-card">
         <button
           class="install-modal-close"

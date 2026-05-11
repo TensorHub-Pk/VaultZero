@@ -983,6 +983,12 @@ select.form-input {
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;
+  background-color: var(--bg-body);
+}
+
+.form-input option {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
 /* Input type toggle */
@@ -1134,6 +1140,33 @@ textarea.input-inactive {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .options-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.reveal-options-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+  animation: revealFade 0.3s ease;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.reveal-options-card .form-label {
+  color: #fff;
+  opacity: 0.9;
+  font-size: 10px;
+}
+
+@keyframes revealFade {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .identity-section .form-group {
@@ -3227,6 +3260,8 @@ textarea.input-inactive {
 .password-input-wrapper {
   position: relative;
   width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden; /* Clips the strength bar to the border radius */
 }
 
 .pass-strength-bar {
@@ -3234,11 +3269,10 @@ textarea.input-inactive {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 0 0 8px 8px;
-  overflow: hidden;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
   pointer-events: none;
+  z-index: 2;
 }
 
 .pass-strength-fill {
@@ -3246,7 +3280,7 @@ textarea.input-inactive {
   width: 0%;
   background: var(--red);
   transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .pass-strength-hint {

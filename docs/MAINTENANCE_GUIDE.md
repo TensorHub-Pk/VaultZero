@@ -12,58 +12,58 @@
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| **"Integrity Check Failed"** | A security-critical file was modified without re-signing | Run `node "For dev/internal-tools/sign-updates.js"` |
-| **"Sodium not loaded"** | Load order issue | Ensure `libs/sodium.js` loads before any call in `encryption.js` |
-| **"Security Alert" on startup** | Hash mismatch in signed manifest | Re-run `sign-updates.js` or revert unauthorized file changes |
-| **"Repair modal appears on every load"** | `update-info.json` hashes are outdated | Re-run `sign-updates.js` after every file change |
-| **AirGap mode not persisting** | `localforage` not initialized | Ensure the vault is fully loaded before toggling AirGap |
+| **"Integrity Check Failed"** | A security-critical file was modified without re-signing | Run the provided integrity signing utility to update the manifest |
+| **"Sodium not loaded"** | Library load order issue | Verify that cryptographic libraries initialize before main logic |
+| **"Security Alert" on startup** | Hash mismatch in security manifest | Re-generate the security manifest or audit unauthorized file changes |
+| **"Repair modal persists"** | Security manifest hashes are outdated | Ensure the manifest is refreshed after every codebase modification |
+| **AirGap mode not persisting** | Storage layer not initialized | Verify persistence modules are fully loaded before state changes |
 
 ---
 
 ## 🧹 [HYGIENE] CODE STANDARDS
-- **Keep it Vanilla**: Avoid adding heavy frameworks or dependencies. VaultZero runs on zero build tools.
-- **Privacy First**: Always use `secureZero()` or `memzero()` on sensitive buffers after use.
-- **Sign Everything**: After any change to a security-critical file, always re-run `sign-updates.js` before committing.
-- **No Inline Secrets**: Private keys, API tokens, and credentials must never appear in source code.
+- **Minimalist Architecture**: Avoid introducing external frameworks. Maintain the zero-build-tool philosophy.
+- **Privacy First**: Explicitly wipe sensitive buffers from memory immediately after use.
+- **Integrity Enforcement**: Always refresh security signatures and file hashes before committing any logic changes.
+- **Strict Secret Isolation**: Secrets, keys, and internal identifiers must never be committed to source control.
 
 ---
 
 ## 🔄 [UPDATES] DEPENDENCY MANAGEMENT
-Check for updates monthly. Follow the [Dependency Policy](DEPENDENCY_POLICY.md) for vetting new libraries.
-- After any dependency update, run `sign-updates.js` to regenerate all hashes.
-- Major version upgrades require a full source audit before approval.
+Perform periodic dependency audits. Adhere to the established [Dependency Policy](DEPENDENCY_POLICY.md).
+- Refresh all integrity manifests whenever an external library is updated.
+- Perform a manual security audit for any major version upgrades before integration.
 
 ---
 
 ## 🔐 [GPG] GIT SIGNING CONFIGURATION
-Every commit to `main` requires a GPG-verified signature:
+All contributions to the primary branch must be cryptographically signed:
 
 ```powershell
-# Link your key to Git
-git config --global user.signingkey 4C5158A46046CE4C
+# Associate your key with Git
+git config --global user.signingkey <YOUR_SIGNING_KEY_ID>
 git config --global commit.gpgsign true
 
-# Configure GPG path on Windows (Kleopatra)
-git config --global gpg.program "C:\Program Files (x86)\GnuPG\bin\gpg.exe"
+# Define the GPG application path
+git config --global gpg.program "<PATH_TO_GPG_EXECUTABLE>"
 ```
 
 ---
 
 ## 🆘 [RECOVERY] DISASTER SCENARIOS
 
-### Scenario 1: Work disappeared during rebase
+### Scenario 1: Unintended State Loss (Rebase/Reset)
 ```powershell
-git log -g --oneline   # Find the lost commit in reflog
-git reset --hard <COMMIT_ID>   # Restore to that exact point
+git log -g --oneline               # Inspect the reference log for lost commits
+git reset --hard <REF_ID>          # Restore the repository to a known good state
 ```
 
-### Scenario 2: GitHub push rejected (histories diverged)
+### Scenario 2: Remote/Local History Conflict
 ```powershell
-git push origin main --force   # Only if local code is confirmed correct
+git push origin <BRANCH_NAME> --force  # Caution: Only use if local state is verified
 ```
 
 > [!IMPORTANT]
-> After any force push or recovery, always re-run `".\For dev\publish.ps1"` to ensure all hashes and signatures are aligned with the restored code.
+> Following any repository recovery or force-push, always run the standard verification and publication workflows to ensure signatures and hashes are synchronized with the active code.
 
 ---
 
