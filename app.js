@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+
 /**
  * app.js — VaultZero UI Controller
  * Dual-UI: Mobile App + Desktop Command Center

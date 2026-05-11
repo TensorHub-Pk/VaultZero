@@ -1,12 +1,12 @@
 {
   "version": "3.1.1",
   "released": "2026-05-12",
-  "timestamp": 1778464770900,
-  "expires": 1781056770900,
+  "timestamp": 1778466767213,
+  "expires": 1781058767213,
   "hashes": {
     "app.js": {
-      "sha256": "21e45a59f3775c1e753defea8df5075070aceee08b1510762992c05afb6732e1",
-      "sha512": "b8d7c4484e449cd33e7b1da98bb8da2679ec9329769fc6cedf170bbc9c1ae5d0d27eb2debc3d37efd788256e4d5e27051dd6c9e6a16a8a83ba782f0f97f8cc0f"
+      "sha256": "ec3ab4c3c4d7c4a28a798b391f16cde410e6c1fde03f1d4e212a5838284ebf76",
+      "sha512": "f247debd82f3ab69a1c372fcdf11bacb9e6c1812703ded64df0c4cdc62e5bcf6c05b3d440278f914e2e8052e68d007232e59cfddeb0238b906bfa624a3b644df"
     },
     "encryption.js": {
       "sha256": "7b0357937d0384249c87914873424b60b547d3b9110588aa5b0d07a0ba7ea704",
@@ -45,6 +45,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "y+uuL4+xbIHM1IbDL/VJqN0+228Po7/9ubaVlzIz2CuC8Pc4ecWmCMFL202QWArilyI4QCASU5DA5OpcUL0QDA==",
+  "signature": "EWIV7fhW4dG77x0XIJHq0RA7exUGA+vDtWllLqZ+PmdhTZPR8Crk1/rBHH07HBrC4Wb/UHfpONxPjj476M8+DA==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
