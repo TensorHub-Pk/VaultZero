@@ -20,7 +20,7 @@ const State = {
     asym: { mode: 'encrypt', type: 'text', stego: false, timer: false },
     id: { publicKey: null, privateKey: null },
     airGap: false,
-    pass: { entries: [], unlocked: false, masterKey: null, vaultId: null, lastSync: 0, syncStatus: 'idle' }
+    pass: { entries: [], unlocked: false, masterKey: null, vaultId: null, lastSync: 0, syncStatus: 'idle', overwriteConfirmed: false }
 };
 
 // --- REAL-TIME TAB RELAY ---
@@ -176,6 +176,7 @@ async function initElements() {
             last: document.getElementById('audit-stat-last'),
             integrityText: document.getElementById('audit-stat-integrity'),
             refresh: document.getElementById('btn-refresh-audit'),
+            clear: document.getElementById('btn-clear-audit'),
             airGap: document.getElementById('air-gap-toggle'),
             heartbeat: document.getElementById('audit-stat-heartbeat')
         }
@@ -621,7 +622,6 @@ async function start() {
         updateInstallUI();
         listeners();
         theme();
-        checkCacheAge();
 
         // Critical Security Init
         try {
@@ -963,6 +963,28 @@ function listeners() {
     if (El.version.mobileNavBtn) El.version.mobileNavBtn.addEventListener('click', triggerAppUpdate);
 
     // --- Password Manager Listeners ---
+    const btnPassInit = document.getElementById('btn-pass-init');
+    if (btnPassInit) {
+        btnPassInit.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const encryptedData = await localforage.getItem('vaultzero_passwords');
+            if (encryptedData) {
+                const confirmWipe = await customConfirm(
+                    "A local password vault already exists on this device. Initializing a new one will PERMANENTLY delete all current entries.\n\nAre you sure you want to proceed?",
+                    "⚠️ Warning: Existing Vault Found",
+                    "Delete & Create New",
+                    "Cancel"
+                );
+                if (!confirmWipe) return;
+                State.pass.overwriteConfirmed = true;
+            } else {
+                State.pass.overwriteConfirmed = false;
+            }
+            showPassState('setup');
+        });
+    }
+
     El.pass.setupBtn?.addEventListener('click', () => unlockPasswords(El.pass.setupPin.value, true));
     El.pass.setupPin?.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlockPasswords(El.pass.setupPin.value, true); });
     El.pass.unlockBtn?.addEventListener('click', () => unlockPasswords(El.pass.pin.value));
@@ -1814,14 +1836,14 @@ async function runAsym() {
     }
 }
 
-function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm", cancelText = "Cancel", inputType = "password", showStrength = false) {
+function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm", cancelText = "Cancel", inputType = "password", showStrength = false, isCritical = false) {
     return new Promise((resolve) => {
         const modalId = 'custom-modal-' + Date.now();
         const html = `
         <div id="${modalId}" class="install-modal hidden">
             <div class="install-modal-backdrop"></div>
-            <div class="install-modal-card" style="text-align: center; max-width: 400px;">
-                <h2 class="install-modal-title" style="margin-top:0; font-size: 20px;">${title}</h2>
+            <div class="install-modal-card" style="text-align: center; max-width: 400px; ${isCritical ? 'border: 1px solid rgba(239,68,68,0.5); box-shadow: 0 10px 40px rgba(239,68,68,0.15);' : ''}">
+                <h2 class="install-modal-title" style="margin-top:0; font-size: 20px; ${isCritical ? 'color: #ef4444;' : ''}">${title}</h2>
                 <p class="install-modal-subtitle" style="font-size: 14px; opacity: 0.7;">${message}</p>
                 ${isPrompt ? `
                 <div class="form-group" style="margin-top: 20px; text-align: left;">
@@ -1838,7 +1860,7 @@ function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm
                     <button id="${modalId}-cancel" class="action-btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); flex: 1; border: 1px solid rgba(255,255,255,0.1); height: 48px; border-radius: 10px; ${!cancelText ? 'display: none;' : ''}">
                         ${cancelText}
                     </button>
-                    <button id="${modalId}-confirm" class="action-btn primary-action" style="background: var(--accent); flex: 1.2; height: 48px; border-radius: 10px; font-weight: 700; margin: 0 !important;">
+                    <button id="${modalId}-confirm" class="action-btn primary-action" style="background: ${isCritical ? '#ef4444' : 'var(--accent)'}; flex: 1.2; height: 48px; border-radius: 10px; font-weight: 700; margin: 0 !important; ${isCritical ? 'color: #fff;' : ''}">
                         ${confirmText}
                     </button>
                 </div>
@@ -1889,6 +1911,7 @@ function runCustomModal(title, message, isPrompt = false, confirmText = "Confirm
 
 
 const customConfirm = (message, title = "Confirm Action", confirmText = "Proceed", cancelText = "Cancel") => runCustomModal(title, message, false, confirmText, cancelText);
+const criticalConfirm = (message, title = "Critical Warning", confirmText = "Proceed", cancelText = "Cancel") => runCustomModal(title, message, false, confirmText, cancelText, "password", false, true);
 const customAlert = (message, title = "Security Notice", btnText = "OK") => runCustomModal(title, message, false, btnText, "");
 const customPrompt = (message, title = "Vault Input", type = "password", confirmText = "Submit", cancelText = "Cancel", showStrength = false) => runCustomModal(title, message, true, confirmText, cancelText, type, showStrength);
 
@@ -2021,6 +2044,42 @@ async function renderAuditTrail() {
             El.id.audit.integrity.classList.toggle('hidden', !stats.integrityOk);
             El.id.audit.integrityText.textContent = stats.integrityOk ? 'Secure' : 'Tampered';
             El.id.audit.integrityText.style.color = stats.integrityOk ? 'var(--green)' : 'var(--red)';
+        }
+
+        // Calculate dynamic security health score
+        let score = 100;
+        let scoreTitle = "System Status: Fully Secured";
+        let scoreDesc = "All cryptographic seals are valid. The local database integrity is verified against unauthorized modifications.";
+        let chartClass = "green";
+
+        if (!stats.integrityOk) {
+            score = 0;
+            scoreTitle = "System Compromised!";
+            scoreDesc = "WARNING: Tampering detected in the local audit log chain. Cryptographic signatures do not match local database records.";
+            chartClass = "red";
+        } else {
+            const anomalyCount = stats.ANOMALY_DETECTED || 0;
+            if (anomalyCount > 0) {
+                score = Math.max(10, 100 - (anomalyCount * 20));
+                scoreTitle = "Anomalies Detected";
+                scoreDesc = `Security pattern alert: ${anomalyCount} unauthorized access attempt pattern(s) identified in the window. Verify your credentials.`;
+                chartClass = score > 50 ? "orange" : "red";
+            }
+        }
+
+        const scorePercentEl = document.getElementById('security-score-percent');
+        const scoreTitleEl = document.getElementById('security-score-title');
+        const scoreDescEl = document.getElementById('security-score-desc');
+        const scoreCircleEl = document.getElementById('security-score-circle');
+        const chartEl = document.querySelector('.circular-chart');
+
+        if (scorePercentEl) scorePercentEl.textContent = `${score}%`;
+        if (scoreTitleEl) scoreTitleEl.textContent = scoreTitle;
+        if (scoreDescEl) scoreDescEl.textContent = scoreDesc;
+        if (scoreCircleEl) scoreCircleEl.setAttribute('stroke-dasharray', `${score}, 100`);
+        if (chartEl) {
+            chartEl.classList.remove('green', 'orange', 'red');
+            chartEl.classList.add(chartClass);
         }
 
         if (logs.length === 0) {
@@ -2178,7 +2237,7 @@ function downloadFile(url, filename) {
     }, 100);
 }
 window.onPanicWipe = async () => {
-    if (await customConfirm("ERASE EVERYTHING? All keys and data will be lost forever.", "Panic Wipe", "Wipe Everything", "Cancel")) {
+    if (await criticalConfirm("ERASE EVERYTHING? All keys and data will be lost forever.", "Panic Wipe", "Wipe Everything", "Cancel")) {
         if (window.AuditLog) AuditLog.log(AuditLog.EventType.WIPE_EXECUTED);
 
         const oldId = State.pass.vaultId;
@@ -2962,56 +3021,7 @@ window.addEventListener('scroll', () => {
     }
 }, { passive: true });
 
-// --- CACHE AGE CHECK (48 HOURS FOR SECURITY) ---
-function checkCacheAge() {
-    const CACHE_MAX_AGE_MS = 48 * 60 * 60 * 1000; // 48 hours security limit
-    const now = Date.now();
-    let lastLoad = localStorage.getItem('vaultzero_last_load');
-
-    if (!lastLoad) {
-        localStorage.setItem('vaultzero_last_load', now.toString());
-        lastLoad = now.toString();
-    }
-
-    const diffMs = now - parseInt(lastLoad, 10);
-    const delay = CACHE_MAX_AGE_MS - diffMs;
-
-    // Clear any existing timer to prevent duplicates
-    if (window._cacheAgeTimer) clearTimeout(window._cacheAgeTimer);
-
-    if (delay <= 0) {
-        // Already expired
-        showCacheReloadPrompt();
-        localStorage.setItem('vaultzero_last_load', now.toString());
-    } else {
-        // Log exactly how much time is left until the trigger
-        const hours = Math.floor(delay / 3600000);
-        const mins = Math.floor((delay % 3600000) / 60000);
-
-        window._cacheAgeTimer = setTimeout(() => {
-            showCacheReloadPrompt();
-            localStorage.setItem('vaultzero_last_load', Date.now().toString());
-        }, delay);
-    }
-}
-
-function showCacheReloadPrompt() {
-    // Show the floating button and proactively trigger the modal
-    if (El.version && El.version.floatingBtn) {
-        showUpdatePrompt();
-        El.version.floatingBtn.setAttribute('title', 'Security Notice: Reload App');
-
-        // Proactively show the update modal to catch user attention
-        const modal = document.getElementById('update-confirm-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.add('active'), 100);
-        }
-    }
-
-    // Always show feedback
-    toast("Security Session Notice: App is over 48 hours old. Please reload for the latest updates.", "warning");
-}
+// Cache Age Check removed for offline convenience
 
 // --- NETWORK STATUS ---
 function initNetworkStatus() {
@@ -3140,13 +3150,16 @@ async function unlockPasswords(pin, isSetup = false) {
 
         // Safeguard: Check if we are overwriting an existing vault
         if (isSetup && encryptedData) {
-            const confirmWipe = await customConfirm(
-                "A local password vault already exists on this device. Creating a new one will PERMANENTLY delete all current entries.\n\nAre you sure you want to proceed?",
-                "⚠️ Warning: Existing Vault Found",
-                "Delete & Create New",
-                "Cancel"
-            );
-            if (!confirmWipe) return;
+            if (!State.pass.overwriteConfirmed) {
+                const confirmWipe = await criticalConfirm(
+                    "A local password vault already exists on this device. Creating a new one will PERMANENTLY delete all current entries.\n\nAre you sure you want to proceed?",
+                    "⚠️ Warning: Existing Vault Found",
+                    "Delete & Create New",
+                    "Cancel"
+                );
+                if (!confirmWipe) return;
+            }
+            State.pass.overwriteConfirmed = false;
 
             // 1. Signal other devices to wipe the OLD vault (Local + Cloud)
             if (State.pass.vaultId) {
@@ -3164,7 +3177,7 @@ async function unlockPasswords(pin, isSetup = false) {
             State.pass.masterKey = pin;
             State.pass.unlocked = true;
 
-            if (State.pass.vaultId && !encryptedData) {
+            if (!isSetup && State.pass.vaultId && !encryptedData) {
                 // If we have an ID but no data, we are linking. 
                 // DON'T push an empty vault yet. Pull first.
                 State.pass.entries = [];
@@ -3881,15 +3894,15 @@ function showRecoveryKeyModal(recoveryKey, isUpgrade = false) {
         const html = `
         <div id="${modalId}" class="install-modal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 10000000000000000;">
             <div class="install-modal-backdrop" style="background: transparent;"></div>
-            <div class="vault-pro-container" style="max-width: 500px; margin: auto; border: 1px solid rgba(59,130,246,0.3); background: linear-gradient(165deg, #0d0d12, #07070a); min-height: auto; padding: 24px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(37,99,235,0.15); width: 90%;">
-                <div class="vp-auth-icon" style="color: var(--accent); background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.2); width: 80px; height: 80px; margin: 10px auto 20px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+            <div class="vault-pro-container" style="max-width: 500px; margin: auto; border: 1px solid rgba(239,68,68,0.3); background: linear-gradient(165deg, #0d0d12, #07070a); min-height: auto; padding: 24px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(239,68,68,0.15); width: 90%;">
+                <div class="vp-auth-icon" style="color: var(--red); background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); width: 80px; height: 80px; margin: 10px auto 20px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 40px;">
                     <i class="ph-duotone ph-shield-check"></i>
                 </div>
                 <h3 style="font-size: 22px; font-weight: 800; color: #fff; text-align: center; margin: 0 0 10px; letter-spacing: -0.5px;">${titleText}</h3>
                 <p style="font-size: 14px; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.6; margin: 0 auto 24px; max-width: 400px;">${descText}</p>
                 
                 <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px;">
-                    <div id="${modalId}-key" class="mono" style="font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: 0.1em; user-select: all; cursor: pointer; text-transform: uppercase;">
+                    <div id="${modalId}-key" class="mono" style="font-size: 18px; font-weight: 800; color: var(--red); letter-spacing: 0.1em; user-select: all; cursor: pointer; text-transform: uppercase;">
                         ${recoveryKey}
                     </div>
                 </div>
@@ -3909,13 +3922,13 @@ function showRecoveryKeyModal(recoveryKey, isUpgrade = false) {
                         <strong>WARNING:</strong> VaultZero is zero-knowledge. This key is stored nowhere in the cloud. If you lose this key and forget your password, your data is gone forever.
                     </p>
                 </div>
-
+ 
                 <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; cursor: pointer; text-align: left; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; user-select: none;">
-                    <input type="checkbox" id="${modalId}-ack" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+                    <input type="checkbox" id="${modalId}-ack" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--red);">
                     <span style="font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600;">I have securely saved my recovery key.</span>
                 </label>
-
-                <button id="${modalId}-done" class="vp-btn-primary green" disabled style="width: 100%; height: 52px; border-radius: 12px; max-width: none; opacity: 0.5; cursor: not-allowed; font-size: 15px; font-weight: 800;">
+ 
+                <button id="${modalId}-done" class="vp-btn-primary red" disabled style="width: 100%; height: 52px; border-radius: 12px; max-width: none; opacity: 0.5; cursor: not-allowed; font-size: 15px; font-weight: 800;">
                     Confirm & Enter Vault
                 </button>
             </div>

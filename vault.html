@@ -761,25 +761,56 @@
                   <i class="ph ph-bold ph-shield-check"></i> Chain Verified
                 </div>
               </div>
+
+              <!-- Dynamic Security Health Index Card -->
+              <div class="security-score-card">
+                <div class="security-score-header">
+                  <div class="score-circle">
+                    <svg viewBox="0 0 36 36" class="circular-chart green">
+                      <path class="circle-bg"
+                        d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path id="security-score-circle" class="circle"
+                        stroke-dasharray="100, 100"
+                        d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <text x="18" y="20.35" class="percentage" id="security-score-percent">100%</text>
+                    </svg>
+                  </div>
+                  <div class="score-details">
+                    <h4 id="security-score-title">System Status: Fully Secured</h4>
+                    <p id="security-score-desc">All cryptographic seals are valid. The local database integrity is verified against unauthorized modifications.</p>
+                  </div>
+                </div>
+              </div>
               
               <div class="audit-stats-grid">
                 <div class="audit-stat-item">
+                  <i class="ph ph-bold ph-list-numbers stat-icon"></i>
                   <span class="audit-stat-label">Total Events</span>
                   <span id="audit-stat-total" class="audit-stat-value">0</span>
                 </div>
                 <div class="audit-stat-item">
+                  <i class="ph ph-bold ph-warning-circle stat-icon text-red"></i>
                   <span class="audit-stat-label">Anomalies</span>
                   <span id="audit-stat-anomalies" class="audit-stat-value" style="color: var(--red);">0</span>
                 </div>
-                <div class="audit-stat-item">
+                <div class="audit-stat-item animate-pulse-accent">
+                  <i class="ph ph-bold ph-activity stat-icon pulsing-accent"></i>
                   <span class="audit-stat-label">Live Guard</span>
                   <span id="audit-stat-heartbeat" class="audit-stat-value" style="color: var(--accent);">Active</span>
                 </div>
                 <div class="audit-stat-item">
+                  <i class="ph ph-bold ph-shield-check stat-icon text-green"></i>
                   <span class="audit-stat-label">Integrity</span>
                   <span id="audit-stat-integrity" class="audit-stat-value" style="color: var(--green);">Secure</span>
                 </div>
                 <div class="audit-stat-item">
+                  <i class="ph ph-bold ph-clock stat-icon"></i>
                   <span class="audit-stat-label">Last Activity</span>
                   <span id="audit-stat-last" class="audit-stat-value">Never</span>
                 </div>
@@ -816,7 +847,7 @@
               </div>
               
               <div class="vp-action-grid">
-                <button class="vp-action-card green" id="btn-pass-init" onclick="showPassState('setup')">
+                <button class="vp-action-card green" id="btn-pass-init">
                   <div class="vp-card-icon"><i class="ph-duotone ph-shield-plus"></i></div>
                   <div class="vp-card-text">
                     <h4>Initialize Vault</h4>

@@ -3336,8 +3336,146 @@ textarea.input-inactive {
   background: var(--bg-hover);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px;
+  padding: 14px 12px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.audit-stat-item:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stat-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.stat-icon.text-red {
+  color: var(--red);
+}
+
+.stat-icon.text-green {
+  color: var(--green);
+}
+
+.stat-icon.pulsing-accent {
+  color: var(--accent);
+}
+
+/* Accent pulse animation for Live Guard card */
+.animate-pulse-accent {
+  position: relative;
+}
+
+@keyframes pulse-accent-border {
+  0% { border-color: var(--border); }
+  50% { border-color: rgba(var(--accent-rgb, 59, 130, 246), 0.4); box-shadow: 0 0 10px rgba(var(--accent-rgb, 59, 130, 246), 0.15); }
+  100% { border-color: var(--border); }
+}
+
+.animate-pulse-accent {
+  animation: pulse-accent-border 3s infinite ease-in-out;
+}
+
+/* --- Security Health Index Score Card --- */
+.security-score-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.security-score-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 25px rgba(var(--accent-rgb, 59, 130, 246), 0.15);
+}
+
+.security-score-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.score-circle {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.circular-chart {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 3;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s ease;
+}
+
+.circular-chart.green .circle {
+  stroke: var(--green, #22c55e);
+}
+.circular-chart.orange .circle {
+  stroke: #f97316;
+}
+.circular-chart.red .circle {
+  stroke: var(--red, #ef4444);
+}
+
+.percentage {
+  fill: #fff;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  text-anchor: middle;
+  font-weight: 800;
+}
+
+.score-details {
+  text-align: left;
+}
+
+.score-details h4 {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.score-details p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .security-score-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  .score-details {
+    text-align: center;
+  }
 }
 
 .audit-stat-label {
