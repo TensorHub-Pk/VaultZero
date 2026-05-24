@@ -5,7 +5,7 @@
  */
 
 
-const CACHE_NAME = 'vault-v3.1.2-stable';
+const CACHE_NAME = 'vault-v3.2.2-stable';
 
 // Core assets to pre-cache (no '/' — it can 301 on CDN/redirect hosts and kill cache.addAll)
 // ASSETS_TO_CACHE: Everything needed for offline operation.
@@ -197,11 +197,11 @@ self.addEventListener('fetch', event => {
 
   // Network-first for update manifest and any requests with cache-busting timestamps
   // Also BYPASS for robots.txt and sitemap.xml to prevent them from being redirected to vault.html
-  if (url.pathname.endsWith('/update-info.json') || 
-      url.pathname.endsWith('/robots.txt') || 
-      url.pathname.endsWith('/sitemap.xml') || 
-      url.searchParams.has('t') || 
-      url.searchParams.has('nocache')) {
+  if (url.pathname.endsWith('/update-info.json') ||
+    url.pathname.endsWith('/robots.txt') ||
+    url.pathname.endsWith('/sitemap.xml') ||
+    url.searchParams.has('t') ||
+    url.searchParams.has('nocache')) {
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
     );
@@ -214,7 +214,7 @@ self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
     // Robust landing page check: handle clean URLs, trailing slashes, and .html extension
     const cleanPath = url.pathname.replace(/\/$/, ''); // Remove trailing slash for comparison
-    const isLandingPage = 
+    const isLandingPage =
       url.pathname === '/' ||
       cleanPath.endsWith('/index.html') ||
       cleanPath.endsWith('/index') ||

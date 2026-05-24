@@ -37,6 +37,8 @@ We have completely retired the legacy codebase and initiated a **Ground-Up Resto
 | **Zero-Knowledge** | Your master password never leaves your browser's memory |
 | **Post-Quantum** | ML-KEM-768 (Kyber) for future-proof secret sharing |
 | **High-Speed Crypto** | Powered by ChaCha20-Poly1305 and Memory-hard Argon2id |
+| **Envelope Encryption** | Master & Recovery Keys protect an inner 256-bit Vault Key |
+| **Air-Gap 110%** | Absolute zero-network lockdown via mocked APIs and strict CSP |
 | **Integrity Sentinel** | Real-time cryptographic sealing and background file monitoring |
 | **Anonymous Sync** | Anonymous browser-to-browser sync via the Pulse Mesh |
 

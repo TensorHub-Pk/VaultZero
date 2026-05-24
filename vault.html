@@ -817,7 +817,7 @@
               
               <div class="vp-action-grid">
                 <button class="vp-action-card green" id="btn-pass-init" onclick="showPassState('setup')">
-                  <div class="vp-card-icon"><i class="ph-duotone ph-plus"></i></div>
+                  <div class="vp-card-icon"><i class="ph-duotone ph-shield-plus"></i></div>
                   <div class="vp-card-text">
                     <h4>Initialize Vault</h4>
                     <span>Create a new encrypted database</span>
@@ -826,7 +826,7 @@
                 </button>
                 
                 <button class="vp-action-card blue" id="btn-pass-unlock" onclick="showPassState('locked')">
-                  <div class="vp-card-icon"><i class="ph-duotone ph-lock-key"></i></div>
+                  <div class="vp-card-icon"><i class="ph-duotone ph-lock-key-open"></i></div>
                   <div class="vp-card-text">
                     <h4>Unlock Vault</h4>
                     <span>Access existing credentials</span>
@@ -874,7 +874,7 @@
                 <span class="vp-topbar-title">Security Unlock</span>
               </div>
               
-              <div class="vp-auth-body">
+              <div class="vp-auth-body" id="locked-password-body">
                 <div class="vp-auth-icon" style="color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);"><i class="ph-duotone ph-lock"></i></div>
                 <p class="vp-auth-desc">Your vault is encrypted. Enter your Master Password to unlock.</p>
                 
@@ -882,8 +882,29 @@
                   <input type="password" id="pass-master-pin" class="vp-input" placeholder="••••••••" autocomplete="current-password" style="letter-spacing: 0.3em; font-size: 24px;">
                 </div>
                 
-                <button id="btn-unlock-passwords" class="vp-btn-primary green">
+                <button id="btn-unlock-passwords" class="vp-btn-primary green" style="margin-bottom: 20px;">
                   <i class="ph-bold ph-lock-open"></i> Decrypt & Unlock
+                </button>
+
+                <button class="vp-text-btn" onclick="toggleLockedState('recovery')" style="color: var(--accent); margin-top: 10px;">
+                  <i class="ph ph-key"></i> Forgot Password? Use Recovery Key
+                </button>
+              </div>
+
+              <div class="vp-auth-body hidden" id="locked-recovery-body">
+                <div class="vp-auth-icon" style="color: var(--accent); background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2);"><i class="ph-duotone ph-key"></i></div>
+                <p class="vp-auth-desc">Enter your 24-character Recovery Key to recover your vault.</p>
+                
+                <div class="vp-input-wrapper" style="max-width: 380px;">
+                  <input type="text" id="pass-recovery-key" class="vp-input mono" placeholder="VZ-RCV-XXXX-XXXX-XXXX-XXXX" style="letter-spacing: 0.05em; font-size: 15px; text-transform: uppercase;">
+                </div>
+                
+                <button id="btn-recover-passwords" class="vp-btn-primary green" style="margin-bottom: 20px;">
+                  <i class="ph-bold ph-check"></i> Verify & Unlock
+                </button>
+
+                <button class="vp-text-btn" onclick="toggleLockedState('password')" style="color: rgba(255,255,255,0.4); margin-top: 10px;">
+                  <i class="ph ph-arrow-left"></i> Back to Password Unlock
                 </button>
               </div>
             </div>

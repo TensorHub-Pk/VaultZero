@@ -8,6 +8,26 @@
 
 ---
 
+## [3.2.2] — 2026-05-24
+
+### 🔐 THE ENVELOPE ENCRYPTION UPDATE
+> _"Your data. Your keys. Your recovery."_
+
+This update introduces a major overhaul to the password manager's cryptographic foundation. By transitioning to an industry-standard **Envelope Encryption** architecture, we now support secure offline vault recovery without ever sacrificing zero-knowledge principles.
+
+#### ✨ Security & Cryptography
+- **Envelope Encryption**: Passwords are now encrypted with a 256-bit Vault Key. This Vault Key is subsequently encrypted by your Master Password and a mathematically secure 26-character Recovery Key.
+- **Recovery Key Flow**: If a Master Password is forgotten, users can now input their Recovery Key to decrypt the Vault Key and regain access to their data, before establishing a new Master Password.
+- **Legacy Vault Migration**: Seamless, automatic cryptographic upgrade process for older vaults to adopt Envelope Encryption upon next unlock.
+- **Absolute Isolation Mode (Air-Gap 110%)**: Vastly hardened the Air-Gap feature. Activating Isolation Mode now globally mocks out `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `navigator.sendBeacon`, and `navigator.onLine`, alongside injecting a strict `connect-src 'none'` Content-Security-Policy to enforce an absolute network blockade.
+
+#### 💎 UI & UX Refinements
+- **Recovery Setup UI**: A premium modal flow to view, copy, and safely download the Recovery Key as a text file.
+- **Sync State Telemetry**: The Cloud Sync button dynamically updates its UI state (grayed out in Isolation Mode, glowing green on success, red on error).
+- **Compressed Cloud Payloads**: Implemented native `CompressionStream` (gzip) for all `ntfy.sh` sync payloads, bypassing arbitrary size limits and ensuring faster, reliable mesh-syncing across devices.
+
+---
+
 ## [3.1.1] — 2026-05-14
 
 ### 🛡️ THE UNIVERSAL HARDWARE IDENTITY

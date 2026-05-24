@@ -704,13 +704,21 @@ function goOffline() {
 
     // Harden: use Object.defineProperty to prevent reassignment/deletion
     Object.defineProperty(window, 'fetch', { value: blockedFetch, writable: false, configurable: true });
-    Object.defineProperty(window, 'XMLHttpRequest', { value: blockedFn('XHR'), writable: false, configurable: false });
-    Object.defineProperty(window, 'WebSocket', { value: blockedFn('WebSocket'), writable: false, configurable: false });
-    Object.defineProperty(window, 'EventSource', { value: blockedFn('EventSource'), writable: false, configurable: false });
+    Object.defineProperty(window, 'XMLHttpRequest', { value: blockedFn('XHR'), writable: false, configurable: true });
+    Object.defineProperty(window, 'WebSocket', { value: blockedFn('WebSocket'), writable: false, configurable: true });
+    Object.defineProperty(window, 'EventSource', { value: blockedFn('EventSource'), writable: false, configurable: true });
 
     if (navigator.sendBeacon) {
-        Object.defineProperty(navigator, 'sendBeacon', { value: () => false, writable: false, configurable: false });
+        Object.defineProperty(navigator, 'sendBeacon', { value: () => false, writable: false, configurable: true });
     }
+
+    Object.defineProperty(navigator, 'onLine', { get: () => false, configurable: true });
+    try {
+        const meta = document.createElement('meta');
+        meta.httpEquiv = "Content-Security-Policy";
+        meta.content = "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'none';";
+        document.head.appendChild(meta);
+    } catch(e) {}
 
     window._offlineLocked = true;
 
@@ -963,6 +971,17 @@ function listeners() {
     El.pass.addBtn?.addEventListener('click', addPasswordEntry);
     El.pass.search?.addEventListener('input', (e) => renderPasswords(e.target.value));
     El.pass.syncBtn?.addEventListener('click', syncPasswords);
+
+    document.getElementById('btn-recover-passwords')?.addEventListener('click', () => {
+        const keyVal = document.getElementById('pass-recovery-key')?.value;
+        unlockWithRecoveryKey(keyVal);
+    });
+    document.getElementById('pass-recovery-key')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const keyVal = document.getElementById('pass-recovery-key')?.value;
+            unlockWithRecoveryKey(keyVal);
+        }
+    });
 
     // PIN strength indicator
     El.pass.setupPin?.addEventListener('input', (e) => {
@@ -2604,25 +2623,6 @@ async function initVersionControl() {
         };
     }
 
-    /**
-     * Activates or deactivates Isolation (Air-Gap) Mode.
-     * When active: all network access is blocked, no updates or syncs occur.
-     */
-    async function setAirGap(enabled) {
-        State.airGap = enabled;
-
-        if (enabled) {
-            await localforage.setItem('vaultzero_airgap', true);
-            await localforage.setItem('vaultzero_airgap_timestamp', Date.now());
-            goOffline();
-            if (El.id.audit && El.id.audit.airGap) El.id.audit.airGap.checked = true;
-        } else {
-            State.airGap = false;
-            await localforage.removeItem('vaultzero_airgap');
-            await localforage.removeItem('vaultzero_airgap_timestamp');
-            if (El.id.audit && El.id.audit.airGap) El.id.audit.airGap.checked = false;
-        }
-    }
 
 
     // Global message listener for Service Worker communications
@@ -3060,10 +3060,8 @@ async function setAirGap(enabled) {
 
     if (enabled) {
         if (window._updatePollTimer) clearInterval(window._updatePollTimer);
-        // Strict fetch lockdown
-        const blockedFetch = () => Promise.reject(new Error('AIR_GAP_MODE: All network access disabled.'));
-        Object.defineProperty(window, 'fetch', { value: blockedFetch, writable: false, configurable: true });
-        if (window._nativeFetch) window._nativeFetch = blockedFetch;
+        // Strict fetch lockdown and offline mock
+        goOffline();
 
         if (El.version.isolationContainer) El.version.isolationContainer.classList.remove('hidden');
         if (El.version.statusText) {
@@ -3077,6 +3075,8 @@ async function setAirGap(enabled) {
                 dot.style.boxShadow = '0 0 10px var(--accent-glow)';
             });
         }
+        
+        if (typeof updateSyncUI === 'function') updateSyncUI('airgap');
         toast("Isolation Mode Enabled. All network requests blocked.", "info");
     } else {
         // Restore if possible (requires page reload to cleanly restore native fetch)
@@ -3112,7 +3112,13 @@ function showPassState(s) {
     });
 
     // Focus input field for convenience
-    if (s === 'locked' && El.pass.pin) setTimeout(() => El.pass.pin.focus(), 100);
+    if (s === 'locked') {
+        const pBody = document.getElementById('locked-password-body');
+        const rBody = document.getElementById('locked-recovery-body');
+        if (pBody) pBody.classList.remove('hidden');
+        if (rBody) rBody.classList.add('hidden');
+        if (El.pass.pin) setTimeout(() => El.pass.pin.focus(), 100);
+    }
     if (s === 'setup' && El.pass.setupPin) setTimeout(() => El.pass.setupPin.focus(), 100);
 
     // Broadcast "HELLO" on unlock to catch up with other tabs
@@ -3130,6 +3136,7 @@ async function unlockPasswords(pin, isSetup = false) {
     let sim;
     try {
         const encryptedData = await localforage.getItem('vaultzero_passwords');
+        const encryptedKeyByPassword = await localforage.getItem('vaultzero_key_by_password');
 
         // Safeguard: Check if we are overwriting an existing vault
         if (isSetup && encryptedData) {
@@ -3167,7 +3174,34 @@ async function unlockPasswords(pin, isSetup = false) {
             } else {
                 // Standard new setup
                 State.pass.entries = [];
-                await savePasswords();
+                
+                // 1. Generate random Vault Encryption Key
+                const randomBytes = new Uint8Array(32);
+                crypto.getRandomValues(randomBytes);
+                const vaultKey = bufferToBase64(randomBytes);
+
+                // 2. Generate Recovery Key
+                const recoveryKey = generateRecoveryKey();
+
+                // 3. Encrypt Vault Key under Master Password and Recovery Key
+                const encryptedKeyByPasswordVal = await SecureCrypto.encryptSymmetric(vaultKey, pin);
+                const encryptedKeyByRecoveryVal = await SecureCrypto.encryptSymmetric(vaultKey, recoveryKey);
+
+                await localforage.setItem('vaultzero_key_by_password', encryptedKeyByPasswordVal);
+                await localforage.setItem('vaultzero_key_by_recovery', encryptedKeyByRecoveryVal);
+
+                // 4. Encrypt database under Vault Key
+                const encryptedPayload = await SecureCrypto.encryptSymmetric(JSON.stringify([]), vaultKey);
+                await localforage.setItem('vaultzero_passwords', encryptedPayload);
+
+                State.pass.lastSync = Date.now();
+                
+                if (sim) sim.finish();
+                hideLoader();
+
+                // 5. Show Recovery Key modal
+                await showRecoveryKeyModal(recoveryKey, false);
+
                 toast("Secure Password Vault Initialized!", "success");
             }
 
@@ -3175,13 +3209,54 @@ async function unlockPasswords(pin, isSetup = false) {
             return;
         }
 
-        const res = await SecureCrypto.decryptSymmetric(encryptedData, pin);
-        const decryptedStr = typeof res === 'string' ? res : res.data;
-        State.pass.entries = JSON.parse(decryptedStr);
-        State.pass.masterKey = pin;
-        State.pass.unlocked = true;
-        finishUnlock();
-        toast("Password Vault Unlocked.", "success");
+        if (encryptedKeyByPassword) {
+            // Envelope Decryption Flow
+            const decryptedKeyBytes = await SecureCrypto.decryptSymmetric(encryptedKeyByPassword, pin);
+            const vaultKey = typeof decryptedKeyBytes === 'string' ? decryptedKeyBytes : decryptedKeyBytes.data;
+
+            const res = await SecureCrypto.decryptSymmetric(encryptedData, vaultKey);
+            const decryptedStr = typeof res === 'string' ? res : res.data;
+
+            State.pass.entries = JSON.parse(decryptedStr);
+            State.pass.masterKey = pin;
+            State.pass.unlocked = true;
+            finishUnlock();
+            toast("Password Vault Unlocked.", "success");
+        } else {
+            // Legacy Upgrade Flow
+            const res = await SecureCrypto.decryptSymmetric(encryptedData, pin);
+            const decryptedStr = typeof res === 'string' ? res : res.data;
+            const entries = JSON.parse(decryptedStr);
+
+            // Generate new keys
+            const randomBytes = new Uint8Array(32);
+            crypto.getRandomValues(randomBytes);
+            const vaultKey = bufferToBase64(randomBytes);
+            const recoveryKey = generateRecoveryKey();
+
+            const newEncKeyByPassword = await SecureCrypto.encryptSymmetric(vaultKey, pin);
+            const newEncKeyByRecovery = await SecureCrypto.encryptSymmetric(vaultKey, recoveryKey);
+
+            await localforage.setItem('vaultzero_key_by_password', newEncKeyByPassword);
+            await localforage.setItem('vaultzero_key_by_recovery', newEncKeyByRecovery);
+
+            // Re-encrypt database
+            const newEncryptedData = await SecureCrypto.encryptSymmetric(decryptedStr, vaultKey);
+            await localforage.setItem('vaultzero_passwords', newEncryptedData);
+
+            State.pass.entries = entries;
+            State.pass.masterKey = pin;
+            State.pass.unlocked = true;
+
+            State.pass.lastSync = Date.now();
+            await performCloudPulse(true);
+
+            if (sim) sim.finish();
+            hideLoader();
+
+            await showRecoveryKeyModal(recoveryKey, true);
+            finishUnlock();
+        }
     } catch (e) {
         toast("Incorrect Password. Access Denied.", "error");
     } finally {
@@ -3194,6 +3269,7 @@ async function unlockPasswords(pin, isSetup = false) {
 function finishUnlock() {
     showPassState('active');
     renderPasswords();
+    performCloudPulse(); // Proactively pull/push from cloud upon unlock
 }
 
 function lockPasswords() {
@@ -3305,7 +3381,19 @@ async function savePasswords() {
 
     try {
         const payload = JSON.stringify(State.pass.entries);
-        const encrypted = await SecureCrypto.encryptSymmetric(payload, State.pass.masterKey);
+
+        // Get Vault Encryption Key
+        let vaultKey;
+        const encryptedKeyByPassword = await localforage.getItem('vaultzero_key_by_password');
+        if (encryptedKeyByPassword) {
+            const decryptedKeyBytes = await SecureCrypto.decryptSymmetric(encryptedKeyByPassword, State.pass.masterKey);
+            vaultKey = typeof decryptedKeyBytes === 'string' ? decryptedKeyBytes : decryptedKeyBytes.data;
+        } else {
+            // Legacy fallback
+            vaultKey = State.pass.masterKey;
+        }
+
+        const encrypted = await SecureCrypto.encryptSymmetric(payload, vaultKey);
         await localforage.setItem('vaultzero_passwords', encrypted);
         State.pass.lastSync = Date.now();
         performCloudPulse();
@@ -3394,6 +3482,10 @@ function showPassEntryModal(existing = null) {
 }
 
 async function syncPasswords() {
+    if (State.airGap) {
+        return customConfirm("Cloud sync is disabled while Isolation Mode is active. All network requests are strictly blocked to ensure maximum security. Please disable Isolation Mode to sync.", "Isolation Mode Active");
+    }
+
     if (!State.pass.unlocked || !State.pass.masterKey) {
         // If locked, allow linking via Vault ID
         const vId = await customPrompt("Enter your Vault ID to link this device:", "Link Existing Vault", "text");
@@ -3423,7 +3515,7 @@ async function syncPasswords() {
 
     // Manual sync button: force a pull and ignore the 15s debounce
     toast("Syncing with cloud...", "info");
-    await performCloudPulse();
+    await performCloudPulse(true);
     if (State.pass.syncStatus === 'success') {
         toast("Cloud sync completed successfully.", "success");
         renderPasswords(); // Refresh UI in case of background updates
@@ -3466,8 +3558,59 @@ async function generateNewVaultId() {
  * Background "Pulse" that pushes or pulls data based on network state.
  * User-friendly: handles everything automatically.
  */
+/**
+ * Helper to compress a string to a base64-encoded gzip string.
+ */
+async function compressStringToBase64(str) {
+    try {
+        const byteArray = new TextEncoder().encode(str);
+        const cs = new CompressionStream('gzip');
+        const writer = cs.writable.getWriter();
+        writer.write(byteArray);
+        writer.close();
+        const response = new Response(cs.readable);
+        const buffer = await response.arrayBuffer();
+        const uint8Array = new Uint8Array(buffer);
+        let binaryString = "";
+        for (let i = 0; i < uint8Array.length; i++) {
+            binaryString += String.fromCharCode(uint8Array[i]);
+        }
+        return btoa(binaryString);
+    } catch (e) {
+        console.warn("Compression failed, falling back to plaintext:", e);
+        return null;
+    }
+}
+
+/**
+ * Helper to decompress a base64-encoded gzip string.
+ */
+async function decompressBase64ToString(base64) {
+    try {
+        const binaryString = atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        const ds = new DecompressionStream('gzip');
+        const writer = ds.writable.getWriter();
+        writer.write(bytes);
+        writer.close();
+        const response = new Response(ds.readable);
+        const buffer = await response.arrayBuffer();
+        return new TextDecoder().decode(buffer);
+    } catch (e) {
+        console.error("Decompression failed:", e);
+        throw e;
+    }
+}
+
+/**
+ * Background "Pulse" that pushes or pulls data based on network state.
+ * User-friendly: handles everything automatically.
+ */
 let _isSyncingPulse = false;
-async function performCloudPulse() {
+async function performCloudPulse(force = false) {
     if (_isSyncingPulse || State.airGap) return;
     if (!State.pass.vaultId) return;
 
@@ -3475,6 +3618,8 @@ async function performCloudPulse() {
     try {
         const vaultId = State.pass.vaultId;
         const localData = await localforage.getItem('vaultzero_passwords');
+        const encryptedKeyByPassword = await localforage.getItem('vaultzero_key_by_password');
+        const encryptedKeyByRecovery = await localforage.getItem('vaultzero_key_by_recovery');
         const canPush = State.pass.unlocked && localData;
         const payload = {
             type: 'SYNC',
@@ -3482,6 +3627,8 @@ async function performCloudPulse() {
             timestamp: Date.now(),
             vaultId: vaultId
         };
+        if (encryptedKeyByPassword) payload.key = encryptedKeyByPassword;
+        if (encryptedKeyByRecovery) payload.recoveryKeyEncrypted = encryptedKeyByRecovery;
 
         // 1. BROADCAST LOCALLY (Instant Cross-Tab Sync)
         SyncRelay.postMessage({ _vz: true, type: 'PULSE', vaultId, payload });
@@ -3495,13 +3642,27 @@ async function performCloudPulse() {
                 const fetcher = window._nativeFetch || fetch;
 
                 // PUSH to relay (Only if unlocked and has data)
-                if (canPush && State.pass.lastPushData !== payload.data) {
-                    await fetcher(relayUrl, {
+                const isForced = force === true;
+                if (canPush && (isForced || State.pass.lastPushData !== payload.data)) {
+                    let bodyToSend = JSON.stringify(payload);
+                    if (typeof CompressionStream !== 'undefined') {
+                        const compressed = await compressStringToBase64(bodyToSend);
+                        if (compressed) {
+                            bodyToSend = compressed;
+                        }
+                    }
+
+                    const pushResponse = await fetcher(relayUrl, {
                         method: 'POST',
-                        body: JSON.stringify(payload)
+                        body: bodyToSend
                     });
-                    State.pass.lastPushData = payload.data;
-                    State.pass.lastSync = payload.timestamp;
+
+                    if (pushResponse.ok) {
+                        State.pass.lastPushData = payload.data;
+                        State.pass.lastSync = payload.timestamp;
+                    } else {
+                        console.warn("Cloud relay push failed with status:", pushResponse.status);
+                    }
                 }
 
                 // PULL from relay (Get latest messages)
@@ -3521,7 +3682,12 @@ async function performCloudPulse() {
                             const latest = messages[i];
                             if (latest.message) {
                                 try {
-                                    const remotePayload = JSON.parse(latest.message);
+                                    let messageText = latest.message.trim();
+                                    if (!messageText.startsWith('{')) {
+                                        // It's compressed! Decompress it.
+                                        messageText = await decompressBase64ToString(messageText);
+                                    }
+                                    const remotePayload = JSON.parse(messageText);
 
                                     // SECURITY: Handle Global Wipe Signal (Only if sent AFTER we created/linked this ID)
                                     if (remotePayload.type === 'WIPE_SIGNAL' &&
@@ -3549,12 +3715,14 @@ async function performCloudPulse() {
                         }
                     }
                 }
+                updateSyncUI('success');
             } catch (cloudErr) {
                 console.warn("Cloud relay (ntfy) error:", cloudErr);
+                updateSyncUI('error');
             }
+        } else {
+            updateSyncUI('offline');
         }
-
-        updateSyncUI('success');
     } catch (e) {
         console.error("Pulse error:", e);
         updateSyncUI('error');
@@ -3570,9 +3738,25 @@ async function handleRemotePulse(remote) {
     if (remote.timestamp <= State.pass.lastSync) return;
 
     try {
+        let vaultKey;
+        // Check if the remote payload contains the encrypted Vault Key
+        if (remote.key) {
+            // Decrypt the remote Vault Key using the local Master Password
+            const decryptedKeyBytes = await SecureCrypto.decryptSymmetric(remote.key, State.pass.masterKey);
+            vaultKey = typeof decryptedKeyBytes === 'string' ? decryptedKeyBytes : decryptedKeyBytes.data;
+
+            // Save the keys locally
+            await localforage.setItem('vaultzero_key_by_password', remote.key);
+            if (remote.recoveryKeyEncrypted) {
+                await localforage.setItem('vaultzero_key_by_recovery', remote.recoveryKeyEncrypted);
+            }
+        } else {
+            // Legacy/Plain Sync fallback
+            vaultKey = State.pass.masterKey;
+        }
 
         const remoteEncrypted = remote.data;
-        const res = await SecureCrypto.decryptSymmetric(remoteEncrypted, State.pass.masterKey);
+        const res = await SecureCrypto.decryptSymmetric(remoteEncrypted, vaultKey);
         const decryptedStr = typeof res === 'string' ? res : res.data;
         const remoteEntries = JSON.parse(decryptedStr);
 
@@ -3589,13 +3773,12 @@ async function handleRemotePulse(remote) {
             }
         });
 
-        if (hasChanges) {
-
+        if (hasChanges || !await localforage.getItem('vaultzero_passwords')) {
             State.pass.entries = Array.from(localMap.values());
 
             // SECURITY: We must RE-ENCRYPT the merged state because our local state might have
             // had changes that weren't in the remote pulse.
-            const mergedEncrypted = await SecureCrypto.encryptSymmetric(JSON.stringify(State.pass.entries), State.pass.masterKey);
+            const mergedEncrypted = await SecureCrypto.encryptSymmetric(JSON.stringify(State.pass.entries), vaultKey);
 
             await localforage.setItem('vaultzero_passwords', mergedEncrypted);
             State.pass.lastPushData = mergedEncrypted;
@@ -3605,14 +3788,14 @@ async function handleRemotePulse(remote) {
             toast("Mesh Sync: Vault updated from cloud.", "success");
         } else {
             State.pass.lastSync = remote.timestamp;
-
         }
     } catch (e) {
-        console.warn("[Local Mesh] Pulse merge failed. Master Password mismatch or corrupt payload.");
+        console.warn("[Local Mesh] Pulse merge failed. Master Password mismatch or corrupt payload.", e);
     }
 }
 
 function updateSyncUI(status) {
+    if (State.airGap) status = 'airgap';
     State.pass.syncStatus = status;
     const btn = document.getElementById('btn-sync-passwords');
     if (!btn) return;
@@ -3622,7 +3805,8 @@ function updateSyncUI(status) {
         syncing: 'ph-duotone ph-arrows-clockwise ph-spin',
         success: 'ph-duotone ph-cloud-check',
         error: 'ph-duotone ph-cloud-warning',
-        offline: 'ph-duotone ph-cloud-slash'
+        offline: 'ph-duotone ph-cloud-slash',
+        airgap: 'ph-duotone ph-shield-slash'
     };
 
     const colors = {
@@ -3630,10 +3814,245 @@ function updateSyncUI(status) {
         syncing: '#3b82f6',
         success: '#10b981',
         error: '#ef4444',
-        offline: 'rgba(255,255,255,0.3)'
+        offline: 'rgba(255,255,255,0.3)',
+        airgap: 'rgba(255,255,255,0.5)'
     };
 
-    btn.innerHTML = `<i class="${icons[status]}" style="color: ${colors[status]}"></i> ${status === 'success' ? 'Synced' : 'Sync'}`;
+    if (status === 'airgap') {
+        btn.classList.remove('green', 'red');
+        btn.style.opacity = '0.5';
+        btn.style.filter = 'grayscale(100%)';
+        btn.style.cursor = 'not-allowed';
+    } else {
+        btn.style.opacity = '';
+        btn.style.filter = '';
+        btn.style.cursor = '';
+        if (status === 'error') {
+            btn.classList.remove('green');
+            btn.classList.add('red');
+        } else {
+            btn.classList.remove('red');
+            btn.classList.add('green');
+        }
+    }
+
+    let text = status === 'success' ? 'Synced' : 'Sync';
+    if (status === 'airgap') text = 'Isolated';
+    btn.innerHTML = `<i class="${icons[status]}" style="color: ${colors[status]}"></i> ${text}`;
+}
+
+function toggleLockedState(mode) {
+    const pBody = document.getElementById('locked-password-body');
+    const rBody = document.getElementById('locked-recovery-body');
+    if (mode === 'recovery') {
+        if (pBody) pBody.classList.add('hidden');
+        if (rBody) rBody.classList.remove('hidden');
+        const rInput = document.getElementById('pass-recovery-key');
+        if (rInput) setTimeout(() => rInput.focus(), 100);
+    } else {
+        if (pBody) pBody.classList.remove('hidden');
+        if (rBody) rBody.classList.add('hidden');
+        if (El.pass.pin) setTimeout(() => El.pass.pin.focus(), 100);
+    }
+}
+
+function generateRecoveryKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const r = (len) => {
+        const bytes = new Uint8Array(len);
+        crypto.getRandomValues(bytes);
+        let str = '';
+        for (let i = 0; i < len; i++) {
+            str += chars[bytes[i] % chars.length];
+        }
+        return str;
+    };
+    return `VZ-RCV-${r(4)}-${r(4)}-${r(4)}-${r(4)}`;
+}
+
+function showRecoveryKeyModal(recoveryKey, isUpgrade = false) {
+    return new Promise((resolve) => {
+        const modalId = 'recovery-key-setup-modal-' + Date.now();
+        const titleText = isUpgrade ? 'Security Upgrade: Save Recovery Key' : 'Save Your Recovery Key';
+        const descText = isUpgrade 
+            ? 'We have upgraded your local vault to support secure offline password recovery. Please save your new Recovery Key below.' 
+            : 'This is your unique Recovery Key. If you forget your password, you can use this key to restore your vault. **Store it somewhere safe.**';
+        
+        const html = `
+        <div id="${modalId}" class="install-modal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 10000000000000000;">
+            <div class="install-modal-backdrop" style="background: transparent;"></div>
+            <div class="vault-pro-container" style="max-width: 500px; margin: auto; border: 1px solid rgba(59,130,246,0.3); background: linear-gradient(165deg, #0d0d12, #07070a); min-height: auto; padding: 24px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(37,99,235,0.15); width: 90%;">
+                <div class="vp-auth-icon" style="color: var(--accent); background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.2); width: 80px; height: 80px; margin: 10px auto 20px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+                    <i class="ph-duotone ph-shield-check"></i>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 800; color: #fff; text-align: center; margin: 0 0 10px; letter-spacing: -0.5px;">${titleText}</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6); text-align: center; line-height: 1.6; margin: 0 auto 24px; max-width: 400px;">${descText}</p>
+                
+                <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px;">
+                    <div id="${modalId}-key" class="mono" style="font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: 0.1em; user-select: all; cursor: pointer; text-transform: uppercase;">
+                        ${recoveryKey}
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                    <button id="${modalId}-copy" class="vp-footer-action" style="flex: 1; height: 48px; border-radius: 12px; font-size: 13px;">
+                        <i class="ph ph-copy"></i> Copy Key
+                    </button>
+                    <button id="${modalId}-download" class="vp-footer-action" style="flex: 1; height: 48px; border-radius: 12px; font-size: 13px;">
+                        <i class="ph ph-download"></i> Download txt
+                    </button>
+                </div>
+                
+                <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 12px; padding: 14px; margin-bottom: 28px; text-align: left; display: flex; gap: 12px; align-items: flex-start;">
+                    <i class="ph ph-warning-circle" style="color: var(--red); font-size: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.7); margin: 0; line-height: 1.5;">
+                        <strong>WARNING:</strong> VaultZero is zero-knowledge. This key is stored nowhere in the cloud. If you lose this key and forget your password, your data is gone forever.
+                    </p>
+                </div>
+
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; cursor: pointer; text-align: left; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.04); padding: 12px; border-radius: 12px; user-select: none;">
+                    <input type="checkbox" id="${modalId}-ack" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+                    <span style="font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 600;">I have securely saved my recovery key.</span>
+                </label>
+
+                <button id="${modalId}-done" class="vp-btn-primary green" disabled style="width: 100%; height: 52px; border-radius: 12px; max-width: none; opacity: 0.5; cursor: not-allowed; font-size: 15px; font-weight: 800;">
+                    Confirm & Enter Vault
+                </button>
+            </div>
+        </div>`;
+
+        document.body.insertAdjacentHTML('beforeend', html);
+        const modal = document.getElementById(modalId);
+        const copyBtn = document.getElementById(`${modalId}-copy`);
+        const downloadBtn = document.getElementById(`${modalId}-download`);
+        const ackCheckbox = document.getElementById(`${modalId}-ack`);
+        const doneBtn = document.getElementById(`${modalId}-done`);
+
+        const close = () => {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+            document.querySelector('.app-shell')?.classList.remove('shell-modal-active');
+            resolve();
+        };
+
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(recoveryKey);
+            toast("Recovery Key copied to clipboard!", "success");
+        };
+
+        downloadBtn.onclick = () => {
+            const blob = new Blob([
+                "VAULTZERO RECOVERY KEY\\n",
+                "======================\\n",
+                `Generated on: ${new Date().toISOString()}\\n`,
+                `Recovery Key: ${recoveryKey}\\n\\n`,
+                "WARNING: Keep this key secure and private. Anyone with access to this key can decrypt your vault.\\n"
+            ], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `vaultzero-recovery-key.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast("Recovery Key downloaded!", "success");
+        };
+
+        ackCheckbox.onchange = (e) => {
+            const checked = e.target.checked;
+            doneBtn.disabled = !checked;
+            doneBtn.style.opacity = checked ? '1' : '0.5';
+            doneBtn.style.cursor = checked ? 'pointer' : 'not-allowed';
+        };
+
+        doneBtn.onclick = () => {
+            close();
+        };
+
+        requestAnimationFrame(() => {
+            modal.classList.remove('hidden');
+            document.querySelector('.app-shell')?.classList.add('shell-modal-active');
+            requestAnimationFrame(() => modal.classList.add('active'));
+        });
+    });
+}
+
+async function unlockWithRecoveryKey(recoveryKey) {
+    if (!recoveryKey) {
+        return toast("Please enter your Recovery Key.", "warning");
+    }
+
+    const cleanKey = recoveryKey.trim().toUpperCase();
+    if (!cleanKey.startsWith('VZ-RCV-') || cleanKey.length < 20) {
+        return toast("Invalid Recovery Key format.", "warning");
+    }
+
+    showLoader("Recovering Vault", "Verifying recovery credential...", true);
+    let sim = simulateProgress(1000);
+
+    try {
+        const encryptedKeyByRecovery = await localforage.getItem('vaultzero_key_by_recovery');
+        if (!encryptedKeyByRecovery) {
+            throw new Error("No recovery key record found on this device.");
+        }
+
+        // Decrypt the Vault Encryption Key using the Recovery Key
+        const decryptedKeyBytes = await SecureCrypto.decryptSymmetric(encryptedKeyByRecovery, cleanKey);
+        const vaultKey = typeof decryptedKeyBytes === 'string' ? decryptedKeyBytes : decryptedKeyBytes.data;
+
+        // Decrypt the password entries database using the Vault Encryption Key
+        const encryptedData = await localforage.getItem('vaultzero_passwords');
+        if (!encryptedData) {
+            throw new Error("No password database found.");
+        }
+
+        const res = await SecureCrypto.decryptSymmetric(encryptedData, vaultKey);
+        const decryptedStr = typeof res === 'string' ? res : res.data;
+        
+        // Success! Load the entries into memory
+        State.pass.entries = JSON.parse(decryptedStr);
+        State.pass.unlocked = true;
+
+        if (sim) sim.finish();
+        hideLoader();
+
+        toast("Vault unlocked via Recovery Key!", "success");
+
+        const newPass = await customPrompt(
+            "Please enter a new Master Password (min 10 characters) to re-secure your vault:",
+            "Reset Master Password",
+            "password"
+        );
+
+        if (newPass && newPass.length >= 10) {
+            showLoader("Re-encrypting Vault", "Securing local container...", true);
+            sim = simulateProgress(800);
+
+            // Re-encrypt Vault Encryption Key under new Master Password
+            const encryptedKeyByPassword = await SecureCrypto.encryptSymmetric(vaultKey, newPass);
+            await localforage.setItem('vaultzero_key_by_password', encryptedKeyByPassword);
+
+            // Save the password so the session is active
+            State.pass.masterKey = newPass;
+
+            // Clear inputs
+            const recInput = document.getElementById('pass-recovery-key');
+            if (recInput) recInput.value = '';
+
+            finishUnlock();
+            toast("Master Password reset successfully!", "success");
+        } else {
+            // Lock back down if they cancel or enter too short password
+            lockPasswords();
+            toast("Password reset cancelled. Vault locked.", "warning");
+        }
+    } catch (e) {
+        console.error("Recovery failed:", e);
+        toast("Incorrect Recovery Key or database corrupt.", "error");
+    } finally {
+        if (sim) sim.finish();
+    }
 }
 
 // Auto-Pulse on focus or network restore

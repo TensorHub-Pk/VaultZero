@@ -1,12 +1,12 @@
 {
-  "version": "3.1.2",
-  "released": "2026-05-12",
-  "timestamp": 1778474647628,
-  "expires": 1781066647628,
+  "version": "3.2.2",
+  "released": "2026-05-24",
+  "timestamp": 1779634979549,
+  "expires": 1782226979549,
   "hashes": {
     "app.js": {
-      "sha256": "77e68cc05e39a2cd15398348e561f2b5004ca9ea879bdaa65c6b3d7311a66d53",
-      "sha512": "eb2dca8687e9055e508dd4b84e0e8578637acee7fc527c833fa437122d183712b9d207f2bc8a76b5011d0296b3218fb5e74b2276bded50eb76f9deb9aafe6192"
+      "sha256": "c68085a85206fa80e8d6618e9d1b25efe03e7778be051ea228427aa8bbb9415a",
+      "sha512": "ebc8f6ab182035daf49bf138782392e0501ff29fc022c5682fdf9612d455764d54273665d84a3186a6367b792cb677ab5e34242634b8204c1e0cee929fddf579"
     },
     "encryption.js": {
       "sha256": "e2c448e21aa161c705c61a145738cde510c80eae089124d0fe56c51a4d084bc2",
@@ -21,8 +21,8 @@
       "sha512": "818990b7c547854439e0c5793c65b43159ffc25b3166506bf515f05052d7e42e0a9d96df7b93512fae7053c261399d0a465ee3d94e2dbb08627dbfb248c8fd8c"
     },
     "service-worker.js": {
-      "sha256": "8085b3ad15b7aeadef79c69c00843b14dacd75e9d9ca6b44729f6b4f662ae2df",
-      "sha512": "05f20d69106a3fb2c3e9102cb32fce9616b60de7aefb3db026acef3df14db063f9524d766c731e6e167d0309659e7d0ff662de29902ea0bf4465d66838b69db3"
+      "sha256": "e8a307b1ef5d523f8f4c167795f982059106c7bdd73348acb0dd577dcb90dbd7",
+      "sha512": "9fe4f68a21a572c815b866abc6e9b7dfaf955baf7e5e1e4f5f9b49d0d579a5f2cb52e022453561eb47a5ab85c1837442764edabd55b82860f74d941a18ec898c"
     },
     "libs/localforage.min.js": {
       "sha256": "cc168d95fb927d46b1043726cfe13998e08902ff63f24330e2bb2290109ed145",
@@ -45,6 +45,6 @@
       "sha512": "8f529bbeee38933bb27d9ea3314c5c0eae7b451d0ec11b854d98c32b3af84ef74085aaebcae40162d20d179a63c29915fff3fe218615dbaf944361594944189f"
     }
   },
-  "signature": "LYFEzQaHD0zWA6wzxNvZLHGWO5karUvPNFv7Xqe6MPCoEhlzBVZqxhtWyAPPxhN4gI002rIMjWb7JnIcICQxDw==",
+  "signature": "kUxxc1idjG8e4IK0q5N93pRG1K3ih5Vk/KAbY3Iagd0vMPx3t0YT3xKc62w660iVuhw2tlrKkT/gB1EHUlbVAw==",
   "signerPublicKey": "JYoLNivx4//GnefoBS0EldrriK0eLpfSb0JfuktIlbI="
 }
